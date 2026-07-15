@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
 #buat database sqlite
-conn = sqlite3.connect('riwayat_sentimen.db')
+conn = sqlite3.connect('database/riwayat_sentimen.db')
 cursor = conn.cursor()
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS riwayat_sentimen(
@@ -22,7 +22,7 @@ conn.close()
 print("Database 'riwayat_sentimen.db' berhasil di buat!")
 
 # proses train model
-df_train = pd.read_csv('train_preprocess_ori.tsv', sep='\t')
+df_train = pd.read_csv('datasets/train_preprocess_ori.tsv', sep='\t')
 
 def bersihkan_teks(teks):
     if not isinstance(teks, str):
@@ -44,9 +44,9 @@ model = LogisticRegression(max_iter=1000)
 model.fit(X_train, y_train)
 
 # eksport model biar akurasi konsisten (pickle)
-with open('model_sentimen.pkl', 'wb') as f_model:
+with open('models/model_sentimen.pkl', 'wb') as f_model:
     pickle.dump(model, f_model)
-with open('vectorizer_tfidf.pkl', 'wb') as f_vec:
+with open('models/vectorizer_tfidf.pkl', 'wb') as f_vec:
     pickle.dump(vectorizer, f_vec)
     
 print("Model dan vectorizer berhasil di kunci menjadi file .pkl! Akurasi tidak akan berubah.")

@@ -6,8 +6,8 @@ from sklearn.metrics import accuracy_score, classification_report
 
 # baca dataset
 try:
-    df_train = pd.read_csv('train_preprocess_ori.tsv', sep='\t')
-    df_valid = pd.read_csv('valid_preprocess.tsv', sep='\t')
+    df_train = pd.read_csv('datasets/train_preprocess_ori.tsv', sep='\t')
+    df_valid = pd.read_csv('datasets/valid_preprocess.tsv', sep='\t')
     print(f"Berhasil memuat data! Train: {len(df_train)} baris, Valid: {len(df_valid)} baris")
 except FileNotFoundError:
     print("File tidak di temukan!, pastikan file berada pada folder yang sama")
@@ -54,7 +54,7 @@ print(classification_report(y_valid, y_pred))
 
 # test 
 try:
-    df_test = pd.read_csv('test_preprocess_masked_label.tsv', sep='\t')
+    df_test = pd.read_csv('datasets/test_preprocess_masked_label.tsv', sep='\t')
     print(f"Berhasil memuat dataset test! Test : {len(df_test)} baris")
 
     df_test['text_clean'] = df_test['text'].apply(bersihkan_teks)
@@ -64,7 +64,7 @@ try:
     df_test['sentiment_prediction'] = model.predict(X_test)
     
     # simpan hasil prediksi ke file tsv
-    nama_file_hasil = 'hasil_prediksi_sentimen_test.tsv'
+    nama_file_hasil = 'datasets/hasil_prediksi_sentimen_test.tsv'
     df_test.to_csv(nama_file_hasil, sep='\t', index=False)
     print(f"prediksi sentimen test berhasil di simpan ke file '{nama_file_hasil}")
     print("\nContoh hasil prediksi otomatis pada data test:")
