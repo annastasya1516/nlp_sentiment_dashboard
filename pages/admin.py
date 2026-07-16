@@ -2,17 +2,41 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from utils.database import ambil_data_db
+from streamlit_autorefresh import st_autorefresh
 
+# ga bisa kebuka dashboard admin kalo blom login
+if "login" not in st.session_state:
+    st.session_state["login"] = False
+    
+if not st.session_state["login"]:
+    st.warning("Silahkan Login Terlebih Dahulu")
+    st.switch_page("pages/login.py")
+    
 st.set_page_config(
     page_title="Dashboard Admin",
     layout="wide"
 )
 
-st.title("Dashboard Admin")
-st.markdown("Monitoring seluruh aktivitas klasifikasi sentimen")
+#auto refresh
+st_autorefresh(
+    interval=5000,
+    key="refresh_admin"
+)
 
+col_title, col_logout = st.columns([8, 1])
+with col_title:
+    st.title("Dashboard Admin")
+    st.markdown("Monitoring seluruh aktivitas klasifikasi sentimen")
+
+# tombol logout
+with col_logout:
+    if st.button("Logout"):
+        st.session_state["login"] = False
+        st.switch_page("app.py")
+    
 df_history = ambil_data_db()
 
+# total data
 jumlah_positive = len(df_history[df_history["klasifikasi"]=="positive"])
 jumlah_negative = len(df_history[df_history["klasifikasi"]=="negative"])
 jumlah_neutral = len(df_history[df_history["klasifikasi"]=="neutral"])
@@ -31,6 +55,7 @@ with col5:
     
 st.divider()
 
+#visualisasi grafik seluruh data
 st.subheader("📊 Visualisasi Keseluruhan Sentimen")   
 
 if not df_history.empty:
@@ -75,6 +100,7 @@ else:
     
 st.divider()
 
+#visualisasi grafik kategori tren input(data yang masuk)
 st.subheader("📈 Grafik Tren")
 if not df_history.empty:
     df_history["waktu"] = pd.to_datetime(df_history["waktu"])
@@ -120,12 +146,44 @@ if not df_history.empty:
         st.plotly_chart(fig_bar_tren, width="stretch")
     
     st.divider()
+    
+    # tabel seluruh database 
+    col_riwayat, col_analisis = st.columns(2)
+    with col_riwayat:       
+        st.subheader("📋 Riwayat Seluruh Data")
+        event = st.dataframe(
+            df_history,
+            width="stretch",
+            hide_index=True,
+            on_select="rerun",
+            selection_mode="single-row"
+        )
         
-    st.subheader("📋 Riwayat Seluruh Data")
-    st.dataframe(
-        df_history,
-        width="stretch",
-        hide_index=True
-    )
+    # hasil analisis per kalimat
+    with col_analisis:
+        st.subheader("🔍 Analisis Kalimat")
+        
+        if event.selection.rows:
+            index = event.selection.rows[0]
+            data = df_history.iloc[index]
+        
+            chart = pd.DataFrame({
+                "sentimen" : [data["klasifikasi"]],
+                "jumlah" : [1]
+            })
+            
+            fig = px.pie(
+                chart,
+                names="sentimen",
+                values="jumlah",
+                color="sentimen",
+                color_discrete_map=warna,
+                title="Analisis Sentimen Kalimat"
+            )
+            st.plotly_chart(fig, width="stretch")
+        else:
+            st.info("Klik pada salah satu baris tabel")
 else:
     st.info("Data masih kosong")
+    
+
