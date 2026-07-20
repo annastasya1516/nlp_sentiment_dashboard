@@ -28,13 +28,13 @@ def bersihkan_teks(teks):
     if not isinstance(teks, str):
         return ""
     teks = teks.lower()
-    teks = re.sub(r'a-z9-0\s', '', teks)
+    teks = re.sub(r'[^a-z9-0\s]', '', teks)
     return teks.strip()
 
 print("sedang memproses penguncian model...")
 df_train['text_clean'] = df_train['text'].apply(bersihkan_teks)
 
-# ekstraksi fitur dengan tf-idf
+# ekstraksi fitur dengan tf-idf huruf jadi angka
 vectorizer = TfidfVectorizer()  
 X_train = vectorizer.fit_transform(df_train['text_clean'])
 y_train = df_train['sentiment']

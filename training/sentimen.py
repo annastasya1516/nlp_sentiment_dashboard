@@ -20,7 +20,7 @@ def bersihkan_teks(teks):
     if not isinstance(teks, str):
         return ""
     teks = teks.lower()
-    teks = re.sub(r'a-z0-9\s', '', teks)
+    teks = re.sub(r'[^a-z0-9\s]', '', teks)
     return teks.strip()
 
 print("sedang membersihkan data train...")
@@ -72,8 +72,4 @@ try:
 
 except Exception as e:
     print(f"terjadi kesalahan pada proses data test: {e}")
-    
-
-
-
     
