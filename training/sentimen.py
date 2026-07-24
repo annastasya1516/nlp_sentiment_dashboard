@@ -3,6 +3,8 @@ import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 # baca dataset
 try:
@@ -72,4 +74,12 @@ try:
 
 except Exception as e:
     print(f"terjadi kesalahan pada proses data test: {e}")
-    
+  
+#confusion matrix  
+ConfusionMatrixDisplay.from_predictions(
+    y_valid,
+    y_pred,
+    cmap="Blues"
+)
+
+plt.show()
