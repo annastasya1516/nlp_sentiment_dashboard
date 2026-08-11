@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+import json
 from utils.preprocessing import bersihkan_teks
 from utils.database import simpan_ke_db
 from utils.load_model import load_model_assets
@@ -12,6 +13,31 @@ st.set_page_config(
 
 model, vectorizer = load_model_assets()
 
+try:
+    with open(
+        "models/metrics.json",
+        "r",
+        encoding="utf-8"
+    ) as file:
+        metrics = json.load(file)
+
+    akurasi = metrics["accuracy"]
+
+except FileNotFoundError:
+    st.warning(
+        "File metrics.json tidak ditemukan. "
+        "Silakan jalankan training model terlebih dahulu."
+    )
+    akurasi = "N/A"
+
+except (json.JSONDecodeError, KeyError):
+    st.warning(
+        "File metrics.json tidak valid atau formatnya salah."
+    )
+    akurasi = "N/A"
+
+akurasi = metrics["accuracy"]
+
 prediksi = None
 
 col_kiri, col_kanan = st.columns(2)
@@ -21,7 +47,7 @@ with col_kiri:
 
     st.metric(
         label="Model Akurasi (Logistic Regression)",
-        value="87.46%"
+        value=akurasi
     )
 
     st.divider()
@@ -59,7 +85,7 @@ with col_kiri:
                 st.info("Silahkan masukkan teks terlebih dahulu")
 
 with col_kanan:
-    st.subheader("📈 Hasil Ananlisis")    
+    st.subheader("📈 Hasil Analisis")    
     if prediksi is not None:
         if prediksi == 'positive' :
             st.success(f"Hasil Klasifikasi adalah: {prediksi.upper()}")

@@ -1,9 +1,38 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import json
 from utils.database import ambil_data_db
 from streamlit_autorefresh import st_autorefresh
 
+st.set_page_config(
+    page_title="Dashboard Admin",
+    layout="wide"
+)
+
+try:
+    with open(
+        "models/metrics.json",
+        "r",
+        encoding="utf-8"
+    ) as file:
+        metrics = json.load(file)
+
+    akurasi = metrics["accuracy"]
+
+except FileNotFoundError:
+    st.warning(
+        "File metrics.json tidak ditemukan. "
+        "Silakan lakukan training model terlebih dahulu."
+    )
+    akurasi = "N/A"
+
+except (json.JSONDecodeError, KeyError):
+    st.warning(
+        "File metrics.json tidak valid atau formatnya salah."
+    )
+    akurasi = "N/A"
+    
 # ga bisa kebuka dashboard admin kalo blom login
 if "login" not in st.session_state:
     st.session_state["login"] = False
@@ -11,11 +40,6 @@ if "login" not in st.session_state:
 if not st.session_state["login"]:
     st.warning("Silahkan Login Terlebih Dahulu")
     st.switch_page("pages/login.py")
-    
-st.set_page_config(
-    page_title="Dashboard Admin",
-    layout="wide"
-)
 
 #auto refresh
 st_autorefresh(
@@ -43,7 +67,7 @@ jumlah_neutral = len(df_history[df_history["klasifikasi"]=="neutral"])
 
 col1,col2,col3,col4,col5 = st.columns(5)
 with col1:
-    st.metric("Akurasi Model", "87.46%")
+    st.metric("Akurasi Model", akurasi)
 with col2:
     st.metric("Total Data", len(df_history))
 with col3:
@@ -103,8 +127,11 @@ st.divider()
 #visualisasi grafik kategori tren input(data yang masuk)
 st.subheader("📈 Grafik Tren")
 if not df_history.empty:
-    df_history["waktu"] = pd.to_datetime(df_history["waktu"])
-
+    df_history["waktu"] = pd.to_datetime(
+        df_history["waktu"],
+        format="mixed"
+    )
+    
     pilihan = st.radio(
         "periode",
         ["harian", "bulanan", "tahunan"],
