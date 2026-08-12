@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        body {
+            margin: 0;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #startButton {
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 50%;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        #startButton:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        #status {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <button id="startButton">🎤</button>
+
+    <div id="status">
+        Klik microphone untuk mulai
+    </div>
+
+
+    <script>
+
+        const startButton =
+            document.getElementById("startButton");
+
+        const statusText =
+            document.getElementById("status");
+
+
+        let recognition = null;
+        let silenceTimer = null;
+        let isRecording = false;
+
+
+        // BERITAHU STREAMLIT BAHWA COMPONENT SIAP
+
+        window.parent.postMessage(
+            {
+                isStreamlitMessage: true,
+                type: "streamlit:componentReady",
+                apiVersion: 1
+            },
+            "*"
+        );
+
+
+        // KIRIM HASIL KE STREAMLIT
+
+        function sendValueToStreamlit(value) {
+
+            window.parent.postMessage(
+                {
+                    isStreamlitMessage: true,
+                    type: "streamlit:setComponentValue",
+                    value: value
+                },
+                "*"
+            );
+
+        }
+
+
+        // SETTING UKURAN COMPONENT
+
+        window.parent.postMessage(
+            {
+                isStreamlitMessage: true,
+                type: "streamlit:setFrameHeight",
+                height: 120
+            },
+            "*"
+        );
+
+        // CEK BROWSER
+
+        if (!("webkitSpeechRecognition" in window)) {
+
+            statusText.textContent =
+                "Browser tidak mendukung Speech Recognition.";
+
+            startButton.disabled = true;
+
+        } else {
+
+            recognition =
+                new webkitSpeechRecognition();
+
+
+            recognition.lang = "id-ID";
+
+            recognition.continuous = true;
+
+            recognition.interimResults = true;
+
+            // MULAI
+
+            recognition.onstart = function () {
+
+                isRecording = true;
+
+                startButton.textContent = "🔴";
+
+                statusText.textContent =
+                    "🎙️ Sedang mendengarkan...";
+
+                resetSilenceTimer();
+
+            };
+
+            // HASIL SUARA
+
+            recognition.onresult = function (event) {
+
+                let transcript = "";
+
+                for (
+                    let i = event.resultIndex;
+                    i < event.results.length;
+                    i++
+                ) {
+
+                    transcript +=
+                        event.results[i][0].transcript;
+
+                }
+
+
+                // Kirim hasil ke Streamlit
+
+                sendValueToStreamlit(
+                    transcript
+                );
+
+
+                // Reset timer
+
+                resetSilenceTimer();
+
+            };
+
+            // ERROR
+
+            recognition.onerror = function (event) {
+
+                console.log(
+                    "Speech recognition error:",
+                    event.error
+                );
+
+
+                statusText.textContent =
+                    "Error: " + event.error;
+
+
+                stopRecording();
+
+            };
+
+            // SELESAI
+
+            recognition.onend = function () {
+
+                isRecording = false;
+
+                clearTimeout(
+                    silenceTimer
+                );
+
+                startButton.textContent =
+                    "🎤";
+
+                statusText.textContent =
+                    "✅ Selesai merekam.";
+
+            };
+
+        }
+
+        // TOMBOL MICROPHONE
+
+        startButton.addEventListener(
+            "click",
+            function () {
+
+                if (!recognition) {
+                    return;
+                }
+
+
+                if (isRecording) {
+
+                    stopRecording();
+
+                    return;
+
+                }
+
+
+                try {
+
+                    recognition.start();
+
+                } catch (error) {
+
+                    console.log(
+                        "Recognition gagal:",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+        // TIMER DIAM 3 DETIK
+
+        function resetSilenceTimer() {
+
+            clearTimeout(
+                silenceTimer
+            );
+
+
+            silenceTimer =
+                setTimeout(
+                    function () {
+
+                        if (
+                            recognition &&
+                            isRecording
+                        ) {
+
+                            statusText.textContent =
+                                "⏹️ Diam 3 detik. Rekaman dihentikan.";
+
+                            recognition.stop();
+
+                        }
+
+                    },
+                    3000
+                );
+
+        }
+
+        // STOP RECORDING
+
+        function stopRecording() {
+
+            clearTimeout(
+                silenceTimer
+            );
+
+
+            if (
+                recognition &&
+                isRecording
+            ) {
+
+                recognition.stop();
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
