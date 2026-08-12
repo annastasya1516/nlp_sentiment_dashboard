@@ -60,7 +60,7 @@ def simpan_ke_db(teks_asli, teks_bersih, klasifikasi):
             conn.close()
 
 
-def ambil_data_db():
+def ambil_data_db(limit=20):
     inisialisasi_db()
 
     conn = None
@@ -69,14 +69,74 @@ def ambil_data_db():
         conn = sqlite3.connect(DB_PATH)
 
         df = pd.read_sql_query(
-            "SELECT * FROM riwayat_sentimen ORDER BY id DESC",
-            conn
+            """
+            SELECT *
+            FROM riwayat_sentimen
+            ORDER BY id DESC
+            LIMIT ?
+            """,
+            conn,
+            params=(limit,)
         )
 
         return df
 
     except sqlite3.Error as e:
         print(f"Error mengambil data: {e}")
+        return pd.DataFrame()
+
+    finally:
+        if conn:
+            conn.close()
+            
+def hitung_total_data():
+    inisialisasi_db()
+
+    conn = None
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM riwayat_sentimen
+        """)
+
+        total = cursor.fetchone()[0]
+
+        return total
+
+    except sqlite3.Error as e:
+        print(f"Error menghitung total data: {e}")
+        return 0
+
+    finally:
+        if conn:
+            conn.close()
+            
+def ambil_semua_data_statistik():
+    inisialisasi_db()
+
+    conn = None
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+
+        df = pd.read_sql_query(
+            """
+            SELECT klasifikasi, waktu
+            FROM riwayat_sentimen
+            ORDER BY id ASC
+            """,
+            conn
+        )
+
+        return df
+
+    except sqlite3.Error as e:
+        print(f"Error mengambil data statistik: {e}")
         return pd.DataFrame()
 
     finally:
