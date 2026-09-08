@@ -1,5 +1,5 @@
 import streamlit as st
-import bcrypt
+from utils.security import verify_password
 
 # CEK JIKA SUDAH LOGIN
 if st.session_state.get("login", False):
@@ -47,10 +47,10 @@ if st.button(
             admin_password_hash = st.secrets[
                 "admin_password_hash"
             ]
-            # Cek password dengan bcrypt
-            password_cocok = bcrypt.checkpw(
-                password.encode("utf-8"),
-                admin_password_hash.encode("utf-8")
+            # Cek password dengan SHA-256
+            password_cocok = verify_password(
+                password,
+                admin_password_hash
             )
             # Cek username dan password
             if (

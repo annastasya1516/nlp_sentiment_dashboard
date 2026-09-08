@@ -1,54 +1,35 @@
 import streamlit as st
 import plotly.express as px
-import json
-from utils.preprocessing import bersihkan_teks
-from utils.database import simpan_ke_db
-from utils.load_model import load_model_assets
+from services.metrics_service import ambil_akurasi
+from controllers.sentiment_controller import analisis_sentimen
 from components.voice_recorder import speech_to_text
 
+# KONFIGURASI HALAMAN
 st.set_page_config(
     page_title="NLP Sentiment",
     layout="wide"
 )
 
-# LOAD MODEL
-model, vectorizer = load_model_assets()
-
 # LOAD METRICS
-try:
-    with open(
-        "models/metrics.json",
-        "r",
-        encoding="utf-8"
-    ) as file:
-        metrics = json.load(file)
-    akurasi = metrics["accuracy"]
-except FileNotFoundError:
-    st.warning(
-        "File metrics.json tidak ditemukan. "
-        "Silakan jalankan training model terlebih dahulu."
-    )
-
-    akurasi = "N/A"
-except (json.JSONDecodeError, KeyError):
-    st.warning(
-        "File metrics.json tidak valid atau formatnya salah."
-    )
-
-    akurasi = "N/A"
+akurasi = ambil_akurasi()
 
 # SESSION STATE
-if "input_teks" not in st.session_state:
-    st.session_state.input_teks = ""
-
+if "input_version" not in st.session_state:
+    st.session_state.input_version = 0
+if "teks_terakhir" not in st.session_state:
+    st.session_state.teks_terakhir = None
 if "prediksi" not in st.session_state:
     st.session_state.prediksi = None
+if "voice_processed" not in st.session_state:
+    st.session_state.voice_processed = False
 
 # LAYOUT
 col_kiri, col_kanan = st.columns(2)
 
 # KOLOM KIRI
 with col_kiri:
+
+    # JUDUL
     st.title("Klasifikasi Sentimen")
     st.markdown(
         "Masukkan kalimat untuk mengetahui "
@@ -58,77 +39,131 @@ with col_kiri:
         label="Model Akurasi (Logistic Regression)",
         value=akurasi
     )
-    st.divider()  
-     
-    # voice to text 
+    st.divider()
+
+    # VOICE TO TEXT
     st.subheader("🎙️ Voice to Text")
     hasil_suara = speech_to_text(
         key="voice_recorder"
     )
     if hasil_suara:
-        st.session_state.input_teks = hasil_suara
+        teks_suara = hasil_suara.get(
+            "text",
+            ""
+        )
+        selesai = hasil_suara.get(
+            "selesai",
+            False
+        )
 
-    # INPUT TEKS
+        # SAAT MASIH MEREKA
+        if not selesai:
+            if teks_suara:
+                st.session_state.input_teks = (
+                    teks_suara
+                )
+
+            # Izinkan rekaman baru untuk diproses
+            st.session_state.voice_processed = False
+
+        # SAAT REKAMAN SELESAI
+        elif selesai and teks_suara.strip():
+
+            # Cegah prediksi berulang akibat
+            # Streamlit melakukan rerun
+            if not st.session_state.voice_processed:
+
+                prediksi = analisis_sentimen(
+                    teks_suara
+                )
+
+                # Simpan hasil prediksi
+                st.session_state.prediksi = prediksi
+
+                # Simpan teks yang dianalisis
+                st.session_state.teks_terakhir = (
+                    teks_suara
+                )
+
+                # Tandai voice sudah diproses
+                st.session_state.voice_processed = True
+
+                # Buat text area baru agar kosong
+                st.session_state.input_version += 1
+
+                # Jalankan ulang halaman
+                st.rerun()
+
+    # INPUT TEKS MANUAL
     st.subheader("Masukkan Kalimat")
     user_input = st.text_area(
         "Masukkan Kalimat",
-        key="input_teks",
-        placeholder="Contoh: Pelayanan disini sangat memuaskan",
+        key=(
+            f"input_teks_"
+            f"{st.session_state.input_version}"
+        ),
+        placeholder=(
+            "Contoh: Pelayanan disini "
+            "sangat memuaskan"
+        ),
         height=150
     )
-    
+
     # TOMBOL ANALISIS
     if st.button(
         "Analisis Sentimen",
         type="primary",
         use_container_width=True
     ):
-        if user_input.strip() == "":    
+        # Cek input kosong
+        if user_input.strip() == "":
             st.warning(
                 "Silakan masukkan teks terlebih dahulu."
             )
         else:
-            # Bersihkan teks
-            teks_bersih = bersihkan_teks(user_input)
-            
-            # Ubah teks menjadi TF-IDF
-            teks_vektor = vectorizer.transform(
-                [teks_bersih]
+            # Analisis sentimen
+            prediksi = analisis_sentimen(
+                user_input
             )
-            
-            # Prediksi sentimen
-            prediksi = model.predict(
-                teks_vektor
-            )[0]
-            
-            # Simpan hasil ke session
+            # Simpan hasil prediksi
             st.session_state.prediksi = prediksi
-
-            # Simpan ke database
-            simpan_ke_db(
-                user_input,
-                teks_bersih,
-                prediksi
+            # Simpan teks yang dianalisis
+            st.session_state.teks_terakhir = (
+                user_input
             )
+            # Buat text area baru agar kosong
+            st.session_state.input_version += 1
+            # Jalankan ulang halaman
+            st.rerun()
 
 # KOLOM KANAN
 with col_kanan:
     st.subheader("📈 Hasil Analisis")
     prediksi = st.session_state.prediksi
+    
+    # JIKA SUDAH ADA HASIL
     if prediksi is not None:
 
-        # HASIL SENTIMEN
+        # HASIL KLASIFIKASI
         if prediksi == "positive":
             st.success(
-                f"Hasil Klasifikasi: {prediksi.upper()}"
+                f"Hasil Klasifikasi: "
+                f"{prediksi.upper()}"
             )
         elif prediksi == "negative":
             st.error(
-                f"Hasil Klasifikasi: {prediksi.upper()}"
+                f"Hasil Klasifikasi: "
+                f"{prediksi.upper()}"
             )
-        else:
+        elif prediksi == "neutral":
             st.warning(
-                f"Hasil Klasifikasi: {prediksi.upper()}"
+                f"Hasil Klasifikasi: "
+                f"{prediksi.upper()}"
+            )
+        elif prediksi == "invalid":
+            st.warning(
+                "⚠️ Teks tidak dapat dianalisis. "
+                "Silakan masukkan kalimat yang lebih jelas."
             )
 
         # DATA GRAFIK
@@ -137,11 +172,12 @@ with col_kanan:
             "jumlah": [1]
         }
         
-        # WARNA SENTIMEN
+        # WARNA GRAFIK
         peta_warna = {
             "positive": "#4CAF50",
             "negative": "#F44336",
-            "neutral": "#FFC107"
+            "neutral": "#FFC107",
+            "invalid": "#FF9999"
         }
 
         # PIE CHART
@@ -157,7 +193,22 @@ with col_kanan:
             fig,
             use_container_width=True
         )
+
+        # TEKS YANG TELAH DIANALISIS
+        teks_terakhir = (
+            st.session_state.teks_terakhir
+        )
+        if teks_terakhir:
+            st.markdown(
+                "### 📝 Teks yang Dianalisis"
+            )
+            st.info(
+                teks_terakhir
+            )
+
+    # BELUM ADA HASIL
     else:
+
         st.info(
             "Hasil analisis akan muncul di sini."
         )

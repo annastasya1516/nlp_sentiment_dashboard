@@ -1,74 +1,87 @@
 import json
-import pandas as pd
-import re
 import pickle
+import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
+from utils.preprocessing import bersihkan_teks
 
 # BACA DATASET
 df_train = pd.read_csv(
     "datasets/train_preprocess_ori.tsv",
     sep="\t"
 )
+
 df_valid = pd.read_csv(
     "datasets/valid_preprocess.tsv",
     sep="\t"
 )
+
 print(
     f"Berhasil memuat data! "
     f"Train: {len(df_train)} baris, "
     f"Valid: {len(df_valid)} baris"
 )
 
-# PREPROCESSING TEKS
-def bersihkan_teks(teks):
-    if not isinstance(teks, str):
-        return ""
-    teks = teks.lower()
-    teks = re.sub(r"[^a-z0-9\s]", "", teks)
-    return teks.strip()
-print("Sedang membersihkan data train...")
-df_train["text_clean"] = df_train["text"].apply(bersihkan_teks)
+# PREPROCESSING
+print("\nSedang membersihkan data train...")
+
+df_train["text_clean"] = df_train["text"].apply(
+    bersihkan_teks
+)
 
 print("Sedang membersihkan data validasi...")
-df_valid["text_clean"] = df_valid["text"].apply(bersihkan_teks)
+
+df_valid["text_clean"] = df_valid["text"].apply(
+    bersihkan_teks
+)
 
 print("Proses pembersihan selesai!")
 
 # TF-IDF
-print("Sedang melakukan ekstraksi fitur TF-IDF...")
+print("\nSedang melakukan ekstraksi fitur TF-IDF...")
+
 vectorizer = TfidfVectorizer()
+
 X_train = vectorizer.fit_transform(
     df_train["text_clean"]
 )
+
 X_valid = vectorizer.transform(
     df_valid["text_clean"]
 )
+
 y_train = df_train["sentiment"]
 y_valid = df_valid["sentiment"]
+
 print("Ekstraksi fitur selesai!")
 
 # TRAINING MODEL
-print("Sedang melakukan training model...")
+print("\nSedang melakukan training model...")
+
 model = LogisticRegression(
     max_iter=1000
 )
+
 model.fit(
     X_train,
     y_train
 )
+
 print("Model berhasil dilatih!")
 
 # EVALUASI MODEL
 y_pred = model.predict(X_valid)
+
 akurasi = accuracy_score(
     y_valid,
     y_pred
 )
+
 akurasi_persen = akurasi * 100
+
 print(
-    f"Akurasi model pada data validasi: "
+    f"\nAkurasi model pada data validasi: "
     f"{akurasi_persen:.2f}%"
 )
 
@@ -76,6 +89,7 @@ print(
 metrics = {
     "accuracy": f"{akurasi_persen:.2f}%"
 }
+
 with open(
     "models/metrics.json",
     "w",
@@ -86,7 +100,11 @@ with open(
         file,
         indent=4
     )
-print("Metrics berhasil disimpan ke models/metrics.json")
+
+print(
+    "Metrics berhasil disimpan "
+    "ke models/metrics.json"
+)
 
 # SIMPAN MODEL
 with open(
@@ -98,6 +116,11 @@ with open(
         file_model
     )
 
+print(
+    "Model berhasil disimpan "
+    "ke models/model_sentimen.pkl"
+)
+
 # SIMPAN VECTORIZER
 with open(
     "models/vectorizer_tfidf.pkl",
@@ -107,4 +130,10 @@ with open(
         vectorizer,
         file_vectorizer
     )
-print("Model dan vectorizer berhasil disimpan ke folder models!")
+
+print(
+    "Vectorizer berhasil disimpan "
+    "ke models/vectorizer_tfidf.pkl"
+)
+
+print("\nProses training dan penyimpanan selesai!")
