@@ -2,7 +2,10 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
     <style>
         body {
             margin: 0;
@@ -29,38 +32,36 @@
     </style>
 </head>
 <body>
-    <button id="startButton">🎤</button>
+    <button id="startButton">
+        🎤
+    </button>
     <div id="status">
         Klik microphone untuk mulai
     </div>
     <script>
+        // ELEMENT HTML
         const startButton =
             document.getElementById("startButton");
         const statusText =
             document.getElementById("status");
+        // VARIABEL
         let recognition = null;
         let silenceTimer = null;
         let isRecording = false;
-
-        // Menyimpan hasil transkripsi
         let finalTranscript = "";
+        let recordingId = null;
+        // STREAMLIT COMPONENT
+        function componentReady() {
+            window.parent.postMessage(
+                {
+                    isStreamlitMessage: true,
+                    type: "streamlit:componentReady",
+                    apiVersion: 1
+                },
 
-        // Menandai apakah rekaman dihentikan
-        // karena diam 3 detik atau tombol stop
-        let recordingFinished = false;
-
-        // BERITAHU STREAMLIT
-        // BAHWA COMPONENT SIAP
-
-        window.parent.postMessage(
-            {
-                isStreamlitMessage: true,
-                type: "streamlit:componentReady",
-                apiVersion: 1
-            },            "*"
-        );
-
-        // KIRIM HASIL KE STREAMLIT
+                "*"
+            );
+        }
         function sendValueToStreamlit(value) {
             window.parent.postMessage(
                 {
@@ -71,80 +72,77 @@
                 "*"
             );
         }
-
-        // SETTING UKURAN COMPONENT
-        window.parent.postMessage(
-            {
-                isStreamlitMessage: true,
-                type: "streamlit:setFrameHeight",
-                height: 120
-            },
-            "*"
-        );
-
-        // CEK BROWSER
-        if (!("webkitSpeechRecognition" in window)) {
-            statusText.textContent =
-                "Browser tidak mendukung Speech Recognition.";
-            startButton.disabled = true;
-        } else {
+        function setFrameHeight() {
+            window.parent.postMessage(
+                {
+                    isStreamlitMessage: true,
+                    type: "streamlit:setFrameHeight",
+                    height: 120
+                },
+                "*"
+            );
+        }
+        // CEK SUPPORT BROWSER
+        function cekBrowser() {
+            if (!("webkitSpeechRecognition" in window)) {
+                statusText.textContent =
+                    "Browser tidak mendukung Speech Recognition.";
+                startButton.disabled = true;
+                return false;
+            }
+            return true;
+        }
+        // INISIALISASI SPEECH RECOGNITION
+        function initRecognition() {
             recognition =
                 new webkitSpeechRecognition();
             recognition.lang = "id-ID";
             recognition.continuous = true;
             recognition.interimResults = true;
-
-            // MULAI REKAMAN
+            // REKAMAN DIMULAI
             recognition.onstart = function () {
                 isRecording = true;
-                recordingFinished = false;
                 finalTranscript = "";
+                // ID unik untuk setiap rekaman
+                recordingId =
+                    Date.now().toString();
                 startButton.textContent = "🔴";
                 statusText.textContent =
                     "🎙️ Sedang mendengarkan...";
                 resetSilenceTimer();
             };
-
-            // HASIL SPEECH-TO-TEXT
+            // HASIL TRANSKRIPSI
             recognition.onresult = function (event) {
                 let transcript = "";
                 for (
-                    let i = event.resultIndex;
+                    let i = 0;
                     i < event.results.length;
                     i++
                 ) {
                     transcript +=
                         event.results[i][0].transcript;
                 }
-
-                // Simpan hasil transkripsi
-                finalTranscript = transcript;
-
-                // Kirim teks ke Streamlit
-                // agar text_area ikut terisi
-                sendValueToStreamlit(
-                    {
-                        text: finalTranscript,
-                        selesai: false
-                    }
-                );
-
-                // Reset timer diam 3 detik
+                finalTranscript =
+                    transcript.trim();
+                // Reset timer setiap ada suara
                 resetSilenceTimer();
             };
-
             // ERROR
             recognition.onerror = function (event) {
                 console.log(
                     "Speech recognition error:",
                     event.error
                 );
+                clearTimeout(
+                    silenceTimer
+                );
+                isRecording = false;
+                startButton.textContent =
+                    "🎤";
                 statusText.textContent =
                     "Error: " + event.error;
-                stopRecording();
             };
-
-            // SELESAI REKAMAN
+            // REKAMAN SELESAI
             recognition.onend = function () {
                 isRecording = false;
                 clearTimeout(
@@ -154,46 +152,54 @@
                     "🎤";
                 statusText.textContent =
                     "✅ Selesai merekam.";
-
-                // Kirim hasil akhir ke Streamlit
-                // hanya ketika rekaman benar-benar selesai
+                // Kirim hasil hanya setelah
+                // rekaman benar-benar selesai
                 if (
-                    finalTranscript.trim() !== ""
+                    finalTranscript !== ""
                 ) {
                     sendValueToStreamlit(
                         {
                             text: finalTranscript,
-                            selesai: true
+                            selesai: true,
+                            recording_id: recordingId
                         }
                     );
                 }
             };
         }
-
-        // TOMBOL MICROPHONE
-        startButton.addEventListener(
-            "click",
-            function () {
-                if (!recognition) {
-                    return;
-                }
-                if (isRecording) {
-                    recordingFinished = true;
-                    stopRecording();
-                    return;
-                }
-
-                try {
-                    recognition.start();
-                } catch (error) {
-                    console.log(
-                        "Recognition gagal:",
-                        error
-                    );
-                }
+        // MULAI / STOP REKAMAN
+        function toggleRecording() {
+            if (!recognition) {
+                return;
             }
-        );
+            if (isRecording) {
+                stopRecording();
+                return;
+            }
+            startRecording();
+        }
+        function startRecording() {
+            try {
+                recognition.start();
+            } catch (error) {
+                console.log(
+                    "Recognition gagal:",
+                    error
+                );
+            }
+        }
+        function stopRecording() {
+            clearTimeout(
+                silenceTimer
+            );
+            if (
+                recognition &&
+                isRecording
+            ) {
 
+                recognition.stop();
+            }
+        }
         // TIMER DIAM 3 DETIK
         function resetSilenceTimer() {
             clearTimeout(
@@ -208,28 +214,23 @@
                         ) {
                             statusText.textContent =
                                 "⏹️ Diam 3 detik. Rekaman dihentikan.";
-                            recordingFinished = true;
                             recognition.stop();
                         }
                     },
                     3000
                 );
         }
-
-        // STOP RECORDING
-        function stopRecording() {
-            clearTimeout(
-                silenceTimer
-            );
-
-            if (
-                recognition &&
-                isRecording
-            ) {
-                recognition.stop();
-            }
+        // EVENT BUTTON
+        startButton.addEventListener(
+            "click",
+            toggleRecording
+        );
+        // INISIALISASI
+        if (cekBrowser()) {
+            initRecognition();
         }
+        componentReady();
+        setFrameHeight();
     </script>
 </body>
 </html>
-

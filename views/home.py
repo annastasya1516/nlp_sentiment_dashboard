@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# LOAD METRICS
+# AMBIL AKURASI MODEL
 akurasi = ambil_akurasi()
 
 # SESSION STATE
@@ -20,21 +20,19 @@ if "teks_terakhir" not in st.session_state:
     st.session_state.teks_terakhir = None
 if "prediksi" not in st.session_state:
     st.session_state.prediksi = None
-if "voice_processed" not in st.session_state:
-    st.session_state.voice_processed = False
-
-# LAYOUT
+if "last_voice_id" not in st.session_state:
+    st.session_state.last_voice_id = None
 col_kiri, col_kanan = st.columns(2)
 
 # KOLOM KIRI
 with col_kiri:
-
-    # JUDUL
     st.title("Klasifikasi Sentimen")
     st.markdown(
         "Masukkan kalimat untuk mengetahui "
         "analisis sentimennya."
     )
+
+    # AKURASI MODEL
     st.metric(
         label="Model Akurasi (Logistic Regression)",
         value=akurasi
@@ -55,53 +53,57 @@ with col_kiri:
             "selesai",
             False
         )
+        voice_id = hasil_suara.get(
+            "recording_id"
+        )
 
-        # SAAT MASIH MEREKA
-        if not selesai:
-            if teks_suara:
-                st.session_state.input_teks = (
-                    teks_suara
-                )
+        # CEK REKAMAN SELESAI
+        if (
+            selesai
+            and teks_suara.strip()
+            and voice_id != st.session_state.last_voice_id
+        ):
 
-            # Izinkan rekaman baru untuk diproses
-            st.session_state.voice_processed = False
+            # ANALISIS SENTIMEN
+            prediksi = analisis_sentimen(
+                teks_suara
+            )
+            
+            # SIMPAN HASIL KE SESSION STATE
+            st.session_state.prediksi = (
+                prediksi
+            )
+            st.session_state.teks_terakhir = (
+                teks_suara
+            )
+            st.session_state.last_voice_id = (
+                voice_id
+            )
 
-        # SAAT REKAMAN SELESAI
-        elif selesai and teks_suara.strip():
+            # SIAPKAN TEXT AREA BARU
+            new_version = (
+                st.session_state.input_version
+                + 1
+            )
+            st.session_state[
+                f"input_teks_{new_version}"
+            ] = teks_suara
+            st.session_state.input_version = (
+                new_version
+            )
+            
+            # REFRESH HALAMAN
+            st.rerun()
 
-            # Cegah prediksi berulang akibat
-            # Streamlit melakukan rerun
-            if not st.session_state.voice_processed:
-
-                prediksi = analisis_sentimen(
-                    teks_suara
-                )
-
-                # Simpan hasil prediksi
-                st.session_state.prediksi = prediksi
-
-                # Simpan teks yang dianalisis
-                st.session_state.teks_terakhir = (
-                    teks_suara
-                )
-
-                # Tandai voice sudah diproses
-                st.session_state.voice_processed = True
-
-                # Buat text area baru agar kosong
-                st.session_state.input_version += 1
-
-                # Jalankan ulang halaman
-                st.rerun()
-
-    # INPUT TEKS MANUAL
+    # INPUT KALIMAT
     st.subheader("Masukkan Kalimat")
+    input_key = (
+        f"input_teks_"
+        f"{st.session_state.input_version}"
+    )
     user_input = st.text_area(
         "Masukkan Kalimat",
-        key=(
-            f"input_teks_"
-            f"{st.session_state.input_version}"
-        ),
+        key=input_key,
         placeholder=(
             "Contoh: Pelayanan disini "
             "sangat memuaskan"
@@ -109,55 +111,62 @@ with col_kiri:
         height=150
     )
 
-    # TOMBOL ANALISIS
+    # TOMBOL ANALISIS MANUAL
     if st.button(
         "Analisis Sentimen",
         type="primary",
         use_container_width=True
     ):
-        # Cek input kosong
+
         if user_input.strip() == "":
             st.warning(
                 "Silakan masukkan teks terlebih dahulu."
             )
+
         else:
-            # Analisis sentimen
             prediksi = analisis_sentimen(
                 user_input
             )
-            # Simpan hasil prediksi
-            st.session_state.prediksi = prediksi
-            # Simpan teks yang dianalisis
+            st.session_state.prediksi = (
+                prediksi
+            )
             st.session_state.teks_terakhir = (
                 user_input
             )
-            # Buat text area baru agar kosong
-            st.session_state.input_version += 1
-            # Jalankan ulang halaman
-            st.rerun()
 
+            # Buat text area baru agar
+            # input lama dapat dikosongkan
+            st.session_state.input_version += 1
+            st.rerun()
+            
 # KOLOM KANAN
 with col_kanan:
     st.subheader("📈 Hasil Analisis")
-    prediksi = st.session_state.prediksi
-    
-    # JIKA SUDAH ADA HASIL
-    if prediksi is not None:
+    prediksi = (
+        st.session_state.prediksi
+    )
+    # BELUM ADA HASIL
+    if prediksi is None:
+        st.info(
+            "Hasil analisis akan muncul di sini."
+        )
 
+    # SUDAH ADA HASIL
+    else:
         # HASIL KLASIFIKASI
         if prediksi == "positive":
             st.success(
-                f"Hasil Klasifikasi: "
+                "Hasil Klasifikasi: "
                 f"{prediksi.upper()}"
             )
         elif prediksi == "negative":
             st.error(
-                f"Hasil Klasifikasi: "
+                "Hasil Klasifikasi: "
                 f"{prediksi.upper()}"
             )
         elif prediksi == "neutral":
             st.warning(
-                f"Hasil Klasifikasi: "
+                "Hasil Klasifikasi: "
                 f"{prediksi.upper()}"
             )
         elif prediksi == "invalid":
@@ -166,13 +175,13 @@ with col_kanan:
                 "Silakan masukkan kalimat yang lebih jelas."
             )
 
-        # DATA GRAFIK
+        # DATA CHART
         chart = {
             "sentimen": [prediksi],
             "jumlah": [1]
         }
-        
-        # WARNA GRAFIK
+
+        # WARNA CHART
         peta_warna = {
             "positive": "#4CAF50",
             "negative": "#F44336",
@@ -194,7 +203,7 @@ with col_kanan:
             use_container_width=True
         )
 
-        # TEKS YANG TELAH DIANALISIS
+        # TEKS YANG DIANALISIS
         teks_terakhir = (
             st.session_state.teks_terakhir
         )
@@ -205,10 +214,3 @@ with col_kanan:
             st.info(
                 teks_terakhir
             )
-
-    # BELUM ADA HASIL
-    else:
-
-        st.info(
-            "Hasil analisis akan muncul di sini."
-        )
