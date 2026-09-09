@@ -15,7 +15,7 @@ def adalah_pertanyaan_sederhana(teks):
         "bagaimana",
         "kapan",
         "dimana",
-        "dimana",
+        "di mana",
         "siapa",
         "mengapa",
         "kenapa",

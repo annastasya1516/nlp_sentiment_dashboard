@@ -22,6 +22,7 @@ if "prediksi" not in st.session_state:
     st.session_state.prediksi = None
 if "last_voice_id" not in st.session_state:
     st.session_state.last_voice_id = None
+    
 col_kiri, col_kanan = st.columns(2)
 
 # KOLOM KIRI

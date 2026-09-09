@@ -25,12 +25,7 @@ def inisialisasi_db():
         print(f"Error inisialisasi database: {e}")
 
 def simpan_ke_db(teks_asli, teks_bersih, klasifikasi):
-    """
-    Menyimpan hasil klasifikasi sentimen ke database.
-    """
-
     inisialisasi_db()
-
     try:
         with sqlite3.connect(DB_PATH) as conn:
             waktu = datetime.now().strftime(
@@ -52,12 +47,7 @@ def simpan_ke_db(teks_asli, teks_bersih, klasifikasi):
         print(f"Error menyimpan data: {e}")
 
 def ambil_data_db(limit=20, offset=0):
-    """
-    Mengambil data riwayat berdasarkan jumlah dan halaman.
-    """
-
     inisialisasi_db()
-
     try:
         with sqlite3.connect(DB_PATH) as conn:
             df = pd.read_sql_query(
@@ -83,12 +73,7 @@ def ambil_data_db(limit=20, offset=0):
         return pd.DataFrame()
 
 def hapus_data_db(id_data):
-    """
-    Menghapus data riwayat berdasarkan ID.
-    """
-
     inisialisasi_db()
-
     try:
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.execute(
@@ -106,12 +91,7 @@ def hapus_data_db(id_data):
         return False
 
 def hitung_total_data():
-    """
-    Menghitung jumlah seluruh data riwayat.
-    """
-
     inisialisasi_db()
-
     try:
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.execute("""
@@ -126,11 +106,6 @@ def hitung_total_data():
         return 0
 
 def ambil_semua_data_statistik():
-    """
-    Mengambil data sentimen dan waktu
-    untuk kebutuhan statistik dashboard.
-    """
-
     inisialisasi_db()
 
     try:
@@ -153,11 +128,6 @@ def ambil_semua_data_statistik():
         return pd.DataFrame()
 
 def ambil_semua_data_csv():
-    """
-    Mengambil seluruh data riwayat untuk
-    kebutuhan export CSV.
-    """
-
     inisialisasi_db()
 
     try:
