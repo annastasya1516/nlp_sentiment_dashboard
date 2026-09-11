@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login Admin - SentiView</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/admin.css') }}"
+    >
+
+</head>
+
+
+<body class="login-page">
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <!-- BRAND -->
+
+            <div class="login-brand">
+
+                <h1>SentiView</h1>
+
+                <span>ADMIN</span>
+
+            </div>
+
+
+            <!-- HEADER -->
+
+            <div class="login-header">
+
+                <h2>Login Admin</h2>
+
+                <p>
+                    Masuk untuk mengakses dashboard administrasi.
+                </p>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form
+                method="POST"
+                class="login-form"
+            >
+
+                <!-- USERNAME -->
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Masukkan username"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Masukkan password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- BUTTON -->
+
+                <button
+                    type="submit"
+                    class="login-button"
+                >
+                    Login
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    {% if error %}
+    <script>
+        alert("{{ error }}");
+    </script>
+    {% endif %}
+    
+    {% if success %}
+    <script>
+        alert("{{ success }}");
+    </script>
+    {% endif %}
+
+</body>
+
+</html>

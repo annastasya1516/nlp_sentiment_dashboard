@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SentiView - Analisis Sentimen</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         HEADER
+    ========================================== -->
+
+    <header class="site-header">
+
+        <div class="logo">
+            SentiView
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================================
+         HERO
+    ========================================== -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+
+            <!-- BADGE -->
+
+            <span class="hero-badge">
+                Analisis Sentimen Bahasa Indonesia
+            </span>
+
+
+
+            <!-- JUDUL -->
+
+            <h1>
+                Pahami sentimen<br>
+                di balik setiap kalimat.
+            </h1>
+
+
+
+            <!-- DESKRIPSI -->
+
+            <p>
+                Analisis teks Bahasa Indonesia menggunakan
+                teknologi Natural Language Processing.
+            </p>
+
+
+
+            <!-- =====================================
+                 AKURASI MODEL
+            ====================================== -->
+
+            <div class="accuracy-info">
+
+                <span class="accuracy-label">
+                    Akurasi Model
+                </span>
+
+                <span
+                    class="accuracy-value"
+                    id="accuracy-value"
+                >
+                    {{ akurasi }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+         AREA ANALISIS
+    ========================================== -->
+
+    <main class="analysis-container">
+
+
+        <!-- =====================================
+             INPUT CARD
+        ====================================== -->
+
+        <section class="sentiment-card">
+
+
+            <!-- HEADER -->
+
+            <div class="card-header">
+
+                <h2>
+                    Masukkan Teks
+                </h2>
+
+                <p>
+                    Tulis atau masukkan teks yang ingin dianalisis.
+                </p>
+
+            </div>
+
+
+
+            <!-- TEXTAREA -->
+
+            <textarea
+                id="sentiment-text"
+                placeholder="Contoh: Pelayanan sangat bagus dan saya puas..."
+                maxlength="2000"
+            ></textarea>
+
+
+
+            <!-- INPUT FOOTER -->
+
+            <div class="input-footer">
+
+                <!-- VOICE -->
+
+                <button
+                    type="button"
+                    class="voice-button"
+                    id="voice-button"
+                >
+                    🎤 Voice to Text
+                </button>
+
+
+                <!-- CHARACTER COUNT -->
+
+                <span
+                    class="character-count"
+                    id="character-count"
+                >
+                    0 / 2000
+                </span>
+
+            </div>
+
+
+
+            <!-- ANALYZE BUTTON -->
+
+            <button
+                type="button"
+                class="analyze-button"
+            >
+                Analisis Sentimen
+            </button>
+
+        </section>
+
+
+
+        <!-- =====================================
+             RESULT CARD
+        ====================================== -->
+
+        <section class="result-card">
+
+
+            <!-- HEADER -->
+
+            <div class="card-header">
+
+                <h2>
+                    Hasil Analisis
+                </h2>
+
+                <p>
+                    Hasil klasifikasi sentimen dari teks yang dimasukkan.
+                </p>
+
+            </div>
+
+
+
+            <!-- RESULT CONTENT -->
+
+            <div class="result-content">
+
+
+                <!-- =================================
+                     EMOJI SENTIMEN
+                ================================== -->
+
+                <div
+                    class="result-icon"
+                    id="result-icon"
+                >
+                    😊
+                </div>
+
+
+
+                <!-- =================================
+                     TEKS YANG DIANALISIS
+                ================================== -->
+
+                <span class="result-label">
+                    Teks yang dianalisis
+                </span>
+
+
+                <p
+                    class="analyzed-text"
+                    id="analyzed-text"
+                >
+                    Belum ada teks
+                </p>
+
+
+
+                <!-- =================================
+                     HASIL SENTIMEN
+                ================================== -->
+
+                <span class="result-label">
+                    Sentimen
+                </span>
+
+
+                <span
+                    class="result-value"
+                    id="result-value"
+                >
+                    Belum dianalisis
+                </span>
+
+
+
+                <!-- =================================
+                     DESKRIPSI HASIL
+                ================================== -->
+
+                <p
+                    class="result-description"
+                    id="result-description"
+                >
+                    Masukkan teks kemudian klik tombol
+                    <strong>Analisis Sentimen</strong>
+                    untuk melihat hasilnya.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer class="site-footer">
+
+        <p>
+            SentiView &copy; 2026
+        </p>
+        <p>
+            Analisis Sentimen Bahasa Indonesia berbasis NLP
+        </p>
+
+    </footer>
+
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script>
+
+
+        /* =========================================
+           ELEMENT HTML
+        ========================================== */
+
+        const tombolAnalisis =
+            document.querySelector(".analyze-button");
+
+        const sentimentText =
+            document.querySelector("#sentiment-text");
+
+        const resultIcon =
+            document.querySelector("#result-icon");
+
+        const resultValue =
+            document.querySelector("#result-value");
+
+        const analyzedText =
+            document.querySelector("#analyzed-text");
+
+        const resultDescription =
+            document.querySelector("#result-description");
+
+        const accuracyValue =
+            document.querySelector("#accuracy-value");
+
+        const characterCount =
+            document.querySelector("#character-count");
+
+        const voiceButton =
+            document.querySelector("#voice-button");
+
+
+
+        /* =========================================
+           CHARACTER COUNTER
+        ========================================== */
+
+        sentimentText.addEventListener(
+            "input",
+            function () {
+
+                const jumlahKarakter =
+                    sentimentText.value.length;
+
+                characterCount.textContent =
+                    `${jumlahKarakter} / 2000`;
+
+            }
+        );
+
+
+
+        /* =========================================
+           FUNGSI ANALISIS SENTIMEN
+        ========================================== */
+
+        async function analisisSentimen() {
+
+
+            /* AMBIL TEKS */
+
+            const teks =
+                sentimentText.value.trim();
+
+
+
+            /* CEK INPUT KOSONG */
+
+            if (!teks) {
+
+                alert(
+                    "Silakan masukkan teks terlebih dahulu."
+                );
+
+                return;
+
+            }
+
+
+
+            /* NONAKTIFKAN TOMBOL */
+
+            tombolAnalisis.disabled =
+                true;
+
+            tombolAnalisis.textContent =
+                "Menganalisis...";
+
+
+
+            try {
+
+
+                /* =================================
+                   KIRIM TEKS KE FLASK
+                ================================== */
+
+                const response =
+                    await fetch(
+                        "/analisis",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                teks: teks
+                            })
+                        }
+                    );
+
+
+
+                /* CEK RESPONSE */
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Server mengembalikan error."
+                    );
+
+                }
+
+
+
+                /* AMBIL HASIL */
+
+                const hasil =
+                    await response.json();
+
+
+
+                /* =================================
+                   PINDAHKAN TEKS KE HASIL ANALISIS
+                ================================== */
+
+                analyzedText.textContent =
+                    teks;
+
+
+
+                /* =================================
+                   KOSONGKAN TEXTAREA
+                ================================== */
+
+                sentimentText.value =
+                    "";
+
+
+
+                /* RESET CHARACTER COUNTER */
+
+                characterCount.textContent =
+                    "0 / 2000";
+
+
+
+                /* =================================
+                   RESET CLASS
+                ================================== */
+
+                resultValue.className =
+                    "result-value";
+
+                resultIcon.className =
+                    "result-icon";
+
+
+
+                /* =================================
+                   HASIL POSITIF
+                ================================== */
+
+                if (
+                    hasil.sentimen ===
+                    "positive"
+                ) {
+
+                    resultIcon.textContent =
+                        "😊";
+
+                    resultIcon.classList.add(
+                        "positive"
+                    );
+
+
+                    resultValue.textContent =
+                        "Positif";
+
+                    resultValue.classList.add(
+                        "positive"
+                    );
+
+
+                    resultDescription.textContent =
+                        "Teks yang dianalisis memiliki sentimen positif.";
+
+                }
+
+
+
+                /* =================================
+                   HASIL NEGATIF
+                ================================== */
+
+                else if (
+                    hasil.sentimen ===
+                    "negative"
+                ) {
+
+                    resultIcon.textContent =
+                        "😞";
+
+                    resultIcon.classList.add(
+                        "negative"
+                    );
+
+
+                    resultValue.textContent =
+                        "Negatif";
+
+                    resultValue.classList.add(
+                        "negative"
+                    );
+
+
+                    resultDescription.textContent =
+                        "Teks yang dianalisis memiliki sentimen negatif.";
+
+                }
+
+
+
+                /* =================================
+                   HASIL NETRAL
+                ================================== */
+
+                else if (
+                    hasil.sentimen ===
+                    "neutral"
+                ) {
+
+                    resultIcon.textContent =
+                        "😐";
+
+                    resultIcon.classList.add(
+                        "neutral"
+                    );
+
+
+                    resultValue.textContent =
+                        "Netral";
+
+                    resultValue.classList.add(
+                        "neutral"
+                    );
+
+
+                    resultDescription.textContent =
+                        "Teks yang dianalisis memiliki sentimen netral.";
+
+                }
+
+
+
+                /* =================================
+                   TIDAK VALID
+                ================================== */
+
+                else if (
+                    hasil.sentimen ===
+                    "invalid"
+                ) {
+
+                    resultIcon.textContent =
+                        "🤔";
+
+                    resultIcon.classList.add(
+                        "invalid"
+                    );
+
+
+                    resultValue.textContent =
+                        "Tidak dapat dianalisis";
+
+                    resultValue.classList.add(
+                        "invalid"
+                    );
+
+
+                    resultDescription.textContent =
+                        "Teks yang dimasukkan tidak dapat dianalisis.";
+
+                }
+
+
+
+                /* =================================
+                   AKURASI MODEL
+                ================================== */
+
+                accuracyValue.textContent =
+                    hasil.akurasi;
+
+            }
+
+
+            /* =====================================
+               ERROR HANDLING
+            ====================================== */
+
+            catch (error) {
+
+                console.error(
+                    "Terjadi kesalahan:",
+                    error
+                );
+
+                alert(
+                    "Terjadi kesalahan saat menghubungi server."
+                );
+
+            }
+
+
+            /* =================================
+               AKTIFKAN KEMBALI TOMBOL
+            ================================== */
+
+            tombolAnalisis.disabled =
+                false;
+
+            tombolAnalisis.textContent =
+                "Analisis Sentimen";
+
+        }
+
+
+
+        /* =========================================
+           TOMBOL ANALISIS MANUAL
+        ========================================== */
+
+        tombolAnalisis.addEventListener(
+            "click",
+            analisisSentimen
+        );
+
+
+
+        /* =========================================
+           VOICE TO TEXT
+        ========================================== */
+
+        let recognition = null;
+
+        let silenceTimer = null;
+
+        let finalTranscript = "";
+
+        let sedangMerekam = false;
+
+
+
+        /* =========================================
+           CEK SUPPORT BROWSER
+        ========================================== */
+
+        if (
+            "webkitSpeechRecognition" in window
+        ) {
+
+
+            /* BUAT SPEECH RECOGNITION */
+
+            recognition =
+                new webkitSpeechRecognition();
+
+
+
+            /* BAHASA */
+
+            recognition.lang =
+                "id-ID";
+
+
+
+            /* TERUS MENDENGARKAN */
+
+            recognition.continuous =
+                true;
+
+
+
+            /* HASIL SEMENTARA */
+
+            recognition.interimResults =
+                true;
+
+
+
+            /* =====================================
+               HASIL SPEECH RECOGNITION
+            ====================================== */
+
+            recognition.onresult =
+                function (event) {
+
+
+                    /* RESET TIMER */
+
+                    clearTimeout(
+                        silenceTimer
+                    );
+
+
+
+                    /* =================================
+                       STOP SETELAH 3 DETIK DIAM
+                    ================================== */
+
+                    silenceTimer =
+                        setTimeout(
+                            function () {
+
+                                recognition.stop();
+
+                            },
+                            3000
+                        );
+
+
+
+                    let hasilSementara =
+                        "";
+
+
+
+                    /* =================================
+                       AMBIL HASIL SUARA
+                    ================================== */
+
+                    for (
+                        let i = event.resultIndex;
+                        i < event.results.length;
+                        i++
+                    ) {
+
+                        const transcript =
+                            event.results[i][0]
+                                .transcript;
+
+
+                        if (
+                            event.results[i].isFinal
+                        ) {
+
+                            finalTranscript +=
+                                transcript + " ";
+
+                        }
+
+                        else {
+
+                            hasilSementara +=
+                                transcript;
+
+                        }
+
+                    }
+
+
+
+                    /* =================================
+                       GABUNGKAN HASIL
+                    ================================== */
+
+                    const hasilLengkap =
+                        finalTranscript +
+                        hasilSementara;
+
+
+
+                    console.log(
+                        "Hasil suara:",
+                        hasilLengkap
+                    );
+
+
+
+                    /* =================================
+                       MASUKKAN KE TEXTAREA
+                    ================================== */
+
+                    sentimentText.value =
+                        hasilLengkap;
+
+
+
+                    /* UPDATE CHARACTER COUNT */
+
+                    characterCount.textContent =
+                        `${hasilLengkap.length} / 2000`;
+
+                };
+
+
+
+            /* =====================================
+               RECOGNITION SELESAI
+            ====================================== */
+
+            recognition.onend =
+                function () {
+
+
+                    /* HAPUS TIMER */
+
+                    clearTimeout(
+                        silenceTimer
+                    );
+
+
+
+                    /* KEMBALIKAN STATUS REKAMAN */
+
+                    voiceButton.textContent =
+                        "🎤 Voice to Text";
+
+
+
+                    /* =================================
+                       ANALISIS OTOMATIS
+                    ================================== */
+
+                    if (
+                        sedangMerekam &&
+                        sentimentText.value.trim()
+                    ) {
+
+                        sedangMerekam =
+                            false;
+
+
+                        console.log(
+                            "Voice selesai. Memulai analisis otomatis..."
+                        );
+
+
+                        analisisSentimen();
+
+                    }
+
+                };
+
+
+
+            /* =====================================
+               TOMBOL VOICE TO TEXT
+            ====================================== */
+
+            voiceButton.addEventListener(
+                "click",
+                function () {
+
+
+                    /* RESET HASIL SUARA */
+
+                    finalTranscript =
+                        "";
+
+
+
+                    /* TANDAI SEDANG MEREKAM */
+
+                    sedangMerekam =
+                        true;
+
+
+
+                    /* MULAI RECOGNITION */
+
+                    recognition.start();
+
+
+
+                    /* UBAH TAMPILAN TOMBOL */
+
+                    voiceButton.textContent =
+                        "🔴 Mendengarkan...";
+
+                }
+            );
+
+        }
+
+
+
+        /* =========================================
+           BROWSER TIDAK SUPPORT
+        ========================================== */
+
+        else {
+
+            voiceButton.disabled =
+                true;
+
+            voiceButton.textContent =
+                "Browser tidak mendukung";
+
+        }
+
+    </script>
+
+</body>
+
+</html>

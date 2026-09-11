@@ -1,0 +1,181 @@
+{% extends "base_admin.html" %}
+
+
+{% block title %}
+Model - SentiView
+{% endblock %}
+
+
+{% block content %}
+
+<!-- HEADER -->
+
+<header class="admin-header">
+
+    <div>
+
+        <h1>Model</h1>
+
+        <p>
+            Informasi model yang digunakan dalam klasifikasi sentimen.
+        </p>
+
+    </div>
+
+</header>
+
+
+<!-- INFORMASI MODEL -->
+
+<section class="dashboard-content">
+
+    <div class="dashboard-title">
+
+        <h2>Informasi Model</h2>
+
+        <p>
+            Model machine learning yang digunakan untuk melakukan
+            klasifikasi sentimen.
+        </p>
+
+    </div>
+
+
+    <div class="stats-grid">
+
+        <!-- MODEL -->
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Model
+            </span>
+
+            <span class="stat-value">
+                Logistic Regression
+            </span>
+
+        </div>
+
+
+        <!-- METODE -->
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Feature Extraction
+            </span>
+
+            <span class="stat-value">
+                TF-IDF
+            </span>
+
+        </div>
+
+
+        <!-- JUMLAH KELAS -->
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Jumlah Kelas
+            </span>
+
+            <span class="stat-value">
+                3
+            </span>
+
+        </div>
+
+
+        <!-- AKURASI -->
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Akurasi
+            </span>
+
+            <span class="stat-value">
+                {{ akurasi }}
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- KELAS SENTIMEN -->
+
+<section class="dashboard-content history-section">
+
+    <div class="dashboard-title">
+
+        <h2>Kategori Sentimen</h2>
+
+        <p>
+            Kelas sentimen yang dapat diprediksi oleh model.
+        </p>
+
+    </div>
+
+
+    <!-- SENTIMENT GRID -->
+
+    <div class="sentiment-grid">
+
+        <!-- POSITIVE -->
+
+        <div class="sentiment-card positive">
+
+            <span class="sentiment-title">
+                Positive
+            </span>
+
+            <p>
+                Menunjukkan sentimen positif
+                terhadap suatu pernyataan.
+            </p>
+
+        </div>
+
+
+        <!-- NEUTRAL -->
+
+        <div class="sentiment-card neutral">
+
+            <span class="sentiment-title">
+                Neutral
+            </span>
+
+            <p>
+                Menunjukkan pernyataan yang
+                bersifat netral.
+            </p>
+
+        </div>
+
+
+        <!-- NEGATIVE -->
+
+        <div class="sentiment-card negative">
+
+            <span class="sentiment-title">
+                Negative
+            </span>
+
+            <p>
+                Menunjukkan sentimen negatif
+                terhadap suatu pernyataan.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% endblock %}
