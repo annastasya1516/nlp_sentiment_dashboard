@@ -1,9 +1,7 @@
-import sqlite3
 import os
+import sqlite3
 
-
-def simpan_ke_db(teks_asli, teks_bersih, klasifikasi):
-
+def _get_db_connection():
     base_dir = os.path.dirname(
         os.path.dirname(
             os.path.dirname(
@@ -18,8 +16,10 @@ def simpan_ke_db(teks_asli, teks_bersih, klasifikasi):
         "riwayat_sentimen.db"
     )
 
-    koneksi = sqlite3.connect(db_path)
+    return sqlite3.connect(db_path)
 
+def simpan_ke_db(teks_asli, teks_bersih, klasifikasi):
+    koneksi = _get_db_connection()
     cursor = koneksi.cursor()
 
     cursor.execute(
@@ -36,28 +36,10 @@ def simpan_ke_db(teks_asli, teks_bersih, klasifikasi):
     )
 
     koneksi.commit()
-
     koneksi.close()
 
-
 def ambil_riwayat(limit=20, offset=0):
-
-    base_dir = os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            )
-        )
-    )
-
-    db_path = os.path.join(
-        base_dir,
-        "database",
-        "riwayat_sentimen.db"
-    )
-
-    koneksi = sqlite3.connect(db_path)
-
+    koneksi = _get_db_connection()
     cursor = koneksi.cursor()
 
     cursor.execute(
@@ -79,30 +61,12 @@ def ambil_riwayat(limit=20, offset=0):
     )
 
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
 
-
 def hitung_total_riwayat():
-
-    base_dir = os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            )
-        )
-    )
-
-    db_path = os.path.join(
-        base_dir,
-        "database",
-        "riwayat_sentimen.db"
-    )
-
-    koneksi = sqlite3.connect(db_path)
-
+    koneksi = _get_db_connection()
     cursor = koneksi.cursor()
 
     cursor.execute(
@@ -113,30 +77,12 @@ def hitung_total_riwayat():
     )
 
     total = cursor.fetchone()[0]
-
     koneksi.close()
 
     return total
 
-
 def ambil_statistik():
-
-    base_dir = os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            )
-        )
-    )
-
-    db_path = os.path.join(
-        base_dir,
-        "database",
-        "riwayat_sentimen.db"
-    )
-
-    koneksi = sqlite3.connect(db_path)
-
+    koneksi = _get_db_connection()
     cursor = koneksi.cursor()
 
     cursor.execute(
@@ -150,7 +96,6 @@ def ambil_statistik():
     )
 
     data = cursor.fetchall()
-
     koneksi.close()
 
     statistik = {
@@ -161,7 +106,6 @@ def ambil_statistik():
     }
 
     for klasifikasi, jumlah in data:
-
         if klasifikasi in statistik:
             statistik[klasifikasi] = jumlah
 
@@ -171,25 +115,8 @@ def ambil_statistik():
 
     return statistik
 
-
 def ambil_semua_riwayat():
-
-    base_dir = os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            )
-        )
-    )
-
-    db_path = os.path.join(
-        base_dir,
-        "database",
-        "riwayat_sentimen.db"
-    )
-
-    koneksi = sqlite3.connect(db_path)
-
+    koneksi = _get_db_connection()
     cursor = koneksi.cursor()
 
     cursor.execute(
@@ -206,32 +133,13 @@ def ambil_semua_riwayat():
     )
 
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
 
-
 def ambil_statistik_harian():
-
-    base_dir = os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            )
-        )
-    )
-
-    db_path = os.path.join(
-        base_dir,
-        "database",
-        "riwayat_sentimen.db"
-    )
-
-    koneksi = sqlite3.connect(db_path)
-
+    koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
     cursor.execute(
         """
         SELECT
@@ -244,30 +152,12 @@ def ambil_statistik_harian():
     )
 
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
 
-
 def ambil_statistik_bulanan():
-
-    base_dir = os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            )
-        )
-    )
-
-    db_path = os.path.join(
-        base_dir,
-        "database",
-        "riwayat_sentimen.db"
-    )
-
-    koneksi = sqlite3.connect(db_path)
-
+    koneksi = _get_db_connection()
     cursor = koneksi.cursor()
 
     cursor.execute(
@@ -282,29 +172,12 @@ def ambil_statistik_bulanan():
     )
 
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
 
 def ambil_statistik_tahunan():
-
-    base_dir = os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            )
-        )
-    )
-
-    db_path = os.path.join(
-        base_dir,
-        "database",
-        "riwayat_sentimen.db"
-    )
-
-    koneksi = sqlite3.connect(db_path)
-
+    koneksi = _get_db_connection()
     cursor = koneksi.cursor()
 
     cursor.execute(
@@ -319,7 +192,28 @@ def ambil_statistik_tahunan():
     )
 
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
+
+def hapus_riwayat(ids_data):
+    if not ids_data:
+        return
+
+    koneksi = _get_db_connection()
+    cursor = koneksi.cursor()
+
+    placeholder = ",".join(
+        "?" for _ in ids_data
+    )
+
+    cursor.execute(
+        f"""
+        DELETE FROM riwayat_sentimen
+        WHERE id IN ({placeholder})
+        """,
+        ids_data
+    )
+
+    koneksi.commit()
+    koneksi.close()

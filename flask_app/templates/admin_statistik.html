@@ -6,581 +6,182 @@ Statistik - SentiView
 
 {% block content %}
 
-<!-- =========================================
-     HEADER
-     ========================================= -->
-
 <header class="admin-header">
-
     <div>
-
         <h1>Statistik</h1>
-
-        <p>
-            Ringkasan dan visualisasi hasil klasifikasi sentimen.
-        </p>
-
+        <p>Ringkasan dan visualisasi hasil klasifikasi sentimen.</p>
     </div>
-
 </header>
 
-
-
-<!-- =========================================
-     RINGKASAN KLASIFIKASI
-     ========================================= -->
-
 <section class="dashboard-content">
-
     <div class="dashboard-title">
-
         <h2>Ringkasan Klasifikasi</h2>
-
-        <p>
-            Jumlah klasifikasi berdasarkan kategori sentimen.
-        </p>
-
+        <p>Jumlah klasifikasi berdasarkan kategori sentimen.</p>
     </div>
-
 
     <div class="stats-grid">
-
-
-        <!-- TOTAL -->
-
         <div class="stat-card">
-
-            <span class="stat-label">
-                Total Klasifikasi
-            </span>
-
-            <span class="stat-value">
-                {{ statistik.total }}
-            </span>
-
+            <span class="stat-label">Total Klasifikasi</span>
+            <span class="stat-value">{{ statistik.total }}</span>
         </div>
-
-
-
-        <!-- POSITIVE -->
 
         <div class="stat-card positive">
-
-            <span class="stat-label">
-                Positive
-            </span>
-
-            <span class="stat-value">
-                {{ statistik.positive }}
-            </span>
-
+            <span class="stat-label">Positive</span>
+            <span class="stat-value">{{ statistik.positive }}</span>
         </div>
-
-
-
-        <!-- NEUTRAL -->
 
         <div class="stat-card neutral">
-
-            <span class="stat-label">
-                Neutral
-            </span>
-
-            <span class="stat-value">
-                {{ statistik.neutral }}
-            </span>
-
+            <span class="stat-label">Neutral</span>
+            <span class="stat-value">{{ statistik.neutral }}</span>
         </div>
-
-
-
-        <!-- NEGATIVE -->
 
         <div class="stat-card negative">
-
-            <span class="stat-label">
-                Negative
-            </span>
-
-            <span class="stat-value">
-                {{ statistik.negative }}
-            </span>
-
+            <span class="stat-label">Negative</span>
+            <span class="stat-value">{{ statistik.negative }}</span>
         </div>
-
     </div>
-
 </section>
 
-
-
-<!-- =========================================
-     DISTRIBUSI SENTIMEN
-     ========================================= -->
-
 <section class="dashboard-content history-section">
-
     <div class="dashboard-title">
-
         <h2>Distribusi Sentimen</h2>
-
-        <p>
-            Perbandingan jumlah klasifikasi berdasarkan
-            kategori sentimen.
-        </p>
-
+        <p>Perbandingan jumlah klasifikasi berdasarkan kategori sentimen.</p>
     </div>
-
 
     <div class="chart-container">
-
         <canvas id="sentimentChart"></canvas>
-
     </div>
-
 </section>
 
-
-
-<!-- =========================================
-     AKTIVITAS KLASIFIKASI
-     ========================================= -->
-
 <section class="dashboard-content history-section">
-
     <div class="dashboard-title">
-
         <h2>Aktivitas Klasifikasi</h2>
-
-        <p>
-            Jumlah klasifikasi sentimen berdasarkan periode.
-        </p>
-
+        <p>Jumlah klasifikasi sentimen berdasarkan periode.</p>
     </div>
-
-
-    <!-- =====================================
-         PILIH PERIODE
-         ===================================== -->
 
     <div class="period-selector">
-
         <label>
-
-            <input
-                type="radio"
-                name="periode"
-                value="harian"
-                checked
-            >
-
+            <input type="radio" name="periode" value="harian" checked>
             <span>Harian</span>
-
         </label>
 
-
         <label>
-
-            <input
-                type="radio"
-                name="periode"
-                value="bulanan"
-            >
-
+            <input type="radio" name="periode" value="bulanan">
             <span>Bulanan</span>
-
         </label>
-
 
         <label>
-
-            <input
-                type="radio"
-                name="periode"
-                value="tahunan"
-            >
-
+            <input type="radio" name="periode" value="tahunan">
             <span>Tahunan</span>
-
         </label>
-
     </div>
-
-
-
-    <!-- =====================================
-         GRAFIK AKTIVITAS
-         ===================================== -->
 
     <div class="chart-container">
-
         <canvas id="activityChart"></canvas>
-
     </div>
-
 </section>
-
-
-
-<!-- =========================================
-     DATA UNTUK JAVASCRIPT
-     ========================================= -->
 
 <div
     id="statistikData"
-
     data-positive="{{ statistik.positive }}"
-
     data-neutral="{{ statistik.neutral }}"
-
     data-negative="{{ statistik.negative }}"
-
     data-harian='{{ statistik_harian | tojson }}'
-
     data-bulanan='{{ statistik_bulanan | tojson }}'
-
-    data-tahunan='{{ statistik_tahunan | tojson }}'>
-</div>
-
-
-
-<!-- =========================================
-     CHART.JS
-     ========================================= -->
+    data-tahunan='{{ statistik_tahunan | tojson }}'
+></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
-
 <script>
+const data = document.getElementById("statistikData");
 
-/* =========================================
-   AMBIL DATA DARI HTML
-   ========================================= */
+const positive = +data.dataset.positive;
+const neutral = +data.dataset.neutral;
+const negative = +data.dataset.negative;
 
-const statistikElement = document.getElementById(
-    "statistikData"
-);
-
-
-
-/* =========================================
-   DATA RINGKASAN SENTIMEN
-   ========================================= */
-
-const positive = Number(
-    statistikElement.dataset.positive
-);
-
-const neutral = Number(
-    statistikElement.dataset.neutral
-);
-
-const negative = Number(
-    statistikElement.dataset.negative
-);
-
-
-
-/* =========================================
-   DOUGHNUT CHART
-   ========================================= */
-
-const sentimentCanvas = document.getElementById(
-    "sentimentChart"
-);
-
-const sentimentCtx = sentimentCanvas.getContext(
-    "2d"
-);
-
-
-
-new Chart(sentimentCtx, {
-
+new Chart(document.getElementById("sentimentChart"), {
     type: "doughnut",
-
     data: {
-
-        labels: [
-            "Positive",
-            "Neutral",
-            "Negative"
-        ],
-
-        datasets: [
-
-            {
-
-                data: [
-                    positive,
-                    neutral,
-                    negative
-                ],
-
-                backgroundColor: [
-                    "#16A34A",
-                    "#EAB308",
-                    "#DC2626"
-                ],
-
-                borderWidth: 0
-
-            }
-
-        ]
-
+        labels: ["Positive", "Neutral", "Negative"],
+        datasets: [{
+            data: [positive, neutral, negative],
+            backgroundColor: [
+                "#16A34A",
+                "#EAB308",
+                "#DC2626"
+            ],
+            borderWidth: 0
+        }]
     },
-
     options: {
-
         responsive: true,
-
         maintainAspectRatio: false,
-
         plugins: {
-
             legend: {
-
                 position: "bottom"
-
             }
-
         }
-
     }
-
 });
 
-
-
-/* =========================================
-   AMBIL DATA AKTIVITAS
-   ========================================= */
-
-const statistikHarian = JSON.parse(
-    statistikElement.dataset.harian
-);
-
-const statistikBulanan = JSON.parse(
-    statistikElement.dataset.bulanan
-);
-
-const statistikTahunan = JSON.parse(
-    statistikElement.dataset.tahunan
-);
-
-
-
-/* =========================================
-   DATA GRAFIK AKTIVITAS
-   ========================================= */
-
 const activityData = {
-
-    harian: statistikHarian,
-
-    bulanan: statistikBulanan,
-
-    tahunan: statistikTahunan
-
+    harian: JSON.parse(data.dataset.harian),
+    bulanan: JSON.parse(data.dataset.bulanan),
+    tahunan: JSON.parse(data.dataset.tahunan)
 };
 
+const getLabels = data => data.map(([label]) => label);
+const getValues = data => data.map(([, value]) => value);
 
-
-/* =========================================
-   CANVAS GRAFIK AKTIVITAS
-   ========================================= */
-
-const activityCanvas = document.getElementById(
-    "activityChart"
-);
-
-const activityCtx = activityCanvas.getContext(
-    "2d"
-);
-
-
-
-/* =========================================
-   FUNGSI MEMBUAT LABEL
-   ========================================= */
-
-function ambilLabels(data) {
-
-    return data.map(
-        function(item) {
-
-            return item[0];
-
-        }
-    );
-
-}
-
-
-
-/* =========================================
-   FUNGSI MEMBUAT DATA
-   ========================================= */
-
-function ambilJumlah(data) {
-
-    return data.map(
-        function(item) {
-
-            return item[1];
-
-        }
-    );
-
-}
-
-
-
-/* =========================================
-   BUAT GRAFIK AKTIVITAS
-   ========================================= */
-
-let activityChart = new Chart(
-    activityCtx,
+const activityChart = new Chart(
+    document.getElementById("activityChart"),
     {
-
         type: "line",
-
         data: {
-
-            labels: ambilLabels(
-                activityData.harian
-            ),
-
-            datasets: [
-
-                {
-
-                    label: "Jumlah Klasifikasi",
-
-                    data: ambilJumlah(
-                        activityData.harian
-                    ),
-
-                    borderColor: "#2563EB",
-
-                    backgroundColor:
-                        "rgba(37, 99, 235, 0.10)",
-
-                    fill: true,
-
-                    tension: 0.3,
-
-                    borderWidth: 2,
-
-                    pointRadius: 4
-
-                }
-
-            ]
-
+            labels: getLabels(activityData.harian),
+            datasets: [{
+                label: "Jumlah Klasifikasi",
+                data: getValues(activityData.harian),
+                borderColor: "#2563EB",
+                backgroundColor: "rgba(37, 99, 235, 0.10)",
+                fill: true,
+                tension: 0.3,
+                borderWidth: 2,
+                pointRadius: 4
+            }]
         },
-
         options: {
-
             responsive: true,
-
             maintainAspectRatio: false,
-
             scales: {
-
                 y: {
-
                     beginAtZero: true,
-
                     ticks: {
-
                         precision: 0
-
                     }
-
                 }
-
             },
-
             plugins: {
-
                 legend: {
-
                     display: false
-
                 }
-
             }
-
         }
-
     }
 );
 
+document
+    .querySelectorAll('input[name="periode"]')
+    .forEach(radio => {
+        radio.addEventListener("change", () => {
+            const data = activityData[radio.value];
 
-
-/* =========================================
-   RADIO BUTTON PERIODE
-   ========================================= */
-
-const radioPeriode = document.querySelectorAll(
-    'input[name="periode"]'
-);
-
-
-
-/* =========================================
-   EVENT RADIO BUTTON
-   ========================================= */
-
-radioPeriode.forEach(
-
-    function(radio) {
-
-        radio.addEventListener(
-            "change",
-
-            function() {
-
-                const periode = this.value;
-
-                const data =
-                    activityData[periode];
-
-
-                /* =============================
-                   UPDATE LABEL
-                   ============================= */
-
-                activityChart.data.labels =
-                    ambilLabels(data);
-
-
-                /* =============================
-                   UPDATE DATA
-                   ============================= */
-
-                activityChart.data.datasets[0].data =
-                    ambilJumlah(data);
-
-
-                /* =============================
-                   UPDATE GRAFIK
-                   ============================= */
-
-                activityChart.update();
-
-            }
-
-        );
-
-    }
-
-);
-
+            activityChart.data.labels = getLabels(data);
+            activityChart.data.datasets[0].data = getValues(data);
+            activityChart.update();
+        });
+    });
 </script>
 
 {% endblock %}

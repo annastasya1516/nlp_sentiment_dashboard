@@ -1,63 +1,40 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
-
     <title>Login Admin - SentiView</title>
-
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/admin.css') }}"
     >
-
 </head>
-
-
 <body class="login-page">
 
     <div class="login-container">
 
         <div class="login-card">
 
-            <!-- BRAND -->
-
             <div class="login-brand">
-
                 <h1>SentiView</h1>
-
                 <span>ADMIN</span>
-
             </div>
 
-
-            <!-- HEADER -->
-
             <div class="login-header">
-
                 <h2>Login Admin</h2>
 
                 <p>
                     Masuk untuk mengakses dashboard administrasi.
                 </p>
-
             </div>
-
-
-            <!-- FORM -->
 
             <form
                 method="POST"
                 class="login-form"
             >
-
-                <!-- USERNAME -->
 
                 <div class="form-group">
 
@@ -75,9 +52,6 @@
 
                 </div>
 
-
-                <!-- PASSWORD -->
-
                 <div class="form-group">
 
                     <label for="password">
@@ -93,9 +67,6 @@
                     >
 
                 </div>
-
-
-                <!-- BUTTON -->
 
                 <button
                     type="submit"
@@ -115,10 +86,11 @@
         alert("{{ error }}");
     </script>
     {% endif %}
-    
+
     {% if success %}
     <script>
         alert("{{ success }}");
+        window.location.href = "/admin";
     </script>
     {% endif %}
 

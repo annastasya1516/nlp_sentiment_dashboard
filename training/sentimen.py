@@ -7,7 +7,7 @@ from sklearn.metrics import (
     classification_report,
     ConfusionMatrixDisplay
 )
-from utils.preprocessing import bersihkan_teks
+from flask_app.utils.preprocessing import bersihkan_teks
 
 # BACA DATASET
 try:

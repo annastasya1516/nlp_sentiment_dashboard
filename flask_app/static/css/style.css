@@ -1,206 +1,109 @@
-/* =========================================
-   RESET
-========================================= */
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-
-/* =========================================
-   BODY
-========================================= */
-
 body {
     font-family: Arial, sans-serif;
-
     background-color: #f8fafc;
-
     color: #0f172a;
-
     min-height: 100vh;
 }
 
-
-/* =========================================
-   HEADER
-========================================= */
-
 .site-header {
     width: 100%;
-
     padding: 28px 60px;
-
     display: flex;
     align-items: center;
-
     background-color: transparent;
 }
 
 .logo {
     font-size: 22px;
-
     font-weight: 700;
-
     color: #2563eb;
 }
 
-
-/* =========================================
-   HERO
-========================================= */
-
 .hero {
     padding: 5px 20px 40px;
-
     text-align: center;
 }
 
 .hero-content {
     max-width: 1000px;
-
     margin: 0 auto;
 }
-
-
-/* BADGE */
 
 .hero-badge {
     display: inline-block;
-
     padding: 7px 14px;
-
     margin-bottom: 20px;
-
     background-color: #eff6ff;
-
     color: #2563eb;
-
     border-radius: 999px;
-
     font-size: 15px;
-
     font-weight: 600;
 }
 
-
-/* TITLE */
-
 .hero h1 {
     font-size: 48px;
-
     line-height: 1.15;
-
     letter-spacing: -1px;
-
     margin-bottom: 20px;
 }
 
-
-/* DESCRIPTION */
-
 .hero p {
     max-width: 900px;
-
     margin: 0 auto;
-
     color: #64748b;
-
     font-size: 17px;
-
     line-height: 1.7;
 }
 
-
-/* =========================================
-   MODEL ACCURACY
-========================================= */
-
 .accuracy-info {
     display: inline-flex;
-
     align-items: center;
-
     gap: 8px;
-
     margin-top: 1px;
-
     padding: 9px 16px;
-
     background-color: #ffffff;
-
     border: 1px solid #e2e8f0;
-
     border-radius: 999px;
-
-    box-shadow:
-        0 4px 12px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
 }
 
 .accuracy-label {
     color: #64748b;
-
     font-size: 20px;
-
     font-weight: 500;
 }
 
 .accuracy-value {
     color: #2563eb;
-
     font-size: 20px;
-
     font-weight: 700;
 }
 
-
-/* =========================================
-   ANALYSIS CONTAINER
-========================================= */
-
 .analysis-container {
     width: 100%;
-
     max-width: 1200px;
-
     margin: 5px auto 80px;
-
     padding: 0 20px;
-
     display: grid;
-
     grid-template-columns: 1.1fr 0.9fr;
-
     gap: 24px;
-
     align-items: stretch;
 }
-
-
-/* =========================================
-   CARD UMUM
-========================================= */
 
 .sentiment-card,
 .result-card {
     background-color: #ffffff;
-
     border: 1px solid #e2e8f0;
-
     border-radius: 18px;
-
     padding: 30px;
-
-    box-shadow:
-        0 8px 25px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
 }
-
-
-/* =========================================
-   CARD HEADER
-========================================= */
 
 .card-header {
     margin-bottom: 22px;
@@ -208,52 +111,31 @@ body {
 
 .card-header h2 {
     font-size: 22px;
-
     margin-bottom: 8px;
 }
 
 .card-header p {
     color: #64748b;
-
     font-size: 14px;
-
     line-height: 1.6;
 }
 
-
-/* =========================================
-   TEXTAREA
-========================================= */
-
 #sentiment-text {
     width: 100%;
-
     min-height: 260px;
-
     padding: 17px;
-
     border: 1px solid #cbd5e1;
-
     border-radius: 12px;
-
     background-color: #f8fafc;
-
     color: #0f172a;
-
     font-family: Arial, sans-serif;
-
     font-size: 15px;
-
     line-height: 1.6;
-
     resize: vertical;
-
     outline: none;
-
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: border-color 0.2s ease,
+                background-color 0.2s ease,
+                box-shadow 0.2s ease;
 }
 
 #sentiment-text::placeholder {
@@ -262,54 +144,30 @@ body {
 
 #sentiment-text:focus {
     background-color: #ffffff;
-
     border-color: #2563eb;
-
-    box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.10);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
-
-
-/* =========================================
-   INPUT FOOTER
-========================================= */
 
 .input-footer {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     margin-top: 12px;
 }
 
 .character-count {
     color: #94a3b8;
-
     font-size: 13px;
 }
 
-
-/* =========================================
-   VOICE BUTTON
-========================================= */
-
 .voice-button {
     padding: 9px 14px;
-
     border: 1px solid #dbeafe;
-
     border-radius: 8px;
-
     background-color: #eff6ff;
-
     color: #2563eb;
-
     font-size: 14px;
-
     cursor: pointer;
-
     transition: all 0.2s ease;
 }
 
@@ -317,35 +175,19 @@ body {
     background-color: #dbeafe;
 }
 
-
-/* =========================================
-   ANALYZE BUTTON
-========================================= */
-
 .analyze-button {
     width: 100%;
-
     margin-top: 20px;
-
     padding: 13px 20px;
-
     border: none;
-
     border-radius: 10px;
-
     background-color: #2563eb;
-
     color: #ffffff;
-
     font-size: 15px;
-
     font-weight: 600;
-
     cursor: pointer;
-
-    transition:
-        background-color 0.2s ease,
-        transform 0.1s ease;
+    transition: background-color 0.2s ease,
+                transform 0.1s ease;
 }
 
 .analyze-button:hover {
@@ -358,67 +200,35 @@ body {
 
 .analyze-button:disabled {
     opacity: 0.6;
-
     cursor: not-allowed;
 }
 
-
-/* =========================================
-   RESULT CARD
-========================================= */
-
 .result-card {
     display: flex;
-
     flex-direction: column;
 }
-
-
-/* =========================================
-   RESULT CONTENT
-========================================= */
 
 .result-content {
     flex: 1;
-
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
-
     text-align: center;
-
     padding: 30px 20px;
 }
 
-
-/* =========================================
-   RESULT ICON
-========================================= */
-
 .result-icon {
     width: 64px;
-
     height: 64px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     margin-bottom: 18px;
-
     border-radius: 50%;
-
     background-color: #eff6ff;
-
     font-size: 28px;
 }
-/* SENTIMENT ICON COLORS */
 
 .result-icon.positive {
     background-color: #dcfce7;
@@ -436,37 +246,19 @@ body {
     background-color: #f1f5f9;
 }
 
-/* =========================================
-   RESULT LABEL
-========================================= */
-
 .result-label {
     margin-bottom: 8px;
-
     color: #64748b;
-
     font-size: 13px;
-
     text-transform: uppercase;
-
     letter-spacing: 0.5px;
 }
 
-
-/* =========================================
-   RESULT VALUE
-========================================= */
-
 .result-value {
     font-size: 28px;
-
     font-weight: 700;
-
     color: #94a3b8;
 }
-
-
-/* SENTIMENT COLORS */
 
 .result-value.positive {
     color: #16a34a;
@@ -480,69 +272,40 @@ body {
     color: #eab308;
 }
 
-
-/* =========================================
-   RESULT DESCRIPTION
-========================================= */
-
 .result-description {
     max-width: 340px;
-
     margin-top: 14px;
-
     color: #64748b;
-
     font-size: 14px;
-
     line-height: 1.6;
 }
 
-
-/* =========================================
-   FOOTER
-========================================= */
-
 .site-footer {
     padding: 25px 20px;
-
     text-align: center;
-
     color: #94a3b8;
-
     font-size: 13px;
 }
 
-
-/* =========================================
-   RESPONSIVE
-========================================= */
-
 @media (max-width: 800px) {
-
     .site-header {
         padding: 22px 25px;
     }
-
 
     .hero {
         padding: 35px 20px 30px;
     }
 
-
     .hero h1 {
         font-size: 36px;
     }
 
-
     .analysis-container {
         grid-template-columns: 1fr;
-
         margin-top: 10px;
     }
-
 
     #sentiment-text {
         min-height: 200px;
     }
-
 }

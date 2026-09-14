@@ -1,17 +1,8 @@
-/* =========================================
-   RESET
-========================================= */
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
-
-/* =========================================
-   BODY
-========================================= */
 
 body {
     font-family: Arial, sans-serif;
@@ -19,41 +10,23 @@ body {
     color: #0f172a;
 }
 
-
-/* =========================================
-   ADMIN LAYOUT
-========================================= */
-
 .admin-layout {
     min-height: 100vh;
 }
 
-
-/* =========================================
-   SIDEBAR
-========================================= */
-
+/* Sidebar */
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
-
     width: 240px;
     height: 100vh;
-
     display: flex;
     flex-direction: column;
-
     padding: 28px 18px;
-
     background-color: #ffffff;
     border-right: 1px solid #e2e8f0;
 }
-
-
-/* =========================================
-   SIDEBAR BRAND
-========================================= */
 
 .sidebar-brand {
     padding: 0 12px;
@@ -61,73 +34,45 @@ body {
 }
 
 .sidebar-brand h2 {
-    margin: 0;
-
     color: #2563eb;
-
     font-size: 22px;
     font-weight: 700;
 }
 
 .sidebar-brand span {
     display: block;
-
     margin-top: 4px;
-
     color: #94a3b8;
-
     font-size: 11px;
     font-weight: 600;
-
     letter-spacing: 1px;
 }
-
-
-/* =========================================
-   SIDEBAR MENU
-========================================= */
 
 .sidebar-menu {
     display: flex;
     flex-direction: column;
-
     gap: 6px;
 }
 
 .menu-item {
     display: block;
-
     padding: 12px 14px;
-
     border-radius: 9px;
-
     color: #64748b;
-
     text-decoration: none;
-
     font-size: 14px;
-
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.menu-item:hover {
+.menu-item:hover,
+.menu-item.active {
     background-color: #eff6ff;
     color: #2563eb;
 }
 
 .menu-item.active {
-    background-color: #eff6ff;
-    color: #2563eb;
-
     font-weight: 600;
 }
-
-
-/* =========================================
-   SIDEBAR LOGOUT
-========================================= */
 
 .sidebar-bottom {
     margin-top: auto;
@@ -135,21 +80,13 @@ body {
 
 .logout-item {
     display: block;
-
     padding: 12px 14px;
     margin: 8px 0;
-
     border-radius: 9px;
-
     color: #64748b;
-
     text-decoration: none;
-
     font-size: 14px;
-
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .logout-item:hover {
@@ -157,25 +94,13 @@ body {
     color: #dc2626;
 }
 
-
-/* =========================================
-   MAIN CONTENT
-========================================= */
-
+/* Main content */
 .admin-content {
     height: 100vh;
-
     margin-left: 240px;
-
     padding: 42px 48px;
-
     overflow-y: auto;
 }
-
-
-/* =========================================
-   PAGE HEADER
-========================================= */
 
 .admin-header {
     margin-bottom: 35px;
@@ -183,35 +108,20 @@ body {
 
 .admin-header h1 {
     margin-bottom: 8px;
-
     font-size: 30px;
 }
 
 .admin-header p {
     color: #64748b;
-
     font-size: 15px;
 }
 
-
-/* =========================================
-   CONTENT CARD
-========================================= */
-
 .dashboard-content {
     padding: 30px;
-
     background-color: #ffffff;
-
     border: 1px solid #e2e8f0;
-
     border-radius: 16px;
 }
-
-
-/* =========================================
-   CONTENT TITLE
-========================================= */
 
 .dashboard-title {
     margin-bottom: 25px;
@@ -219,79 +129,43 @@ body {
 
 .dashboard-title h2 {
     margin-bottom: 7px;
-
     font-size: 20px;
 }
 
 .dashboard-title p {
     color: #64748b;
-
     font-size: 14px;
     line-height: 1.6;
 }
 
-
-/* =========================================
-   STATISTICS GRID
-========================================= */
-
+/* Statistics */
 .stats-grid {
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
-
     gap: 16px;
 }
 
-
-/* =========================================
-   STAT CARD
-========================================= */
-
 .stat-card {
     padding: 22px;
-
     background-color: #f8fafc;
-
     border: 1px solid #e2e8f0;
-
     border-radius: 12px;
 }
 
-
-/* =========================================
-   STAT LABEL
-========================================= */
-
 .stat-label {
     display: block;
-
     margin-bottom: 12px;
-
     color: #64748b;
-
     font-size: 13px;
     font-weight: 500;
 }
 
-
-/* =========================================
-   STAT VALUE
-========================================= */
-
 .stat-value {
     display: block;
-
     color: #0f172a;
-
     font-size: 28px;
     font-weight: 700;
 }
-
-
-/* =========================================
-   STAT VALUE COLORS
-========================================= */
 
 .stat-card.positive .stat-value {
     color: #16a34a;
@@ -305,164 +179,107 @@ body {
     color: #dc2626;
 }
 
-
-/* =========================================
-   SENTIMENT CATEGORY GRID
-========================================= */
-
+/* Sentiment */
 .sentiment-grid {
     display: grid;
-
     grid-template-columns: repeat(3, 1fr);
-
     gap: 16px;
 }
 
-
-/* =========================================
-   SENTIMENT CATEGORY CARD
-========================================= */
-
 .sentiment-card {
     padding: 22px;
-
     border-radius: 12px;
-
     border-left: 4px solid;
 }
 
-
-/* =========================================
-   POSITIVE CARD
-========================================= */
-
 .sentiment-card.positive {
     background-color: #f0fdf4;
-
     border-top: 1px solid #bbf7d0;
     border-right: 1px solid #bbf7d0;
     border-bottom: 1px solid #bbf7d0;
     border-left-color: #16a34a;
 }
 
-.sentiment-card.positive .sentiment-title {
-    color: #16a34a;
-}
-
-
-/* =========================================
-   NEUTRAL CARD
-========================================= */
-
 .sentiment-card.neutral {
     background-color: #fefce8;
-
     border-top: 1px solid #fde68a;
     border-right: 1px solid #fde68a;
     border-bottom: 1px solid #fde68a;
     border-left-color: #eab308;
 }
 
-.sentiment-card.neutral .sentiment-title {
-    color: #ca8a04;
-}
-
-
-/* =========================================
-   NEGATIVE CARD
-========================================= */
-
 .sentiment-card.negative {
     background-color: #fef2f2;
-
     border-top: 1px solid #fecaca;
     border-right: 1px solid #fecaca;
     border-bottom: 1px solid #fecaca;
     border-left-color: #dc2626;
 }
 
-.sentiment-card.negative .sentiment-title {
-    color: #dc2626;
-}
-
-
-/* =========================================
-   SENTIMENT TITLE
-========================================= */
-
 .sentiment-title {
     display: block;
-
     margin-bottom: 12px;
-
     font-size: 16px;
     font-weight: 700;
 }
 
+.sentiment-card.positive .sentiment-title {
+    color: #16a34a;
+}
 
-/* =========================================
-   SENTIMENT DESCRIPTION
-========================================= */
+.sentiment-card.neutral .sentiment-title {
+    color: #ca8a04;
+}
+
+.sentiment-card.negative .sentiment-title {
+    color: #dc2626;
+}
 
 .sentiment-card p {
     color: #64748b;
-
     font-size: 14px;
     line-height: 1.6;
 }
 
-
-/* =========================================
-   HISTORY SECTION
-========================================= */
-
+/* History */
 .history-section {
     margin-top: 24px;
 }
 
-
-/* =========================================
-   HISTORY TABLE
-========================================= */
+.history-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
 .history-table-wrapper {
     width: 100%;
-
     overflow-x: auto;
 }
 
 .history-table {
     width: 100%;
-
     border-collapse: collapse;
-
     font-size: 14px;
 }
 
 .history-table th {
     padding: 13px 12px;
-
     background-color: #f8fafc;
-
     color: #64748b;
-
     text-align: left;
-
     font-size: 12px;
     font-weight: 600;
-
     text-transform: uppercase;
-
     letter-spacing: 0.4px;
-
     border-bottom: 1px solid #e2e8f0;
 }
 
 .history-table td {
     padding: 15px 12px;
-
     border-bottom: 1px solid #f1f5f9;
-
     vertical-align: middle;
 }
 
@@ -470,21 +287,25 @@ body {
     border-bottom: none;
 }
 
+.checkbox-column {
+    width: 50px;
+    text-align: center !important;
+}
 
-/* =========================================
-   SENTIMENT BADGE
-========================================= */
+.checkbox-column input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #2563eb;
+}
 
+/* Sentiment badge */
 .sentiment-badge {
     display: inline-block;
-
     padding: 5px 9px;
-
     border-radius: 999px;
-
     font-size: 12px;
     font-weight: 600;
-
     text-transform: capitalize;
 }
 
@@ -508,105 +329,103 @@ body {
     color: #64748b;
 }
 
-
-/* =========================================
-   EMPTY HISTORY
-========================================= */
-
 .empty-history {
     padding: 30px !important;
-
     color: #94a3b8;
-
     text-align: center;
 }
 
+/* History buttons */
+.download-button,
+.delete-selected-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
 
-/* =========================================
-   CHART
-========================================= */
+.download-button {
+    border: none;
+    background-color: #2563eb;
+    color: #ffffff;
+    text-decoration: none;
+}
 
+.download-button:hover {
+    background-color: #1d4ed8;
+}
+
+.delete-selected-button {
+    border: none;
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+.delete-selected-button:hover {
+    background-color: #b91c1c;
+}
+
+.download-button:active,
+.delete-selected-button:active {
+    transform: translateY(1px);
+}
+
+/* Chart */
 .chart-container {
     position: relative;
-
     width: 100%;
     height: 350px;
-
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-
-/* =========================================
-   LOGIN ADMIN
-========================================= */
-
+/* Login */
 .login-page {
     min-height: 100vh;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     background-color: #f8fafc;
 }
-
 
 .login-container {
     width: 100%;
     max-width: 420px;
-
     padding: 24px;
 }
 
-
 .login-card {
     padding: 36px;
-
     background-color: #ffffff;
-
     border: 1px solid #e2e8f0;
-
     border-radius: 16px;
-
-    box-shadow:
-        0 10px 30px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
 }
-
-
-/* =========================================
-   LOGIN BRAND
-========================================= */
 
 .login-brand {
     text-align: center;
-
     margin-bottom: 32px;
 }
 
 .login-brand h1 {
     margin-bottom: 5px;
-
     color: #2563eb;
-
     font-size: 26px;
     font-weight: 700;
 }
 
 .login-brand span {
     color: #94a3b8;
-
     font-size: 11px;
     font-weight: 600;
-
     letter-spacing: 1.5px;
 }
-
-
-/* =========================================
-   LOGIN HEADER
-========================================= */
 
 .login-header {
     margin-bottom: 26px;
@@ -614,70 +433,46 @@ body {
 
 .login-header h2 {
     margin-bottom: 8px;
-
     color: #0f172a;
-
     font-size: 22px;
-
     text-align: center;
 }
 
 .login-header p {
     color: #64748b;
-
     font-size: 14px;
-
     line-height: 1.6;
-
     text-align: center;
 }
-
-
-/* =========================================
-   LOGIN FORM
-========================================= */
 
 .login-form {
     display: flex;
     flex-direction: column;
-
     gap: 20px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-
     gap: 8px;
 }
 
 .form-group label {
     color: #0f172a;
-
     font-size: 13px;
     font-weight: 600;
 }
 
 .form-group input {
     width: 100%;
-
     padding: 12px 14px;
-
     background-color: #ffffff;
-
     border: 1px solid #e2e8f0;
-
     border-radius: 9px;
-
     color: #0f172a;
-
     font-size: 14px;
-
     outline: none;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-group input::placeholder {
@@ -686,39 +481,21 @@ body {
 
 .form-group input:focus {
     border-color: #2563eb;
-
-    box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.10);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
 }
-
-
-/* =========================================
-   LOGIN BUTTON
-========================================= */
 
 .login-button {
     width: 100%;
-
     margin-top: 4px;
-
     padding: 12px 16px;
-
     border: none;
-
     border-radius: 9px;
-
     background-color: #2563eb;
-
     color: #ffffff;
-
     font-size: 14px;
     font-weight: 600;
-
     cursor: pointer;
-
-    transition:
-        background-color 0.2s ease,
-        transform 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .login-button:hover {
@@ -729,644 +506,345 @@ body {
     transform: translateY(1px);
 }
 
-
-/* =========================================
-   PAGINATION
-========================================= */
-
+/* Pagination */
 .pagination {
     display: flex;
-
     justify-content: center;
     align-items: center;
-
     gap: 8px;
-
     margin-top: 24px;
 }
 
 .pagination-button,
 .pagination-number {
     display: inline-flex;
-
     justify-content: center;
     align-items: center;
-
     min-width: 38px;
     height: 38px;
-
     padding: 0 12px;
-
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-
     background-color: #ffffff;
-
     color: #64748b;
-
     text-decoration: none;
-
     font-size: 13px;
     font-weight: 500;
-
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease,
-        border-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .pagination-button:hover,
 .pagination-number:hover {
     background-color: #eff6ff;
-
     border-color: #bfdbfe;
-
     color: #2563eb;
 }
 
 .pagination-number.active {
     background-color: #2563eb;
-
     border-color: #2563eb;
-
     color: #ffffff;
-
     font-weight: 600;
 }
 
-
-/* =========================================
-   HISTORY ACTIONS
-========================================= */
-
-.history-actions {
-    display: flex;
-
-    justify-content: flex-end;
-
-    margin-bottom: 20px;
-}
-
-.download-button {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 10px 16px;
-
-    border-radius: 8px;
-
-    background-color: #2563eb;
-
-    color: #ffffff;
-
-    text-decoration: none;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    transition:
-        background-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.download-button:hover {
-    background-color: #1d4ed8;
-}
-
-.download-button:active {
-    transform: translateY(1px);
-}
-
-
-/* =========================================
-   PERIOD SELECTOR
-========================================= */
-
+/* Period selector */
 .period-selector {
     display: flex;
-
     align-items: center;
-
     gap: 24px;
-
     margin-bottom: 24px;
 }
 
 .period-selector label {
     display: inline-flex;
-
     align-items: center;
-
     gap: 8px;
-
     color: #64748b;
-
     font-size: 14px;
-
     cursor: pointer;
 }
 
 .period-selector input[type="radio"] {
     width: 16px;
     height: 16px;
-
     margin: 0;
-
     accent-color: #2563eb;
-
     cursor: pointer;
 }
 
-.period-selector label:has(
-    input[type="radio"]:checked
-) {
+.period-selector label:has(input[type="radio"]:checked) {
     color: #2563eb;
-
     font-weight: 600;
 }
-/* =========================================
-   RESPONSIVE - TABLET
-========================================= */
 
+/* Hamburger */
+.hamburger-button {
+    display: none;
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 42px;
+    height: 42px;
+    padding: 9px;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    background-color: #ffffff;
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.hamburger-button span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    margin: 5px 0;
+    background-color: #0f172a;
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.35);
+    z-index: 999;
+}
+
+/* Tablet */
 @media (max-width: 1024px) {
-
-    /* MAIN CONTENT */
-
     .admin-content {
         margin-left: 210px;
-
         padding: 32px 28px;
     }
 
-
-    /* SIDEBAR */
-
     .sidebar {
         width: 210px;
-
         padding: 24px 14px;
     }
-
-
-    /* STATISTICS */
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
-
-    /* SENTIMENT */
-
     .sentiment-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-
 }
 
-
-/* =========================================
-   RESPONSIVE - HP
-========================================= */
-
+/* Mobile */
 @media (max-width: 768px) {
-
-    /* SIDEBAR */
+    .hamburger-button {
+        display: block;
+    }
 
     .sidebar {
-        position: static;
-
-        width: 100%;
-        height: auto;
-
-        padding: 18px 16px;
-
-        border-right: none;
-        border-bottom: 1px solid #e2e8f0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100vh;
+        padding: 28px 18px;
+        border-right: 1px solid #e2e8f0;
+        border-bottom: none;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 1000;
     }
 
-
-    .sidebar-brand {
-        padding: 0 8px;
-
-        margin-bottom: 18px;
+    .sidebar.open {
+        transform: translateX(0);
     }
 
+    .sidebar-overlay.active {
+        display: block;
+    }
 
     .sidebar-menu {
-        flex-direction: row;
-
+        flex-direction: column;
+        overflow-x: visible;
         gap: 6px;
-
-        overflow-x: auto;
     }
-
 
     .menu-item {
-        flex: 0 0 auto;
-
-        padding: 10px 12px;
-
-        font-size: 13px;
+        width: 100%;
+        padding: 12px 14px;
     }
-
 
     .sidebar-bottom {
-        margin-top: 12px;
+        margin-top: auto;
     }
-
 
     .logout-item {
         margin: 4px 0 0;
-
         padding: 10px 12px;
     }
 
-
-    /* MAIN CONTENT */
-
     .admin-content {
         width: 100%;
-
         height: auto;
-
         margin-left: 0;
-
         padding: 28px 18px;
-
         overflow-y: visible;
     }
-
-
-    /* PAGE HEADER */
 
     .admin-header {
         margin-bottom: 26px;
     }
 
-
     .admin-header h1 {
         font-size: 26px;
     }
-
 
     .admin-header p {
         font-size: 14px;
     }
 
-
-    /* CONTENT CARD */
-
     .dashboard-content {
         padding: 22px;
-
         border-radius: 14px;
     }
-
-
-    /* CONTENT TITLE */
 
     .dashboard-title {
         margin-bottom: 20px;
     }
 
-
     .dashboard-title h2 {
         font-size: 18px;
     }
-
 
     .dashboard-title p {
         font-size: 13px;
     }
 
-
-    /* STATISTICS */
-
     .stats-grid {
         grid-template-columns: 1fr;
-
         gap: 12px;
     }
-
 
     .stat-card {
         padding: 18px;
     }
 
-
     .stat-value {
         font-size: 24px;
     }
 
-
-    /* SENTIMENT */
-
     .sentiment-grid {
         grid-template-columns: 1fr;
-
         gap: 12px;
     }
-
 
     .sentiment-card {
         padding: 18px;
     }
 
-
-    /* CHART */
-
     .chart-container {
         height: 280px;
     }
 
-
-    /* PERIOD SELECTOR */
-
     .period-selector {
         gap: 16px;
-
         flex-wrap: wrap;
     }
-
 
     .period-selector label {
         font-size: 13px;
     }
 
-
-    /* HISTORY TABLE */
-
     .history-table {
-        min-width: 600px;
+        min-width: 650px;
     }
-
-
-    /* HISTORY ACTIONS */
 
     .history-actions {
         justify-content: flex-start;
+        flex-wrap: wrap;
     }
 
-
-    .download-button {
-        width: 100%;
+    .download-button,
+    .delete-selected-button {
+        flex: 1;
     }
-
-
-    /* PAGINATION */
 
     .pagination {
         flex-wrap: wrap;
-
         gap: 6px;
     }
-
 }
 
-
-/* =========================================
-   RESPONSIVE - HP KECIL
-========================================= */
-
+/* Mobile kecil */
 @media (max-width: 480px) {
-
-    /* MAIN CONTENT */
-
     .admin-content {
         padding: 22px 14px;
     }
-
-
-    /* SIDEBAR */
 
     .sidebar {
         padding: 16px 12px;
     }
 
-
     .sidebar-brand h2 {
         font-size: 20px;
     }
-
-
-    /* HEADER */
 
     .admin-header h1 {
         font-size: 24px;
     }
 
-
-    /* CONTENT */
-
     .dashboard-content {
         padding: 18px;
-
         border-radius: 12px;
     }
-
-
-    /* CHART */
 
     .chart-container {
         height: 240px;
     }
 
-
-    /* PERIOD SELECTOR */
-
     .period-selector {
         gap: 12px;
     }
 
-
     .period-selector label {
         font-size: 12px;
     }
-
 
     .period-selector input[type="radio"] {
         width: 14px;
         height: 14px;
     }
 
-
-    /* LOGIN */
-
     .login-container {
         padding: 16px;
     }
-
 
     .login-card {
         padding: 26px 20px;
     }
 
-}
-/* =========================================
-   HAMBURGER BUTTON
-   DEFAULT: HIDDEN
-========================================= */
-
-.hamburger-button {
-    display: none;
-
-    position: fixed;
-
-    top: 16px;
-    right: 16px;
-
-    width: 42px;
-    height: 42px;
-
-    padding: 9px;
-
-    border: 1px solid #e2e8f0;
-    border-radius: 9px;
-
-    background-color: #ffffff;
-
-    cursor: pointer;
-
-    z-index: 1001;
-
-    box-shadow:
-        0 4px 12px rgba(15, 23, 42, 0.08);
-}
-
-
-.hamburger-button span {
-    display: block;
-
-    width: 100%;
-    height: 2px;
-
-    margin: 5px 0;
-
-    background-color: #0f172a;
-
-    border-radius: 2px;
-
-    transition:
-        transform 0.2s ease,
-        opacity 0.2s ease;
-}
-
-
-/* =========================================
-   SIDEBAR OVERLAY
-   DEFAULT: HIDDEN
-========================================= */
-
-.sidebar-overlay {
-    display: none;
-
-    position: fixed;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background-color: rgba(15, 23, 42, 0.35);
-
-    z-index: 999;
-}
-
-
-/* =========================================
-   MOBILE SIDEBAR
-========================================= */
-
-@media (max-width: 768px) {
-
-    /* HAMBURGER */
-
-    .hamburger-button {
-        display: block;
-    }
-
-
-    /* SIDEBAR */
-
-    .sidebar {
-        position: fixed;
-
-        top: 0;
-        left: 0;
-
-        width: 250px;
-        height: 100vh;
-
-        padding: 28px 18px;
-
-        border-right: 1px solid #e2e8f0;
-        border-bottom: none;
-
-        transform: translateX(-100%);
-
-        transition:
-            transform 0.25s ease;
-
-        z-index: 1000;
-    }
-
-
-    /* SIDEBAR OPEN */
-
-    .sidebar.open {
-        transform: translateX(0);
-    }
-
-
-    /* OVERLAY OPEN */
-
-    .sidebar-overlay.active {
-        display: block;
-    }
-
-
-    /* SIDEBAR MENU */
-
-    .sidebar-menu {
+    .history-actions {
         flex-direction: column;
-
-        overflow-x: visible;
-
-        gap: 6px;
+        align-items: stretch;
     }
 
-
-    .menu-item {
+    .download-button,
+    .delete-selected-button {
         width: 100%;
-
-        padding: 12px 14px;
+        flex: none;
     }
+}
 
+/* Hamburger aktif */
+.hamburger-button.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
 
-    /* SIDEBAR BOTTOM */
+.hamburger-button.active span:nth-child(2) {
+    opacity: 0;
+}
 
-    .sidebar-bottom {
-        margin-top: auto;
-    }
-
-
-    /* HAMBURGER ACTIVE */
-
-    .hamburger-button.active span:nth-child(1) {
-        transform: translateY(7px) rotate(45deg);
-    }
-
-
-    .hamburger-button.active span:nth-child(2) {
-        opacity: 0;
-    }
-
-
-    .hamburger-button.active span:nth-child(3) {
-        transform: translateY(-7px) rotate(-45deg);
-    }
-
+.hamburger-button.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
 }

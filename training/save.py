@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-from utils.preprocessing import bersihkan_teks
+from flask_app.utils.preprocessing import bersihkan_teks
 
 # BACA DATASET
 df_train = pd.read_csv(

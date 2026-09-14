@@ -6,7 +6,6 @@ from services.validation_service import (
 from utils.load_model import load_model_assets
 from utils.database import simpan_ke_db
 
-
 def proses_sentimen(teks):
     """
     Memproses teks sampai menghasilkan klasifikasi sentimen.

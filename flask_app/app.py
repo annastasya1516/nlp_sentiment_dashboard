@@ -1,5 +1,4 @@
 import json
-
 from flask import (
     Flask,
     render_template,
@@ -7,12 +6,11 @@ from flask import (
     jsonify,
     session,
     redirect,
-    Response
+    Response,
+    url_for
 )
-
 from services.sentiment_service import proses_sentimen
 from utils.security import verify_password
-
 from utils.database import (
     ambil_statistik,
     ambil_riwayat,
@@ -20,31 +18,19 @@ from utils.database import (
     ambil_semua_riwayat,
     ambil_statistik_harian,
     ambil_statistik_bulanan,
-    ambil_statistik_tahunan
+    ambil_statistik_tahunan,
+    hapus_riwayat
 )
-
-
-# =========================================
-# FLASK APPLICATION
-# =========================================
 
 app = Flask(__name__)
 
 app.secret_key = "kunci-rahasia-aplikasi"
 
-
-# =========================================
-# ADMIN ACCOUNT
-# =========================================
-
 ADMIN_USERNAME = "admin"
 
-ADMIN_PASSWORD_HASH = "c976fb9fcc6d65c5d8a8efba43101fd4fba53682b4e224316acea7c5b063044e"
-
-
-# =========================================
-# LOAD MODEL ACCURACY
-# =========================================
+ADMIN_PASSWORD_HASH = (
+    "c976fb9fcc6d65c5d8a8efba43101fd4fba53682b4e224316acea7c5b063044e"
+)
 
 with open(
     "models/metrics.json",
@@ -54,15 +40,9 @@ with open(
 
     metrics = json.load(file)
 
-
 akurasi = metrics["accuracy"]
 
 print("Akurasi model:", akurasi)
-
-
-# =========================================
-# HOME
-# =========================================
 
 @app.route("/")
 def home():
@@ -72,23 +52,27 @@ def home():
         akurasi=akurasi
     )
 
-
-# =========================================
-# ANALISIS SENTIMEN
-# =========================================
-
 @app.route("/analisis", methods=["POST"])
 def analisis():
 
     data = request.get_json()
 
-    teks = data.get("teks", "")
+    teks = data.get(
+        "teks",
+        ""
+    )
 
-    print("Teks yang diterima:", teks)
+    print(
+        "Teks yang diterima:",
+        teks
+    )
 
     prediksi = proses_sentimen(teks)
 
-    print("Hasil prediksi:", prediksi)
+    print(
+        "Hasil prediksi:",
+        prediksi
+    )
 
     return jsonify({
         "status": "success",
@@ -97,33 +81,41 @@ def analisis():
         "akurasi": akurasi
     })
 
-
-# =========================================
-# ADMIN LOGIN
-# =========================================
-
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
+
     if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
 
-        print("Username:", username)
+        username = request.form.get(
+            "username"
+        )
 
-        if username == ADMIN_USERNAME and verify_password(password, ADMIN_PASSWORD_HASH):
+        password = request.form.get(
+            "password"
+        )
+
+        if (
+            username == ADMIN_USERNAME
+            and verify_password(
+                password,
+                ADMIN_PASSWORD_HASH
+            )
+        ):
+
             session["admin_login"] = True
-            return redirect("/admin/dashboard")
+
+            return redirect(
+                "/admin/dashboard"
+            )
 
         return render_template(
             "admin_login.html",
             error="Username atau password salah."
         )
 
-    return render_template("admin_login.html")
-
-# =========================================
-# ADMIN DASHBOARD
-# =========================================
+    return render_template(
+        "admin_login.html"
+    )
 
 @app.route("/admin/dashboard")
 def admin_dashboard():
@@ -141,28 +133,25 @@ def admin_dashboard():
         riwayat=riwayat
     )
 
-
-# =========================================
-# ADMIN STATISTIK
-# =========================================
-
 @app.route("/admin/statistik")
 def admin_statistik():
 
     if not session.get("admin_login"):
         return redirect("/admin")
 
-    # Statistik keseluruhan
     statistik = ambil_statistik()
 
-    # Statistik harian
-    statistik_harian = ambil_statistik_harian()
+    statistik_harian = (
+        ambil_statistik_harian()
+    )
 
-    # Statistik bulanan
-    statistik_bulanan = ambil_statistik_bulanan()
+    statistik_bulanan = (
+        ambil_statistik_bulanan()
+    )
 
-    # Statistik tahunan
-    statistik_tahunan = ambil_statistik_tahunan()
+    statistik_tahunan = (
+        ambil_statistik_tahunan()
+    )
 
     return render_template(
         "admin_statistik.html",
@@ -171,11 +160,6 @@ def admin_statistik():
         statistik_bulanan=statistik_bulanan,
         statistik_tahunan=statistik_tahunan
     )
-
-
-# =========================================
-# ADMIN RIWAYAT
-# =========================================
 
 @app.route("/admin/riwayat")
 def admin_riwayat():
@@ -188,6 +172,9 @@ def admin_riwayat():
         1,
         type=int
     )
+
+    if halaman < 1:
+        halaman = 1
 
     data_per_halaman = 20
 
@@ -213,11 +200,6 @@ def admin_riwayat():
         halaman=halaman,
         total_halaman=total_halaman
     )
-
-
-# =========================================
-# DOWNLOAD CSV
-# =========================================
 
 @app.route("/admin/riwayat/download")
 def download_csv():
@@ -251,10 +233,37 @@ def download_csv():
         }
     )
 
+@app.route(
+    "/admin/riwayat/hapus",
+    methods=["POST"]
+)
+def admin_hapus_riwayat():
 
-# =========================================
-# ADMIN MODEL
-# =========================================
+    if not session.get("admin_login"):
+        return redirect("/admin")
+
+    ids_data = request.form.getlist(
+        "ids_data"
+    )
+
+    if ids_data:
+
+        hapus_riwayat(
+            ids_data
+        )
+
+    halaman = request.form.get(
+        "halaman",
+        1,
+        type=int
+    )
+
+    return redirect(
+        url_for(
+            "admin_riwayat",
+            halaman=halaman
+        )
+    )
 
 @app.route("/admin/model")
 def admin_model():
@@ -268,22 +277,21 @@ def admin_model():
     )
 
 
-# =========================================
-# ADMIN LOGOUT
-# =========================================
-
-@app.route("/admin/logout")
+@app.route(
+    "/admin/logout",
+    methods=["GET", "POST"]
+)
 def admin_logout():
-    session.pop("admin_login", None)
+
+    session.pop(
+        "admin_login",
+        None
+    )
 
     return render_template(
         "admin_login.html",
         success="Anda berhasil logout."
     )
-
-# =========================================
-# RUN APPLICATION
-# =========================================
 
 if __name__ == "__main__":
 

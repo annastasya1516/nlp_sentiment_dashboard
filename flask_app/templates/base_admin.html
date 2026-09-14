@@ -1,29 +1,21 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
-
     <title>
         {% block title %}
         SentiView Admin
         {% endblock %}
     </title>
-
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/admin.css') }}"
     >
-
 </head>
-
-
 <body>
 
     <div class="admin-layout">
@@ -39,7 +31,6 @@
         </main>
 
     </div>
-
 
     <script>
 
@@ -78,7 +69,6 @@
             }
         );
 
-
         sidebarOverlay.addEventListener(
             "click",
             function() {
@@ -98,12 +88,10 @@
             }
         );
 
-
         const menuItems =
             document.querySelectorAll(
                 ".menu-item"
             );
-
 
         menuItems.forEach(
             function(menuItem) {
