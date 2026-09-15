@@ -1,6 +1,7 @@
 import os
 import sqlite3
 
+
 def _get_db_connection():
     base_dir = os.path.dirname(
         os.path.dirname(
@@ -18,25 +19,37 @@ def _get_db_connection():
 
     return sqlite3.connect(db_path)
 
-def simpan_ke_db(teks_asli, teks_bersih, klasifikasi):
+
+def simpan_ke_db(
+    teks_asli,
+    teks_bersih,
+    klasifikasi,
+    confidence=None
+):
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
 
     cursor.execute(
         """
-        INSERT INTO riwayat_sentimen
-        (teks_asli, teks_bersih, klasifikasi)
-        VALUES (?, ?, ?)
+        INSERT INTO riwayat_sentimen (
+            teks_asli,
+            teks_bersih,
+            klasifikasi,
+            confidence
+        )
+        VALUES (?, ?, ?, ?)
         """,
         (
             teks_asli,
             teks_bersih,
-            klasifikasi
+            klasifikasi,
+            confidence
         )
     )
 
     koneksi.commit()
     koneksi.close()
+
 
 def ambil_riwayat(limit=20, offset=0):
     koneksi = _get_db_connection()
@@ -49,6 +62,7 @@ def ambil_riwayat(limit=20, offset=0):
             teks_asli,
             teks_bersih,
             klasifikasi,
+            confidence,
             waktu
         FROM riwayat_sentimen
         ORDER BY id DESC
@@ -65,6 +79,7 @@ def ambil_riwayat(limit=20, offset=0):
 
     return data
 
+
 def hitung_total_riwayat():
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
@@ -80,6 +95,7 @@ def hitung_total_riwayat():
     koneksi.close()
 
     return total
+
 
 def ambil_statistik():
     koneksi = _get_db_connection()
@@ -115,6 +131,7 @@ def ambil_statistik():
 
     return statistik
 
+
 def ambil_semua_riwayat():
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
@@ -126,6 +143,7 @@ def ambil_semua_riwayat():
             teks_asli,
             teks_bersih,
             klasifikasi,
+            confidence,
             waktu
         FROM riwayat_sentimen
         ORDER BY id DESC
@@ -137,9 +155,11 @@ def ambil_semua_riwayat():
 
     return data
 
+
 def ambil_statistik_harian():
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
+
     cursor.execute(
         """
         SELECT
@@ -155,6 +175,7 @@ def ambil_statistik_harian():
     koneksi.close()
 
     return data
+
 
 def ambil_statistik_bulanan():
     koneksi = _get_db_connection()
@@ -176,6 +197,7 @@ def ambil_statistik_bulanan():
 
     return data
 
+
 def ambil_statistik_tahunan():
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
@@ -195,6 +217,7 @@ def ambil_statistik_tahunan():
     koneksi.close()
 
     return data
+
 
 def hapus_riwayat(ids_data):
     if not ids_data:
@@ -217,3 +240,60 @@ def hapus_riwayat(ids_data):
 
     koneksi.commit()
     koneksi.close()
+    
+def edit_riwayat(
+    id_data,
+    teks_asli,
+    teks_bersih,
+    klasifikasi,
+    confidence
+):
+    koneksi = _get_db_connection()
+    cursor = koneksi.cursor()
+
+    cursor.execute(
+        """
+        UPDATE riwayat_sentimen
+        SET
+            teks_asli = ?,
+            teks_bersih = ?,
+            klasifikasi = ?,
+            confidence = ?
+        WHERE id = ?
+        """,
+        (
+            teks_asli,
+            teks_bersih,
+            klasifikasi,
+            confidence,
+            id_data
+        )
+    )
+
+    koneksi.commit()
+    koneksi.close()
+    
+def ambil_riwayat_by_id(id_data):
+    koneksi = _get_db_connection()
+    cursor = koneksi.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            id,
+            teks_asli,
+            teks_bersih,
+            klasifikasi,
+            confidence,
+            waktu
+        FROM riwayat_sentimen
+        WHERE id = ?
+        """,
+        (id_data,)
+    )
+
+    data = cursor.fetchone()
+
+    koneksi.close()
+
+    return data

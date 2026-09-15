@@ -6,54 +6,52 @@ from services.validation_service import (
 from utils.load_model import load_model_assets
 from utils.database import simpan_ke_db
 
+
 def proses_sentimen(teks):
-    """
-    Memproses teks sampai menghasilkan klasifikasi sentimen.
-    """
-
-    # CEK TEKS TIDAK JELAS
     if teks_tidak_jelas(teks):
-
         teks_bersih = bersihkan_teks(teks)
-
         prediksi = "invalid"
+        confidence = None
 
         simpan_ke_db(
             teks,
             teks_bersih,
-            prediksi
+            prediksi,
+            confidence
         )
 
-        return prediksi
+        return prediksi, confidence
 
-    # BERSIHKAN TEKS
     teks_bersih = bersihkan_teks(teks)
 
-    # CEK PERTANYAAN SEDERHANA
     if adalah_pertanyaan_sederhana(teks):
-
         prediksi = "neutral"
+        confidence = None
 
     else:
-
-        # LOAD MODEL
         model, vectorizer = load_model_assets()
 
-        # UBAH TEKS MENJADI TF-IDF
         teks_vektor = vectorizer.transform(
             [teks_bersih]
         )
 
-        # PREDIKSI SENTIMEN
         prediksi = model.predict(
             teks_vektor
         )[0]
 
-    # SIMPAN HASIL KLASIFIKASI KE DATABASE
+        probabilitas = model.predict_proba(
+            teks_vektor
+        )[0]
+
+        confidence = max(
+            probabilitas
+        ) * 100
+
     simpan_ke_db(
         teks,
         teks_bersih,
-        prediksi
+        prediksi,
+        confidence
     )
 
-    return prediksi
+    return prediksi, confidence

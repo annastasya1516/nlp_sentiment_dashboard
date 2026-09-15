@@ -4,21 +4,40 @@
 Riwayat - SentiView
 {% endblock %}
 
+
 {% block content %}
 
 <header class="admin-header">
+
     <div>
-        <h1>Riwayat</h1>
-        <p>Seluruh riwayat klasifikasi sentimen.</p>
+
+        <h1>
+            Riwayat
+        </h1>
+
+        <p>
+            Seluruh riwayat klasifikasi sentimen.
+        </p>
+
     </div>
+
 </header>
+
 
 <section class="dashboard-content">
 
     <div class="dashboard-title">
-        <h2>Riwayat Klasifikasi</h2>
-        <p>Daftar seluruh aktivitas klasifikasi yang tersimpan.</p>
+
+        <h2>
+            Riwayat Klasifikasi
+        </h2>
+
+        <p>
+            Daftar seluruh aktivitas klasifikasi yang tersimpan.
+        </p>
+
     </div>
+
 
     <form
         action="{{ url_for('admin_hapus_riwayat') }}"
@@ -33,6 +52,9 @@ Riwayat - SentiView
             value="{{ halaman }}"
         >
 
+
+        <!-- ACTIONS -->
+
         <div class="history-actions">
 
             <button
@@ -41,6 +63,7 @@ Riwayat - SentiView
             >
                 Hapus Data Terpilih
             </button>
+
 
             <a
                 href="{{ url_for('download_csv') }}"
@@ -51,25 +74,61 @@ Riwayat - SentiView
 
         </div>
 
+
+        <!-- TABLE -->
+
         <div class="history-table-wrapper">
 
             <table class="history-table">
 
                 <thead>
+
                     <tr>
+
                         <th class="checkbox-column">
+
                             <input
                                 type="checkbox"
                                 id="select-all"
                                 onchange="pilihSemua(this)"
                             >
+
                         </th>
-                        <th>TEKS</th>
-                        <th>TEKS BERSIH</th>
-                        <th>SENTIMEN</th>
-                        <th>WAKTU</th>
+
+
+                        <th>
+                            TEKS
+                        </th>
+
+
+                        <th>
+                            TEKS BERSIH
+                        </th>
+
+
+                        <th>
+                            SENTIMEN
+                        </th>
+
+
+                        <th>
+                            CONFIDENCE
+                        </th>
+
+
+                        <th>
+                            WAKTU
+                        </th>
+
+
+                        <th>
+                            AKSI
+                        </th>
+
                     </tr>
+
                 </thead>
+
 
                 <tbody>
 
@@ -77,46 +136,102 @@ Riwayat - SentiView
 
                     <tr>
 
+                        <!-- CHECKBOX -->
+
                         <td class="checkbox-column">
+
                             <input
                                 type="checkbox"
                                 name="ids_data"
                                 value="{{ data[0] }}"
                                 class="data-checkbox"
                             >
+
                         </td>
+
+
+                        <!-- TEKS ASLI -->
 
                         <td>
                             {{ data[1] }}
                         </td>
 
+
+                        <!-- TEKS BERSIH -->
+
                         <td>
                             {{ data[2] }}
                         </td>
 
+
+                        <!-- SENTIMEN -->
+
                         <td>
+
                             <span
                                 class="sentiment-badge {{ data[3] }}"
                             >
                                 {{ data[3] }}
                             </span>
+
                         </td>
 
+
+                        <!-- CONFIDENCE -->
+
                         <td>
-                            {{ data[4] }}
+
+                            {% if data[4] is not none %}
+
+                                {{ "%.2f"|format(data[4]) }}%
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- WAKTU -->
+
+                        <td>
+                            {{ data[5] }}
+                        </td>
+
+
+                        <!-- AKSI -->
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'admin_edit_riwayat_page',
+                                    id_data=data[0],
+                                    halaman=halaman
+                                ) }}"
+                                class="edit-button"
+                            >
+                                Edit
+                            </a>
+
                         </td>
 
                     </tr>
 
+
                     {% else %}
 
                     <tr>
+
                         <td
-                            colspan="5"
+                            colspan="7"
                             class="empty-history"
                         >
                             Belum ada riwayat klasifikasi.
                         </td>
+
                     </tr>
 
                     {% endfor %}
@@ -131,6 +246,9 @@ Riwayat - SentiView
 
 </section>
 
+
+<!-- PAGINATION -->
+
 <div class="pagination">
 
     {% if halaman > 1 %}
@@ -144,6 +262,7 @@ Riwayat - SentiView
 
     {% endif %}
 
+
     {% for nomor in range(1, total_halaman + 1) %}
 
     <a
@@ -154,6 +273,7 @@ Riwayat - SentiView
     </a>
 
     {% endfor %}
+
 
     {% if halaman < total_halaman %}
 
@@ -168,39 +288,58 @@ Riwayat - SentiView
 
 </div>
 
+
+<!-- JAVASCRIPT -->
+
 <script>
 
 function pilihSemua(checkbox) {
 
-    const checkboxes = document.querySelectorAll(
-        ".data-checkbox"
+    const checkboxes =
+        document.querySelectorAll(
+            ".data-checkbox"
+        );
+
+
+    checkboxes.forEach(
+        function(item) {
+
+            item.checked =
+                checkbox.checked;
+
+        }
     );
 
-    checkboxes.forEach(function(item) {
-        item.checked = checkbox.checked;
-    });
 }
+
 
 function konfirmasiHapus() {
 
-    const dataTerpilih = document.querySelectorAll(
-        ".data-checkbox:checked"
-    );
+    const dataTerpilih =
+        document.querySelectorAll(
+            ".data-checkbox:checked"
+        );
 
-    if (dataTerpilih.length === 0) {
+
+    if (
+        dataTerpilih.length === 0
+    ) {
 
         alert(
             "Pilih minimal satu data yang ingin dihapus."
         );
 
         return false;
+
     }
+
 
     return confirm(
         "Yakin ingin menghapus " +
         dataTerpilih.length +
         " data terpilih?"
     );
+
 }
 
 </script>

@@ -2,7 +2,7 @@ import json
 import pickle
 import pandas as pd
 from sklearn.metrics import accuracy_score
-from utils.preprocessing import bersihkan_teks
+from flask_app.utils.preprocessing import bersihkan_teks
 
 # BACA DATA VALIDASI
 df_valid = pd.read_csv(

@@ -4,14 +4,20 @@
 Dashboard Admin - SentiView
 {% endblock %}
 
+
 {% block content %}
 
-<!-- HEADER -->
+<!-- =========================================
+     HEADER
+========================================= -->
+
 <header class="admin-header">
 
     <div>
 
-        <h1>Dashboard</h1>
+        <h1>
+            Dashboard
+        </h1>
 
         <p>
             Ringkasan aktivitas klasifikasi sentimen.
@@ -21,12 +27,18 @@ Dashboard Admin - SentiView
 
 </header>
 
-<!-- RINGKASAN -->
+
+<!-- =========================================
+     RINGKASAN KLASIFIKASI
+========================================= -->
+
 <section class="dashboard-content">
 
     <div class="dashboard-title">
 
-        <h2>Ringkasan Klasifikasi</h2>
+        <h2>
+            Ringkasan Klasifikasi
+        </h2>
 
         <p>
             Ringkasan aktivitas klasifikasi sentimen.
@@ -34,7 +46,10 @@ Dashboard Admin - SentiView
 
     </div>
 
+
     <div class="stats-grid">
+
+        <!-- TOTAL -->
 
         <div class="stat-card">
 
@@ -48,6 +63,9 @@ Dashboard Admin - SentiView
 
         </div>
 
+
+        <!-- POSITIVE -->
+
         <div class="stat-card positive">
 
             <span class="stat-label">
@@ -60,6 +78,9 @@ Dashboard Admin - SentiView
 
         </div>
 
+
+        <!-- NEUTRAL -->
+
         <div class="stat-card neutral">
 
             <span class="stat-label">
@@ -71,6 +92,9 @@ Dashboard Admin - SentiView
             </span>
 
         </div>
+
+
+        <!-- NEGATIVE -->
 
         <div class="stat-card negative">
 
@@ -88,12 +112,18 @@ Dashboard Admin - SentiView
 
 </section>
 
-<!-- AKTIVITAS TERBARU -->
+
+<!-- =========================================
+     AKTIVITAS TERBARU
+========================================= -->
+
 <section class="dashboard-content history-section">
 
     <div class="dashboard-title">
 
-        <h2>Aktivitas Terbaru</h2>
+        <h2>
+            Aktivitas Terbaru
+        </h2>
 
         <p>
             Riwayat klasifikasi sentimen terbaru.
@@ -101,23 +131,39 @@ Dashboard Admin - SentiView
 
     </div>
 
+
     <div class="history-table-wrapper">
 
         <table class="history-table">
+
+            <!-- TABLE HEADER -->
 
             <thead>
 
                 <tr>
 
-                    <th>TEKS</th>
+                    <th>
+                        TEKS
+                    </th>
 
-                    <th>SENTIMEN</th>
+                    <th>
+                        SENTIMEN
+                    </th>
 
-                    <th>WAKTU</th>
+                    <th>
+                        CONFIDENCE
+                    </th>
+
+                    <th>
+                        WAKTU
+                    </th>
 
                 </tr>
 
             </thead>
+
+
+            <!-- TABLE BODY -->
 
             <tbody>
 
@@ -125,9 +171,14 @@ Dashboard Admin - SentiView
 
                 <tr>
 
+                    <!-- TEKS -->
+
                     <td>
                         {{ data[1] }}
                     </td>
+
+
+                    <!-- SENTIMEN -->
 
                     <td>
 
@@ -139,18 +190,41 @@ Dashboard Admin - SentiView
 
                     </td>
 
+
+                    <!-- CONFIDENCE -->
+
                     <td>
-                        {{ data[4] }}
+
+                        {% if data[4] is not none %}
+
+                            {{ "%.2f"|format(data[4]) }}%
+
+                        {% else %}
+
+                            -
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- WAKTU -->
+
+                    <td>
+                        {{ data[5] }}
                     </td>
 
                 </tr>
 
+
                 {% else %}
+
+                <!-- DATA KOSONG -->
 
                 <tr>
 
                     <td
-                        colspan="3"
+                        colspan="4"
                         class="empty-history"
                     >
                         Belum ada aktivitas klasifikasi.
