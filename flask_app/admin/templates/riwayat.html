@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    SentiView - Riwayat Analisis
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="container-fluid px-4">
+
+
+    <!-- ================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ================================================= -->
+
+    <h1 class="mt-4">
+        Riwayat Analisis
+    </h1>
+
+
+    <!-- BREADCRUMB -->
+
+    <ol class="breadcrumb mb-4">
+
+        <li class="breadcrumb-item">
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+        </li>
+
+        <li class="breadcrumb-item active">
+            Riwayat Analisis
+        </li>
+
+    </ol>
+
+
+    <!-- ================================================= -->
+    <!-- FLASH MESSAGE -->
+    <!-- ================================================= -->
+
+    {% with messages = get_flashed_messages(
+        with_categories=true
+    ) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div
+                    class="alert alert-{{ category }} alert-dismissible fade show"
+                    role="alert"
+                >
+
+                    {% if category == "success" %}
+
+                        <i class="fas fa-check-circle me-2"></i>
+
+                    {% elif category == "warning" %}
+
+                        <i class="fas fa-pen me-2"></i>
+
+                    {% elif category == "danger" %}
+
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+
+                    {% else %}
+
+                        <i class="fas fa-info-circle me-2"></i>
+
+                    {% endif %}
+
+                    <strong>
+                        {{ message }}
+                    </strong>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                    ></button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- ================================================= -->
+    <!-- DATA RIWAYAT -->
+    <!-- ================================================= -->
+
+    <div class="card mb-4">
+
+
+        <!-- ================================================= -->
+        <!-- CARD HEADER -->
+        <!-- ================================================= -->
+
+        <div
+            class="card-header d-flex justify-content-between align-items-center"
+        >
+
+            <div>
+
+                <i class="fas fa-table me-1"></i>
+
+                Data Riwayat Analisis
+
+            </div>
+
+
+            <!-- ACTION BUTTONS -->
+
+            <div>
+
+                <a
+                    href="{{ url_for('download_csv') }}"
+                    class="btn btn-success btn-sm me-2"
+                >
+
+                    <i class="fas fa-file-csv me-1"></i>
+
+                    Download CSV
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('tambah_riwayat') }}"
+                    class="btn btn-primary btn-sm"
+                >
+
+                    <i class="fas fa-plus me-1"></i>
+
+                    Tambah Data
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- CARD BODY -->
+        <!-- ================================================= -->
+
+        <div class="card-body">
+
+
+            <!-- ================================================= -->
+            <!-- TABLE -->
+            <!-- ================================================= -->
+
+            <table
+                id="riwayatTable"
+                class="table table-bordered"
+                width="100%"
+                cellspacing="0"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Teks
+                        </th>
+
+                        <th>
+                            Teks Bersih
+                        </th>
+
+                        <th>
+                            Sentimen
+                        </th>
+
+                        <th>
+                            Confidence
+                        </th>
+
+                        <th>
+                            Waktu
+                        </th>
+
+                        <th>
+                            Aksi
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for data in riwayat %}
+
+                    <tr>
+
+
+                        <!-- ID -->
+
+                        <td>
+                            {{ data[0] }}
+                        </td>
+
+
+                        <!-- TEKS ASLI -->
+
+                        <td>
+                            {{ data[1] }}
+                        </td>
+
+
+                        <!-- TEKS BERSIH -->
+
+                        <td>
+                            {{ data[2] }}
+                        </td>
+
+
+                        <!-- SENTIMEN -->
+
+                        <td>
+
+                            {% if data[3] == "positive" %}
+
+                                <span class="badge bg-success">
+                                    Positive
+                                </span>
+
+                            {% elif data[3] == "negative" %}
+
+                                <span class="badge bg-danger">
+                                    Negative
+                                </span>
+
+                            {% elif data[3] == "neutral" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Neutral
+                                </span>
+
+                            {% elif data[3] == "invalid" %}
+
+                                <span class="badge bg-secondary">
+                                    Invalid
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    {{ data[3] }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- CONFIDENCE -->
+
+                        <td>
+
+                            {% if data[4] is not none %}
+
+                                {{ "%.2f"|format(data[4]) }}%
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- WAKTU -->
+
+                        <td>
+                            {{ data[5] }}
+                        </td>
+
+
+                        <!-- AKSI -->
+
+                        <td>
+
+                            <!-- EDIT -->
+
+                            <a
+                                href="{{ url_for(
+                                    'edit_riwayat',
+                                    id_data=data[0]
+                                ) }}"
+                                class="btn btn-warning btn-sm"
+                            >
+
+                                <i class="fas fa-edit"></i>
+
+                                Edit
+
+                            </a>
+
+
+                            <!-- HAPUS -->
+
+                            <form
+                                action="{{ url_for(
+                                    'hapus_satu_riwayat',
+                                    id_data=data[0]
+                                ) }}"
+                                method="POST"
+                                style="display: inline;"
+                                onsubmit="
+                                    return confirm(
+                                        'Yakin ingin menghapus data ini?'
+                                    );
+                                "
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger btn-sm"
+                                >
+
+                                    <i class="fas fa-trash"></i>
+
+                                    Hapus
+
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<!-- ================================================= -->
+<!-- SIMPLE DATATABLES -->
+<!-- ================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
+    crossorigin="anonymous"
+></script>
+
+
+<script>
+
+    /* ================================================= */
+    /* RIWAYAT DATATABLE */
+    /* ================================================= */
+
+    const riwayatTable =
+        document.getElementById(
+            "riwayatTable"
+        );
+
+
+    if (riwayatTable) {
+
+        new simpleDatatables.DataTable(
+
+            riwayatTable,
+
+            {
+
+                perPage: 10,
+
+                perPageSelect: [
+
+                    5,
+
+                    10,
+
+                    20
+
+                ]
+
+            }
+
+        );
+
+    }
+
+</script>
+
+{% endblock %}

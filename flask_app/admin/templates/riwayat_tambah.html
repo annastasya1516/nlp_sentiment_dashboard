@@ -1,0 +1,489 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    SentiView - Tambah Data
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid px-4">
+
+
+    <!-- ================================================= -->
+    <!-- PAGE TITLE -->
+    <!-- ================================================= -->
+
+    <h1 class="mt-4">
+        Tambah Data Riwayat
+    </h1>
+
+
+    <!-- ================================================= -->
+    <!-- BREADCRUMB -->
+    <!-- ================================================= -->
+
+    <ol class="breadcrumb mb-4">
+
+        <li class="breadcrumb-item">
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+        </li>
+
+
+        <li class="breadcrumb-item">
+
+            <a href="{{ url_for('riwayat') }}">
+                Riwayat Analisis
+            </a>
+
+        </li>
+
+
+        <li class="breadcrumb-item active">
+            Tambah Data
+        </li>
+
+    </ol>
+
+
+    <!-- ================================================= -->
+    <!-- FLASH MESSAGE -->
+    <!-- ================================================= -->
+
+    {% with messages = get_flashed_messages(
+        with_categories=true
+    ) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div
+                    class="alert alert-{{ category }} alert-dismissible fade show"
+                    role="alert"
+                >
+
+                    {% if category == "success" %}
+
+                        <i class="fas fa-check-circle me-2"></i>
+
+                    {% elif category == "warning" %}
+
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+
+                    {% elif category == "danger" %}
+
+                        <i class="fas fa-times-circle me-2"></i>
+
+                    {% else %}
+
+                        <i class="fas fa-info-circle me-2"></i>
+
+                    {% endif %}
+
+
+                    <strong>
+                        {{ message }}
+                    </strong>
+
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                    ></button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- ================================================= -->
+    <!-- FORM AREA -->
+    <!-- ================================================= -->
+
+    <div class="row">
+
+
+        <!-- ================================================= -->
+        <!-- FORM -->
+        <!-- ================================================= -->
+
+        <div class="col-xl-8">
+
+            <div class="card mb-4">
+
+
+                <!-- CARD HEADER -->
+
+                <div class="card-header">
+
+                    <i class="fas fa-plus me-1"></i>
+
+                    Form Tambah Data
+
+                </div>
+
+
+                <!-- CARD BODY -->
+
+                <div class="card-body">
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('tambah_riwayat') }}"
+                    >
+
+
+                        <!-- ================================================= -->
+                        <!-- TEKS ASLI -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="teks_asli"
+                                class="form-label fw-bold"
+                            >
+                                Teks Asli
+                            </label>
+
+
+                            <textarea
+                                class="form-control"
+                                id="teks_asli"
+                                name="teks_asli"
+                                rows="4"
+                                placeholder="Masukkan teks asli..."
+                                required
+                            ></textarea>
+
+
+                            <div class="form-text">
+
+                                Masukkan kalimat yang ingin
+                                ditambahkan ke riwayat.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- TEKS BERSIH -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="teks_bersih"
+                                class="form-label fw-bold"
+                            >
+                                Teks Bersih
+                            </label>
+
+
+                            <textarea
+                                class="form-control"
+                                id="teks_bersih"
+                                name="teks_bersih"
+                                rows="4"
+                                placeholder="Masukkan teks yang sudah dibersihkan..."
+                            ></textarea>
+
+
+                            <div class="form-text">
+
+                                Versi teks setelah proses
+                                preprocessing.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- SENTIMEN -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="klasifikasi"
+                                class="form-label fw-bold"
+                            >
+                                Sentimen
+                            </label>
+
+
+                            <select
+                                class="form-select"
+                                id="klasifikasi"
+                                name="klasifikasi"
+                                required
+                            >
+
+                                <option value="">
+                                    -- Pilih Sentimen --
+                                </option>
+
+
+                                <option value="positive">
+                                    Positive
+                                </option>
+
+
+                                <option value="negative">
+                                    Negative
+                                </option>
+
+
+                                <option value="neutral">
+                                    Neutral
+                                </option>
+
+
+                                <option value="invalid">
+                                    Invalid
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- CONFIDENCE -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="confidence"
+                                class="form-label fw-bold"
+                            >
+                                Confidence
+                            </label>
+
+
+                            <div class="input-group">
+
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="confidence"
+                                    name="confidence"
+                                    min="0"
+                                    max="100"
+                                    step="0.01"
+                                    placeholder="Contoh: 87.70"
+                                >
+
+
+                                <span class="input-group-text">
+                                    %
+                                </span>
+
+                            </div>
+
+
+                            <div class="form-text">
+
+                                Kosongkan jika confidence
+                                tidak tersedia.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- BUTTON -->
+                        <!-- ================================================= -->
+
+                        <div
+                            class="d-flex justify-content-end gap-2 mt-4"
+                        >
+
+                            <a
+                                href="{{ url_for('riwayat') }}"
+                                class="btn btn-secondary"
+                            >
+
+                                <i class="fas fa-arrow-left me-1"></i>
+
+                                Batal
+
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+
+                                <i class="fas fa-save me-1"></i>
+
+                                Simpan Data
+
+                            </button>
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- INFORMATION -->
+        <!-- ================================================= -->
+
+        <div class="col-xl-4">
+
+
+            <!-- ================================================= -->
+            <!-- INFO CARD -->
+            <!-- ================================================= -->
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+
+                    <i class="fas fa-info-circle me-1"></i>
+
+                    Informasi
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <p class="mb-3">
+
+                        <strong>
+                            Tambah Data Riwayat
+                        </strong>
+
+                    </p>
+
+
+                    <p class="text-muted">
+
+                        Halaman ini digunakan untuk
+                        menambahkan data analisis sentimen
+                        secara manual ke dalam database
+                        riwayat.
+
+                    </p>
+
+
+                    <hr>
+
+
+                    <p class="mb-2">
+
+                        <i
+                            class="fas fa-check-circle text-success me-2"
+                        ></i>
+
+                        Teks asli
+
+                    </p>
+
+
+                    <p class="mb-2">
+
+                        <i
+                            class="fas fa-check-circle text-success me-2"
+                        ></i>
+
+                        Teks bersih
+
+                    </p>
+
+
+                    <p class="mb-2">
+
+                        <i
+                            class="fas fa-check-circle text-success me-2"
+                        ></i>
+
+                        Klasifikasi sentimen
+
+                    </p>
+
+
+                    <p class="mb-0">
+
+                        <i
+                            class="fas fa-check-circle text-success me-2"
+                        ></i>
+
+                        Confidence
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CATATAN -->
+            <!-- ================================================= -->
+
+            <div class="card mb-4 border-warning">
+
+                <div class="card-header">
+
+                    <i class="fas fa-lightbulb me-1"></i>
+
+                    Catatan
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <p class="mb-0 text-muted">
+
+                        <small>
+
+                            Confidence dapat dikosongkan
+                            apabila data tidak memiliki
+                            nilai confidence.
+
+                        </small>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

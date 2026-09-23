@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block title %}
+    SentiView - Model Sentimen
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-4">
+
+    <!-- HEADER -->
+    <div class="admin-header">
+        <div>
+            <h1>Model Sentimen</h1>
+            <p>
+                Informasi model machine learning yang digunakan
+                untuk klasifikasi sentimen.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- MODEL OVERVIEW -->
+    <div class="row mb-4">
+
+        <!-- MODEL -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="model-card">
+
+                <div class="model-icon blue">
+                    <i class="fas fa-brain"></i>
+                </div>
+
+                <div class="model-info">
+                    <span class="model-label">
+                        Model
+                    </span>
+
+                    <h3>
+                        Logistic Regression
+                    </h3>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- METODE -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="model-card">
+
+                <div class="model-icon purple">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+
+                <div class="model-info">
+                    <span class="model-label">
+                        Metode
+                    </span>
+
+                    <h3>
+                        TF-IDF
+                    </h3>
+
+                    <small>
+                        Feature Extraction
+                    </small>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- AKURASI -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="model-card">
+
+                <div class="model-icon green">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+
+                <div class="model-info">
+                    <span class="model-label">
+                        Akurasi
+                    </span>
+
+                    <h3 class="accuracy-value">
+                        {{ akurasi }}
+                    </h3>
+
+                    <small>
+                        Data validasi
+                    </small>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- STATUS -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="model-card">
+
+                <div class="model-icon orange">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+
+                <div class="model-info">
+                    <span class="model-label">
+                        Status
+                    </span>
+
+                    <h3>
+                        Aktif
+                    </h3>
+
+                    <small>
+                        Model digunakan aplikasi
+                    </small>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- DETAIL MODEL -->
+    <div class="row">
+
+        <!-- INFORMASI -->
+        <div class="col-xl-7 mb-4">
+
+            <div class="model-section">
+
+                <div class="model-section-header">
+                    <div>
+                        <h2>
+                            <i class="fas fa-brain"></i>
+                            Informasi Model
+                        </h2>
+
+                        <p>
+                            Detail konfigurasi model klasifikasi
+                            sentimen yang sedang digunakan.
+                        </p>
+                    </div>
+                </div>
+
+
+                <div class="model-detail-list">
+
+                    <div class="model-detail-item">
+
+                        <div class="detail-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+
+                        <div>
+                            <span>
+                                Algoritma
+                            </span>
+
+                            <strong>
+                                Logistic Regression
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="model-detail-item">
+
+                        <div class="detail-icon">
+                            <i class="fas fa-filter"></i>
+                        </div>
+
+                        <div>
+                            <span>
+                                Feature Extraction
+                            </span>
+
+                            <strong>
+                                TF-IDF Vectorizer
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="model-detail-item">
+
+                        <div class="detail-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+
+                        <div>
+                            <span>
+                                Kategori Sentimen
+                            </span>
+
+                            <strong>
+                                Positive · Neutral · Negative
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="model-detail-item">
+
+                        <div class="detail-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+
+                        <div>
+                            <span>
+                                Evaluasi
+                            </span>
+
+                            <strong>
+                                Accuracy
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FILE MODEL -->
+        <div class="col-xl-5 mb-4">
+
+            <div class="model-section">
+
+                <div class="model-section-header">
+                    <div>
+                        <h2>
+                            <i class="fas fa-folder-open"></i>
+                            File Model
+                        </h2>
+
+                        <p>
+                            File yang digunakan aplikasi.
+                        </p>
+                    </div>
+                </div>
+
+
+                <div class="file-box">
+
+                    <div class="file-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+
+                    <div class="file-content">
+
+                        <span>
+                            Model
+                        </span>
+
+                        <strong>
+                            model_sentimen.pkl
+                        </strong>
+
+                        <small>
+                            models/model_sentimen.pkl
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="file-box">
+
+                    <div class="file-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+
+                    <div class="file-content">
+
+                        <span>
+                            Vectorizer
+                        </span>
+
+                        <strong>
+                            vectorizer_tfidf.pkl
+                        </strong>
+
+                        <small>
+                            models/vectorizer_tfidf.pkl
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DATASET -->
+    <div class="model-section mb-4">
+
+        <div class="model-section-header">
+
+            <div>
+                <h2>
+                    <i class="fas fa-database"></i>
+                    Dataset Training
+                </h2>
+
+                <p>
+                    Dataset yang digunakan dalam proses
+                    pelatihan dan validasi model.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="dataset-list">
+
+            <div class="dataset-item">
+
+                <div class="dataset-icon">
+                    <i class="fas fa-file-csv"></i>
+                </div>
+
+                <div class="dataset-info">
+
+                    <span>
+                        Training Dataset
+                    </span>
+
+                    <strong>
+                        train_preprocess_ori.tsv
+                    </strong>
+
+                    <small>
+                        datasets/train_preprocess_ori.tsv
+                    </small>
+
+                </div>
+
+                <span class="dataset-badge">
+                    Training
+                </span>
+
+            </div>
+
+
+            <div class="dataset-item">
+
+                <div class="dataset-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+
+                <div class="dataset-info">
+
+                    <span>
+                        Validation Dataset
+                    </span>
+
+                    <strong>
+                        valid_preprocess.tsv
+                    </strong>
+
+                    <small>
+                        datasets/valid_preprocess.tsv
+                    </small>
+
+                </div>
+
+                <span class="dataset-badge validation">
+                    Validation
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

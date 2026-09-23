@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    SentiView - Edit Riwayat
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid px-4">
+
+
+    <!-- ================================================= -->
+    <!-- PAGE TITLE -->
+    <!-- ================================================= -->
+
+    <h1 class="mt-4">
+        Edit Riwayat Analisis
+    </h1>
+
+
+    <!-- ================================================= -->
+    <!-- BREADCRUMB -->
+    <!-- ================================================= -->
+
+    <ol class="breadcrumb mb-4">
+
+        <li class="breadcrumb-item">
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+        </li>
+
+
+        <li class="breadcrumb-item">
+
+            <a href="{{ url_for('riwayat') }}">
+                Riwayat Analisis
+            </a>
+
+        </li>
+
+
+        <li class="breadcrumb-item active">
+            Edit Data
+        </li>
+
+    </ol>
+
+
+    <!-- ================================================= -->
+    <!-- CONTENT -->
+    <!-- ================================================= -->
+
+    <div class="row">
+
+
+        <!-- ================================================= -->
+        <!-- FORM EDIT -->
+        <!-- ================================================= -->
+
+        <div class="col-xl-8">
+
+            <div class="card mb-4">
+
+
+                <!-- CARD HEADER -->
+
+                <div class="card-header">
+
+                    <i class="fas fa-edit me-1"></i>
+
+                    Edit Data Riwayat
+
+                </div>
+
+
+                <!-- CARD BODY -->
+
+                <div class="card-body">
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'edit_riwayat',
+                            id_data=data[0]
+                        ) }}"
+                    >
+
+
+                        <!-- ================================================= -->
+                        <!-- ID -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                class="form-label fw-bold"
+                            >
+                                ID Data
+                            </label>
+
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ data[0] }}"
+                                readonly
+                            >
+
+
+                            <div class="form-text">
+
+                                ID digunakan sebagai identitas
+                                data dan tidak dapat diubah.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- TEKS ASLI -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="teks_asli"
+                                class="form-label fw-bold"
+                            >
+                                Teks Asli
+                            </label>
+
+
+                            <textarea
+                                class="form-control"
+                                id="teks_asli"
+                                name="teks_asli"
+                                rows="4"
+                                required
+                            >{{ data[1] }}</textarea>
+
+
+                            <div class="form-text">
+
+                                Teks yang digunakan sebagai
+                                input asli.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- TEKS BERSIH -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="teks_bersih"
+                                class="form-label fw-bold"
+                            >
+                                Teks Bersih
+                            </label>
+
+
+                            <textarea
+                                class="form-control"
+                                id="teks_bersih"
+                                name="teks_bersih"
+                                rows="4"
+                                required
+                            >{{ data[2] }}</textarea>
+
+
+                            <div class="form-text">
+
+                                Hasil teks setelah proses
+                                preprocessing.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- SENTIMEN -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="klasifikasi"
+                                class="form-label fw-bold"
+                            >
+                                Sentimen
+                            </label>
+
+
+                            <select
+                                class="form-select"
+                                id="klasifikasi"
+                                name="klasifikasi"
+                                required
+                            >
+
+                                <option
+                                    value="positive"
+                                    {% if data[3] == "positive" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Positive
+                                </option>
+
+
+                                <option
+                                    value="negative"
+                                    {% if data[3] == "negative" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Negative
+                                </option>
+
+
+                                <option
+                                    value="neutral"
+                                    {% if data[3] == "neutral" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Neutral
+                                </option>
+
+
+                                <option
+                                    value="invalid"
+                                    {% if data[3] == "invalid" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Invalid
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- CONFIDENCE -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="confidence"
+                                class="form-label fw-bold"
+                            >
+                                Confidence (%)
+                            </label>
+
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="confidence"
+                                name="confidence"
+                                value="{% if data[4] is not none %}{{ data[4] }}{% endif %}"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                                placeholder="Contoh: 87.70"
+                            >
+
+
+                            <div class="form-text">
+
+                                Isi nilai antara 0 sampai 100.
+                                Kosongkan jika tidak ada
+                                confidence.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- BUTTON -->
+                        <!-- ================================================= -->
+
+                        <div
+                            class="d-flex justify-content-end gap-2"
+                        >
+
+                            <a
+                                href="{{ url_for('riwayat') }}"
+                                class="btn btn-secondary"
+                            >
+
+                                <i class="fas fa-arrow-left me-1"></i>
+
+                                Batal
+
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+
+                                <i class="fas fa-save me-1"></i>
+
+                                Simpan Perubahan
+
+                            </button>
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- INFORMASI -->
+        <!-- ================================================= -->
+
+        <div class="col-xl-4">
+
+
+            <!-- ================================================= -->
+            <!-- DATA -->
+            <!-- ================================================= -->
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+
+                    <i class="fas fa-info-circle me-1"></i>
+
+                    Informasi Data
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <!-- ID -->
+
+                    <div class="mb-3">
+
+                        <div class="small text-muted">
+                            ID
+                        </div>
+
+
+                        <div class="fw-bold">
+                            #{{ data[0] }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- SENTIMEN -->
+
+                    <div class="mb-3">
+
+                        <div class="small text-muted">
+                            Sentimen Saat Ini
+                        </div>
+
+
+                        <div>
+
+                            {% if data[3] == "positive" %}
+
+                                <span class="badge bg-success">
+                                    Positive
+                                </span>
+
+                            {% elif data[3] == "negative" %}
+
+                                <span class="badge bg-danger">
+                                    Negative
+                                </span>
+
+                            {% elif data[3] == "neutral" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Neutral
+                                </span>
+
+                            {% elif data[3] == "invalid" %}
+
+                                <span class="badge bg-secondary">
+                                    Invalid
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    {{ data[3] }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIDENCE -->
+
+                    <div class="mb-3">
+
+                        <div class="small text-muted">
+                            Confidence Saat Ini
+                        </div>
+
+
+                        <div class="fw-bold">
+
+                            {% if data[4] is not none %}
+
+                                {{ "%.2f"|format(data[4]) }}%
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- WAKTU -->
+
+                    <div>
+
+                        <div class="small text-muted">
+                            Waktu Analisis
+                        </div>
+
+
+                        <div class="fw-bold">
+                            {{ data[5] }}
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CATATAN -->
+            <!-- ================================================= -->
+
+            <div class="card mb-4 border-warning">
+
+                <div class="card-header">
+
+                    <i class="fas fa-lightbulb me-1"></i>
+
+                    Catatan
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <p class="mb-0">
+
+                        Perubahan pada data riwayat akan
+                        langsung disimpan ke database.
+                        Pastikan data sudah sesuai sebelum
+                        menyimpan perubahan.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

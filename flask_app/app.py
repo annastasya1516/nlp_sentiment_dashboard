@@ -1,17 +1,29 @@
+import csv
+import io
 import json
+import os
 
 from flask import (
     Flask,
-    Response,
+    flash,
     jsonify,
     redirect,
     render_template,
     request,
+    send_file,
+    send_from_directory,
     session,
     url_for
 )
 
-from services.sentiment_service import proses_sentimen
+from jinja2 import (
+    ChoiceLoader,
+    FileSystemLoader
+)
+
+from services.sentiment_service import (
+    proses_sentimen
+)
 
 from utils.database import (
     ambil_riwayat,
@@ -21,12 +33,44 @@ from utils.database import (
     ambil_statistik_bulanan,
     ambil_statistik_harian,
     ambil_statistik_tahunan,
-    edit_riwayat,
+    edit_riwayat as update_riwayat,
     hapus_riwayat,
-    hitung_total_riwayat
+    hitung_total_riwayat,
+    simpan_ke_db
 )
 
-from utils.security import verify_password
+from utils.security import (
+    verify_password
+)
+
+
+# =========================================================
+# PATH PROJECT
+# =========================================================
+
+BASE_DIR = os.path.dirname(
+    os.path.abspath(__file__)
+)
+
+PROJECT_DIR = os.path.dirname(
+    BASE_DIR
+)
+
+ADMIN_DIR = os.path.join(
+    BASE_DIR,
+    "admin"
+)
+
+ADMIN_TEMPLATE_DIR = os.path.join(
+    ADMIN_DIR,
+    "templates"
+)
+
+METRICS_PATH = os.path.join(
+    PROJECT_DIR,
+    "models",
+    "metrics.json"
+)
 
 
 # =========================================================
@@ -35,7 +79,36 @@ from utils.security import verify_password
 
 app = Flask(__name__)
 
-app.secret_key = "kunci-rahasia-aplikasi"
+app.secret_key = (
+    "kunci-rahasia-aplikasi"
+)
+
+
+# =========================================================
+# TEMPLATE LOADER
+# =========================================================
+#
+# Template utama:
+# flask_app/templates
+#
+# Template admin:
+# flask_app/admin/templates
+#
+# Component admin:
+# flask_app/admin/components
+#
+# =========================================================
+
+app.jinja_loader = ChoiceLoader([
+    app.jinja_loader,
+    FileSystemLoader(ADMIN_TEMPLATE_DIR),
+    FileSystemLoader(ADMIN_DIR)
+])
+
+
+# =========================================================
+# KONFIGURASI ADMIN
+# =========================================================
 
 ADMIN_USERNAME = "admin"
 
@@ -45,31 +118,86 @@ ADMIN_PASSWORD_HASH = (
 
 
 # =========================================================
+# ASSET SB ADMIN
+# =========================================================
+
+@app.route(
+    "/admin-static/<path:filename>"
+)
+def admin_static(filename):
+
+    return send_from_directory(
+        ADMIN_DIR,
+        filename
+    )
+
+
+# =========================================================
+# FUNGSI CEK LOGIN ADMIN
+# =========================================================
+
+def admin_sudah_login():
+
+    return session.get(
+        "admin_login",
+        False
+    )
+
+
+# =========================================================
 # INFORMASI MODEL
 # =========================================================
 
-with open(
-    "models/metrics.json",
-    "r",
-    encoding="utf-8"
-) as file:
+def ambil_akurasi_model():
 
-    metrics = json.load(file)
+    try:
 
-akurasi = metrics["accuracy"]
+        with open(
+            METRICS_PATH,
+            "r",
+            encoding="utf-8"
+        ) as file:
 
-print(
-    "Akurasi model:",
-    akurasi
-)
+            metrics = json.load(
+                file
+            )
+
+        return metrics.get(
+            "accuracy",
+            "N/A"
+        )
+
+    except FileNotFoundError:
+
+        print(
+            "metrics.json tidak ditemukan:"
+        )
+
+        print(
+            METRICS_PATH
+        )
+
+        return "N/A"
+
+    except json.JSONDecodeError:
+
+        print(
+            "Format metrics.json tidak valid."
+        )
+
+        return "N/A"
 
 
 # =========================================================
-# HALAMAN UTAMA
+# HALAMAN UTAMA USER
 # =========================================================
 
 @app.route("/")
 def home():
+
+    akurasi = (
+        ambil_akurasi_model()
+    )
 
     return render_template(
         "index.html",
@@ -89,6 +217,13 @@ def analisis():
 
     data = request.get_json()
 
+    if not data:
+
+        return jsonify({
+            "status": "error",
+            "message": "Data tidak ditemukan."
+        }), 400
+
     teks = data.get(
         "teks",
         ""
@@ -99,8 +234,12 @@ def analisis():
         teks
     )
 
-    prediksi, confidence = proses_sentimen(
-        teks
+    prediksi, confidence = (
+        proses_sentimen(teks)
+    )
+
+    akurasi = (
+        ambil_akurasi_model()
     )
 
     print(
@@ -130,21 +269,31 @@ def analisis():
     "/admin",
     methods=["GET", "POST"]
 )
-def admin():
+def admin_login():
+
+    if admin_sudah_login():
+
+        return redirect(
+            url_for("dashboard")
+        )
 
     if request.method == "POST":
 
         username = request.form.get(
-            "username"
-        )
+            "username",
+            ""
+        ).strip()
 
         password = request.form.get(
-            "password"
+            "password",
+            ""
         )
 
-        password_benar = verify_password(
-            password,
-            ADMIN_PASSWORD_HASH
+        password_benar = (
+            verify_password(
+                password,
+                ADMIN_PASSWORD_HASH
+            )
         )
 
         if (
@@ -152,15 +301,20 @@ def admin():
             and password_benar
         ):
 
-            session["admin_login"] = True
+            session[
+                "admin_login"
+            ] = True
 
             return redirect(
-                "/admin/dashboard"
+                url_for("dashboard")
             )
 
         return render_template(
             "admin_login.html",
-            error="Username atau password salah."
+            error=(
+                "Username atau "
+                "password salah."
+            )
         )
 
     return render_template(
@@ -172,34 +326,58 @@ def admin():
 # DASHBOARD ADMIN
 # =========================================================
 
-@app.route("/admin/dashboard")
-def admin_dashboard():
+@app.route(
+    "/admin/dashboard"
+)
+def dashboard():
 
-    if not session.get("admin_login"):
-        return redirect("/admin")
+    if not admin_sudah_login():
 
-    statistik = ambil_statistik()
+        return redirect(
+            url_for("admin_login")
+        )
 
-    riwayat = ambil_riwayat()
+    statistik = (
+        ambil_statistik()
+    )
+
+    riwayat = ambil_riwayat(
+        limit=20,
+        offset=0
+    )
+
+    statistik_harian = (
+        ambil_statistik_harian()
+    )
 
     return render_template(
-        "admin_dashboard.html",
+        "dashboard.html",
         statistik=statistik,
-        riwayat=riwayat
+        riwayat=riwayat,
+        statistik_harian=(
+            statistik_harian
+        )
     )
 
 
 # =========================================================
-# STATISTIK
+# STATISTIK ADMIN
 # =========================================================
 
-@app.route("/admin/statistik")
-def admin_statistik():
+@app.route(
+    "/admin/statistik"
+)
+def statistik():
 
-    if not session.get("admin_login"):
-        return redirect("/admin")
+    if not admin_sudah_login():
 
-    statistik = ambil_statistik()
+        return redirect(
+            url_for("admin_login")
+        )
+
+    data_statistik = (
+        ambil_statistik()
+    )
 
     statistik_harian = (
         ambil_statistik_harian()
@@ -214,11 +392,17 @@ def admin_statistik():
     )
 
     return render_template(
-        "admin_statistik.html",
-        statistik=statistik,
-        statistik_harian=statistik_harian,
-        statistik_bulanan=statistik_bulanan,
-        statistik_tahunan=statistik_tahunan
+        "statistik.html",
+        statistik=data_statistik,
+        statistik_harian=(
+            statistik_harian
+        ),
+        statistik_bulanan=(
+            statistik_bulanan
+        ),
+        statistik_tahunan=(
+            statistik_tahunan
+        )
     )
 
 
@@ -226,108 +410,245 @@ def admin_statistik():
 # RIWAYAT KLASIFIKASI
 # =========================================================
 
-@app.route("/admin/riwayat")
-def admin_riwayat():
+@app.route(
+    "/admin/riwayat"
+)
+def riwayat():
 
-    if not session.get("admin_login"):
-        return redirect("/admin")
+    if not admin_sudah_login():
 
-    halaman = request.args.get(
-        "halaman",
-        1,
-        type=int
-    )
+        return redirect(
+            url_for("admin_login")
+        )
 
-    if halaman < 1:
-        halaman = 1
-
-    data_per_halaman = 20
-
-    offset = (
-        halaman - 1
-    ) * data_per_halaman
-
-    riwayat = ambil_riwayat(
-        limit=data_per_halaman,
-        offset=offset
-    )
-
-    total_data = hitung_total_riwayat()
-
-    total_halaman = (
-        (total_data + data_per_halaman - 1)
-        // data_per_halaman
+    data_riwayat = (
+        ambil_semua_riwayat()
     )
 
     return render_template(
-        "admin_riwayat.html",
-        riwayat=riwayat,
-        halaman=halaman,
-        total_halaman=total_halaman
+        "riwayat.html",
+        riwayat=data_riwayat
     )
 
 
 # =========================================================
-# DOWNLOAD RIWAYAT DALAM CSV
+# TAMBAH RIWAYAT
 # =========================================================
 
-@app.route("/admin/riwayat/download")
-def download_csv():
+@app.route(
+    "/admin/riwayat/tambah",
+    methods=["GET", "POST"]
+)
+def tambah_riwayat():
 
-    if not session.get("admin_login"):
-        return redirect("/admin")
+    if not admin_sudah_login():
 
-    riwayat = ambil_semua_riwayat()
-
-    csv_data = (
-        "ID,"
-        "Teks Asli,"
-        "Teks Bersih,"
-        "Sentimen,"
-        "Confidence,"
-        "Waktu\n"
-    )
-
-    for data in riwayat:
-
-        confidence = (
-            f"{data[4]:.2f}%"
-            if data[4] is not None
-            else "-"
+        return redirect(
+            url_for("admin_login")
         )
 
-        csv_data += (
-            f'"{data[0]}",'
-            f'"{data[1]}",'
-            f'"{data[2]}",'
-            f'"{data[3]}",'
-            f'"{confidence}",'
-            f'"{data[5]}"\n'
+    if request.method == "POST":
+
+        teks_asli = request.form.get(
+            "teks_asli",
+            ""
+        ).strip()
+
+        teks_bersih = request.form.get(
+            "teks_bersih",
+            ""
+        ).strip()
+
+        klasifikasi = request.form.get(
+            "klasifikasi",
+            ""
         )
 
-    return Response(
-        csv_data,
-        mimetype="text/csv",
-        headers={
-            "Content-Disposition":
-                "attachment; "
-                "filename=riwayat_sentimen.csv"
-        }
+        confidence_input = (
+            request.form.get(
+                "confidence",
+                ""
+            ).strip()
+        )
+
+        if confidence_input:
+
+            try:
+
+                confidence = float(
+                    confidence_input
+                )
+
+            except ValueError:
+
+                confidence = None
+
+        else:
+
+            confidence = None
+
+        simpan_ke_db(
+            teks_asli,
+            teks_bersih,
+            klasifikasi,
+            confidence
+        )
+
+        flash(
+            "Data berhasil ditambahkan!",
+            "success"
+        )
+
+        return redirect(
+            url_for("riwayat")
+        )
+
+    return render_template(
+        "riwayat_tambah.html"
     )
 
 
 # =========================================================
-# HAPUS RIWAYAT
+# EDIT RIWAYAT
+# =========================================================
+
+@app.route(
+    "/admin/riwayat/edit/<int:id_data>",
+    methods=["GET", "POST"]
+)
+def edit_riwayat(id_data):
+
+    if not admin_sudah_login():
+
+        return redirect(
+            url_for("admin_login")
+        )
+
+    data = (
+        ambil_riwayat_by_id(
+            id_data
+        )
+    )
+
+    if data is None:
+
+        flash(
+            "Data tidak ditemukan.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("riwayat")
+        )
+
+    if request.method == "POST":
+
+        teks_asli = request.form.get(
+            "teks_asli",
+            ""
+        ).strip()
+
+        teks_bersih = request.form.get(
+            "teks_bersih",
+            ""
+        ).strip()
+
+        klasifikasi = request.form.get(
+            "klasifikasi",
+            ""
+        )
+
+        confidence_input = (
+            request.form.get(
+                "confidence",
+                ""
+            ).strip()
+        )
+
+        if confidence_input:
+
+            try:
+
+                confidence = float(
+                    confidence_input
+                )
+
+            except ValueError:
+
+                confidence = None
+
+        else:
+
+            confidence = None
+
+        update_riwayat(
+            id_data,
+            teks_asli,
+            teks_bersih,
+            klasifikasi,
+            confidence
+        )
+
+        flash(
+            "Data berhasil diperbarui!",
+            "warning"
+        )
+
+        return redirect(
+            url_for("riwayat")
+        )
+
+    return render_template(
+        "riwayat_edit.html",
+        data=data
+    )
+
+
+# =========================================================
+# HAPUS SATU RIWAYAT
+# =========================================================
+
+@app.route(
+    "/admin/riwayat/hapus/<int:id_data>",
+    methods=["POST"]
+)
+def hapus_satu_riwayat(id_data):
+
+    if not admin_sudah_login():
+
+        return redirect(
+            url_for("admin_login")
+        )
+
+    hapus_riwayat(
+        [id_data]
+    )
+
+    flash(
+        "Data berhasil dihapus!",
+        "danger"
+    )
+
+    return redirect(
+        url_for("riwayat")
+    )
+
+
+# =========================================================
+# HAPUS BANYAK RIWAYAT
 # =========================================================
 
 @app.route(
     "/admin/riwayat/hapus",
     methods=["POST"]
 )
-def admin_hapus_riwayat():
+def hapus_banyak_riwayat():
 
-    if not session.get("admin_login"):
-        return redirect("/admin")
+    if not admin_sudah_login():
+
+        return redirect(
+            url_for("admin_login")
+        )
 
     ids_data = request.form.getlist(
         "ids_data"
@@ -339,135 +660,93 @@ def admin_hapus_riwayat():
             ids_data
         )
 
-    halaman = request.form.get(
-        "halaman",
-        1,
-        type=int
-    )
+        flash(
+            "Data berhasil dihapus!",
+            "danger"
+        )
 
     return redirect(
-        url_for(
-            "admin_riwayat",
-            halaman=halaman
-        )
+        url_for("riwayat")
     )
 
+
 # =========================================================
-# HALAMAN EDIT RIWAYAT
+# DOWNLOAD RIWAYAT CSV
 # =========================================================
 
 @app.route(
-    "/admin/riwayat/edit/<int:id_data>",
-    methods=["GET"]
+    "/admin/riwayat/download"
 )
-def admin_edit_riwayat_page(id_data):
+def download_csv():
 
-    if not session.get("admin_login"):
-        return redirect("/admin")
+    if not admin_sudah_login():
 
-    data = ambil_riwayat_by_id(
-        id_data
-    )
-
-    if data is None:
         return redirect(
-            url_for(
-                "admin_riwayat"
-            )
+            url_for("admin_login")
         )
 
-    halaman = request.args.get(
-        "halaman",
-        1,
-        type=int
+    data_riwayat = (
+        ambil_semua_riwayat()
     )
 
-    return render_template(
-        "admin_edit_riwayat.html",
-        data=data,
-        halaman=halaman
+    output = io.StringIO()
+
+    writer = csv.writer(
+        output
     )
-    
+
+    writer.writerow([
+        "ID",
+        "Teks Asli",
+        "Teks Bersih",
+        "Sentimen",
+        "Confidence",
+        "Waktu"
+    ])
+
+    for data in data_riwayat:
+
+        writer.writerow(
+            data
+        )
+
+    output.seek(0)
+
+    return send_file(
+        io.BytesIO(
+            output.getvalue().encode(
+                "utf-8-sig"
+            )
+        ),
+        mimetype="text/csv",
+        as_attachment=True,
+        download_name=(
+            "riwayat_sentimen.csv"
+        )
+    )
+
+
 # =========================================================
-# EDIT RIWAYAT
+# MODEL SENTIMEN
 # =========================================================
 
 @app.route(
-    "/admin/riwayat/edit/<int:id_data>",
-    methods=["POST"]
+    "/admin/model"
 )
-def admin_edit_riwayat(id_data):
+def model_sentimen():
 
-    if not session.get("admin_login"):
-        return redirect("/admin")
+    if not admin_sudah_login():
 
-    teks_asli = request.form.get(
-        "teks_asli",
-        ""
-    )
-
-    teks_bersih = request.form.get(
-        "teks_bersih",
-        ""
-    )
-
-    klasifikasi = request.form.get(
-        "klasifikasi",
-        ""
-    )
-
-    confidence_input = request.form.get(
-        "confidence",
-        ""
-    )
-
-    if confidence_input:
-
-        try:
-            confidence = float(
-                confidence_input
-            )
-
-        except ValueError:
-            confidence = None
-
-    else:
-        confidence = None
-
-    edit_riwayat(
-        id_data,
-        teks_asli,
-        teks_bersih,
-        klasifikasi,
-        confidence
-    )
-
-    halaman = request.form.get(
-        "halaman",
-        1,
-        type=int
-    )
-
-    return redirect(
-        url_for(
-            "admin_riwayat",
-            halaman=halaman
+        return redirect(
+            url_for("admin_login")
         )
+
+    akurasi = (
+        ambil_akurasi_model()
     )
-
-
-# =========================================================
-# MODEL
-# =========================================================
-
-@app.route("/admin/model")
-def admin_model():
-
-    if not session.get("admin_login"):
-        return redirect("/admin")
 
     return render_template(
-        "admin_model.html",
+        "model.html",
         akurasi=akurasi
     )
 
@@ -480,16 +759,12 @@ def admin_model():
     "/admin/logout",
     methods=["GET", "POST"]
 )
-def admin_logout():
+def logout():
 
-    session.pop(
-        "admin_login",
-        None
-    )
+    session.clear()
 
-    return render_template(
-        "admin_login.html",
-        success="Anda berhasil logout."
+    return redirect(
+        url_for("admin_login")
     )
 
 

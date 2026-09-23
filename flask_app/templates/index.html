@@ -12,6 +12,11 @@
     <title>SentiView - Analisis Sentimen</title>
 
     <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
@@ -106,6 +111,7 @@
                     0 / 2000
                 </span>
 
+        
                 <button
                     type="button"
                     class="voice-button"
@@ -113,7 +119,7 @@
                     title="Gunakan Voice to Text"
                     aria-label="Gunakan Voice to Text"
                 >
-                    🎤
+                    <i class="fa-solid fa-microphone"></i>
                 </button>
 
             </div>
@@ -126,8 +132,6 @@
             </button>
 
         </section>
-
-
 
         <!-- RESULT CARD -->
 
@@ -771,36 +775,31 @@
             ============================== */
 
             recognition.onend =
-                function () {
+            function () {
+                clearTimeout(
+                    silenceTimer
+                );
 
-                    clearTimeout(
-                        silenceTimer
+                const adaTeks =
+                    sentimentText.value.trim() !== "";
+
+                sedangMerekam =
+                    false;
+
+                voiceButton.innerHTML =
+                    '<i class="fa-solid fa-microphone"></i>';
+
+                if (adaTeks) {
+
+                    console.log(
+                        "Voice selesai. Memulai analisis otomatis..."
                     );
 
+                    analisisSentimen();
 
-                    voiceButton.textContent =
-                        "🔴";
+                }
 
-
-                    if (
-                        sedangMerekam &&
-                        sentimentText.value.trim()
-                    ) {
-
-                        sedangMerekam =
-                            false;
-
-
-                        console.log(
-                            "Voice selesai. Memulai analisis otomatis..."
-                        );
-
-
-                        analisisSentimen();
-
-                    }
-
-                };
+            };
 
 
 
@@ -823,8 +822,8 @@
                     recognition.start();
 
 
-                    voiceButton.textContent =
-                        "🔴 Mendengarkan...";
+                    voiceButton.innerHTML =
+                    '<i class="fa-solid fa-circle"></i> Mendengarkan...';
 
                 }
             );

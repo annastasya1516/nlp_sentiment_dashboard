@@ -1,0 +1,740 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    SentiView - Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid px-4">
+
+
+    <!-- ================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ================================================= -->
+
+    <h1 class="mt-4">
+        Dashboard
+    </h1>
+
+
+    <ol class="breadcrumb mb-4">
+
+        <li class="breadcrumb-item active">
+            Dashboard
+        </li>
+
+    </ol>
+
+
+    <!-- ================================================= -->
+    <!-- SUMMARY CARDS -->
+    <!-- ================================================= -->
+
+    <div class="row">
+
+
+        <!-- TOTAL DATA -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card bg-primary text-white mb-4">
+
+                <div class="card-body">
+
+                    <div class="fs-5">
+                        Total Data
+                    </div>
+
+                    <div class="fs-1 fw-bold">
+                        {{ statistik.total }}
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="card-footer d-flex align-items-center justify-content-between"
+                >
+
+                    <span class="small text-white">
+                        Seluruh data analisis
+                    </span>
+
+                    <i class="fas fa-database"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- POSITIVE -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card bg-success text-white mb-4">
+
+                <div class="card-body">
+
+                    <div class="fs-5">
+                        Positive
+                    </div>
+
+                    <div class="fs-1 fw-bold">
+                        {{ statistik.positive }}
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="card-footer d-flex align-items-center justify-content-between"
+                >
+
+                    <span class="small text-white">
+                        Sentimen positif
+                    </span>
+
+                    <i class="fas fa-smile"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NEGATIVE -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card bg-danger text-white mb-4">
+
+                <div class="card-body">
+
+                    <div class="fs-5">
+                        Negative
+                    </div>
+
+                    <div class="fs-1 fw-bold">
+                        {{ statistik.negative }}
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="card-footer d-flex align-items-center justify-content-between"
+                >
+
+                    <span class="small text-white">
+                        Sentimen negatif
+                    </span>
+
+                    <i class="fas fa-frown"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NEUTRAL -->
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="card bg-warning text-dark mb-4">
+
+                <div class="card-body">
+
+                    <div class="fs-5">
+                        Neutral
+                    </div>
+
+                    <div class="fs-1 fw-bold">
+                        {{ statistik.neutral }}
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="card-footer d-flex align-items-center justify-content-between"
+                >
+
+                    <span class="small text-dark">
+                        Sentimen netral
+                    </span>
+
+                    <i class="fas fa-meh"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- CHARTS -->
+    <!-- ================================================= -->
+
+    <div class="row">
+
+
+        <!-- DISTRIBUSI SENTIMEN -->
+
+        <div class="col-xl-6">
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+
+                    <i class="fas fa-chart-pie me-1"></i>
+
+                    Distribusi Sentimen
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div
+                        style="
+                            position: relative;
+                            height: 300px;
+                        "
+                    >
+
+                        <canvas
+                            id="sentimentChart"
+                        ></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TREN ANALISIS -->
+
+        <div class="col-xl-6">
+
+            <div class="card mb-4">
+
+                <div class="card-header">
+
+                    <i class="fas fa-chart-line me-1"></i>
+
+                    Tren Analisis Harian
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div
+                        style="
+                            position: relative;
+                            height: 300px;
+                        "
+                    >
+
+                        <canvas
+                            id="dailyChart"
+                        ></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- RECENT DATA -->
+    <!-- ================================================= -->
+
+    <div class="card mb-4">
+
+
+        <div class="card-header">
+
+            <i class="fas fa-table me-1"></i>
+
+            20 Data Terbaru
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <table
+                id="dashboardTable"
+                class="table table-bordered"
+                width="100%"
+                cellspacing="0"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Teks
+                        </th>
+
+                        <th>Teks Bersih</th>
+
+                        <th>
+                            Sentimen
+                        </th>
+
+                        <th>
+                            Confidence
+                        </th>
+
+                        <th>
+                            Waktu
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for data in riwayat %}
+
+                    <tr>
+
+
+                        <!-- ID -->
+
+                        <td>
+                            {{ data[0] }}
+                        </td>
+
+
+                        <!-- TEKS -->
+
+                        <td>
+                            {{ data[1] }}
+                        </td>
+
+                        <!-- TEKS Bersih -->
+
+                        <td>
+                            {{ data[2] }}
+                        </td>
+
+
+                        <!-- SENTIMEN -->
+
+                        <td>
+
+                            {% if data[3] == "positive" %}
+
+                                <span class="badge bg-success">
+                                    Positive
+                                </span>
+
+                            {% elif data[3] == "negative" %}
+
+                                <span class="badge bg-danger">
+                                    Negative
+                                </span>
+
+                            {% elif data[3] == "neutral" %}
+
+                                <span class="badge bg-warning text-dark">
+                                    Neutral
+                                </span>
+
+                            {% elif data[3] == "invalid" %}
+
+                                <span class="badge bg-secondary">
+                                    Invalid
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    {{ data[3] }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- CONFIDENCE -->
+
+                        <td>
+
+                            {% if data[4] is not none %}
+
+                                {{ "%.2f"|format(data[4]) }}%
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- WAKTU -->
+
+                        <td>
+                            {{ data[5] }}
+                        </td>
+
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- DASHBOARD DATA -->
+<!-- ================================================= -->
+
+<div
+    id="dashboardData"
+
+    data-positive="{{ statistik.positive }}"
+
+    data-neutral="{{ statistik.neutral }}"
+
+    data-negative="{{ statistik.negative }}"
+
+    data-total="{{ statistik.total }}"
+
+    data-harian="{{ statistik_harian | tojson | forceescape }}"
+></div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+
+<!-- ================================================= -->
+<!-- SIMPLE DATATABLES -->
+<!-- ================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
+    crossorigin="anonymous"
+></script>
+
+
+<!-- ================================================= -->
+<!-- CHART.JS -->
+<!-- ================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+></script>
+
+
+<script>
+
+
+    /* ================================================= */
+    /* DASHBOARD DATA */
+    /* ================================================= */
+
+    const dashboardData =
+        document.getElementById(
+            "dashboardData"
+        );
+
+
+    const positive =
+        Number(
+            dashboardData.dataset.positive
+        );
+
+
+    const neutral =
+        Number(
+            dashboardData.dataset.neutral
+        );
+
+
+    const negative =
+        Number(
+            dashboardData.dataset.negative
+        );
+
+
+    const harian =
+        JSON.parse(
+            dashboardData.dataset.harian
+        );
+
+
+    /* ================================================= */
+    /* SENTIMENT CHART */
+    /* ================================================= */
+
+    const sentimentCanvas =
+        document.getElementById(
+            "sentimentChart"
+        );
+
+
+    if (sentimentCanvas) {
+
+        new Chart(
+            sentimentCanvas,
+            {
+
+                type: "doughnut",
+
+                data: {
+
+                    labels: [
+                        "Positive",
+                        "Neutral",
+                        "Negative"
+                    ],
+
+
+                    datasets: [
+
+                        {
+
+                            data: [
+                                positive,
+                                neutral,
+                                negative
+                            ],
+
+
+                            backgroundColor: [
+
+                                "#4CAF50",
+
+                                "#FFC107",
+
+                                "#F44336"
+
+                            ]
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    legend: {
+
+                        position: "top"
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ================================================= */
+    /* DAILY CHART */
+    /* ================================================= */
+
+    const dailyCanvas =
+        document.getElementById(
+            "dailyChart"
+        );
+
+
+    if (dailyCanvas) {
+
+
+        const labels =
+            harian.map(
+                item => item[0]
+            );
+
+
+        const values =
+            harian.map(
+                item => item[1]
+            );
+
+
+        new Chart(
+            dailyCanvas,
+            {
+
+                type: "line",
+
+
+                data: {
+
+                    labels: labels,
+
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Jumlah Analisis",
+
+
+                            data: values,
+
+
+                            borderColor:
+                                "#2563eb",
+
+
+                            backgroundColor:
+                                "rgba(37, 99, 235, 0.1)",
+
+
+                            borderWidth: 2,
+
+
+                            fill: true,
+
+
+                            lineTension: 0.3
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+
+                    legend: {
+
+                        position: "top"
+
+                    },
+
+
+                    scales: {
+
+                        yAxes: [
+
+                            {
+
+                                ticks: {
+
+                                    beginAtZero: true,
+
+                                    precision: 0
+
+                                }
+
+                            }
+
+                        ]
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ================================================= */
+    /* DATA TABLE */
+    /* ================================================= */
+
+    const dashboardTable =
+        document.getElementById(
+            "dashboardTable"
+        );
+
+
+    if (dashboardTable) {
+
+
+        new simpleDatatables.DataTable(
+
+            dashboardTable,
+
+            {
+
+                perPage: 10,
+
+                perPageSelect: [
+
+                    5,
+
+                    10,
+
+                    20
+
+                ]
+
+            }
+
+        );
+
+    }
+
+
+</script>
+
+{% endblock %}
