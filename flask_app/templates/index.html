@@ -811,23 +811,33 @@
                 "click",
                 function () {
 
+                    /* JIKA SEDANG MEREKAM */
+                    if (sedangMerekam) {
+
+                        console.log(
+                            "Voice dihentikan secara manual."
+                        );
+
+                        recognition.stop();
+
+                        return;
+                    }
+
+
+                    /* MULAI MEREKAM */
                     finalTranscript =
                         "";
-
 
                     sedangMerekam =
                         true;
 
-
                     recognition.start();
-
 
                     voiceButton.innerHTML =
                     '<i class="fa-solid fa-circle"></i> Mendengarkan...';
 
                 }
             );
-
         }
 
 

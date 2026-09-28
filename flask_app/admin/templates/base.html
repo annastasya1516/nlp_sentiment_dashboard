@@ -21,30 +21,22 @@
         {% endblock %}
     </title>
 
-
-    <!-- SB ADMIN -->
-
+    <!-- CSS -->
     <link
         href="{{ url_for('admin_static', filename='css/styles.css') }}"
         rel="stylesheet"
     >
-
-
-    <!-- CUSTOM CSS -->
 
     <link
         href="{{ url_for('admin_static', filename='css/custom.css') }}"
         rel="stylesheet"
     >
 
-
-    <!-- FONT AWESOME -->
-
+    <!-- Font Awesome -->
     <script
         src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
         crossorigin="anonymous"
     ></script>
-
 
     {% block extra_css %}
     {% endblock %}
@@ -54,46 +46,63 @@
 
 <body class="sb-nav-fixed">
 
-
-    <!-- ================================================= -->
-    <!-- NAVBAR -->
-    <!-- ================================================= -->
-
+    <!-- Navbar -->
     {% include "components/navbar.html" %}
 
 
-    <!-- ================================================= -->
-    <!-- LAYOUT -->
-    <!-- ================================================= -->
-
+    <!-- Layout -->
     <div id="layoutSidenav">
 
-
-        <!-- ================================================= -->
-        <!-- SIDEBAR -->
-        <!-- ================================================= -->
-
+        <!-- Sidebar -->
         {% include "components/sidebar.html" %}
 
 
-        <!-- ================================================= -->
-        <!-- MAIN CONTENT -->
-        <!-- ================================================= -->
-
+        <!-- Content -->
         <div id="layoutSidenav_content">
 
             <main>
 
+                <!-- Notification -->
+                <div class="container-fluid px-4 pt-3">
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+
+                        {% if messages %}
+
+                            {% for category, message in messages %}
+
+                                <div
+                                    class="alert alert-{{ category }} alert-dismissible fade show"
+                                    role="alert"
+                                >
+                                    {{ message }}
+
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="alert"
+                                        aria-label="Close"
+                                    ></button>
+
+                                </div>
+
+                            {% endfor %}
+
+                        {% endif %}
+
+                    {% endwith %}
+
+                </div>
+
+
+                <!-- Page Content -->
                 {% block content %}
                 {% endblock %}
 
             </main>
 
 
-            <!-- ================================================= -->
-            <!-- FOOTER -->
-            <!-- ================================================= -->
-
+            <!-- Footer -->
             <footer class="py-4 bg-light mt-auto">
 
                 <div class="container-fluid px-4">
@@ -121,29 +130,28 @@
     </div>
 
 
-    <!-- ================================================= -->
-    <!-- JAVASCRIPT -->
-    <!-- ================================================= -->
-
-
-    <!-- BOOTSTRAP -->
-
+    <!-- JavaScript -->
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"
     ></script>
 
-
-    <!-- SB ADMIN -->
-
     <script
         src="{{ url_for('admin_static', filename='js/scripts.js') }}"
     ></script>
 
+    <script>
+        window.addEventListener("pageshow", function (event) {
+
+            if (event.persisted) {
+                window.location.reload();
+            }
+
+        });
+    </script>
 
     {% block extra_js %}
     {% endblock %}
-
 
 </body>
 

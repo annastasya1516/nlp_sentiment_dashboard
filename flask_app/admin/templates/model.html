@@ -8,23 +8,31 @@
 
 <div class="container-fluid px-4">
 
-    <!-- HEADER -->
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
     <div class="admin-header">
+
         <div>
             <h1>Model Sentimen</h1>
+
             <p>
                 Informasi model machine learning yang digunakan
                 untuk klasifikasi sentimen.
             </p>
         </div>
+
     </div>
 
 
-    <!-- MODEL OVERVIEW -->
+    <!-- =====================================================
+         MODEL OVERVIEW
+    ====================================================== -->
     <div class="row mb-4">
 
         <!-- MODEL -->
         <div class="col-xl-3 col-md-6 mb-4">
+
             <div class="model-card">
 
                 <div class="model-icon blue">
@@ -32,6 +40,7 @@
                 </div>
 
                 <div class="model-info">
+
                     <span class="model-label">
                         Model
                     </span>
@@ -39,14 +48,17 @@
                     <h3>
                         Logistic Regression
                     </h3>
+
                 </div>
 
             </div>
+
         </div>
 
 
         <!-- METODE -->
         <div class="col-xl-3 col-md-6 mb-4">
+
             <div class="model-card">
 
                 <div class="model-icon purple">
@@ -54,6 +66,7 @@
                 </div>
 
                 <div class="model-info">
+
                     <span class="model-label">
                         Metode
                     </span>
@@ -65,14 +78,17 @@
                     <small>
                         Feature Extraction
                     </small>
+
                 </div>
 
             </div>
+
         </div>
 
 
         <!-- AKURASI -->
         <div class="col-xl-3 col-md-6 mb-4">
+
             <div class="model-card">
 
                 <div class="model-icon green">
@@ -80,6 +96,7 @@
                 </div>
 
                 <div class="model-info">
+
                     <span class="model-label">
                         Akurasi
                     </span>
@@ -91,14 +108,17 @@
                     <small>
                         Data validasi
                     </small>
+
                 </div>
 
             </div>
+
         </div>
 
 
         <!-- STATUS -->
         <div class="col-xl-3 col-md-6 mb-4">
+
             <div class="model-card">
 
                 <div class="model-icon orange">
@@ -106,6 +126,7 @@
                 </div>
 
                 <div class="model-info">
+
                     <span class="model-label">
                         Status
                     </span>
@@ -117,24 +138,30 @@
                     <small>
                         Model digunakan aplikasi
                     </small>
+
                 </div>
 
             </div>
+
         </div>
 
     </div>
 
 
-    <!-- DETAIL MODEL -->
+    <!-- =====================================================
+         DETAIL MODEL
+    ====================================================== -->
     <div class="row">
 
-        <!-- INFORMASI -->
+        <!-- INFORMASI MODEL -->
         <div class="col-xl-7 mb-4">
 
             <div class="model-section">
 
                 <div class="model-section-header">
+
                     <div>
+
                         <h2>
                             <i class="fas fa-brain"></i>
                             Informasi Model
@@ -144,12 +171,15 @@
                             Detail konfigurasi model klasifikasi
                             sentimen yang sedang digunakan.
                         </p>
+
                     </div>
+
                 </div>
 
 
                 <div class="model-detail-list">
 
+                    <!-- ALGORITMA -->
                     <div class="model-detail-item">
 
                         <div class="detail-icon">
@@ -157,6 +187,7 @@
                         </div>
 
                         <div>
+
                             <span>
                                 Algoritma
                             </span>
@@ -164,11 +195,13 @@
                             <strong>
                                 Logistic Regression
                             </strong>
+
                         </div>
 
                     </div>
 
 
+                    <!-- FEATURE EXTRACTION -->
                     <div class="model-detail-item">
 
                         <div class="detail-icon">
@@ -176,6 +209,7 @@
                         </div>
 
                         <div>
+
                             <span>
                                 Feature Extraction
                             </span>
@@ -183,11 +217,13 @@
                             <strong>
                                 TF-IDF Vectorizer
                             </strong>
+
                         </div>
 
                     </div>
 
 
+                    <!-- KATEGORI -->
                     <div class="model-detail-item">
 
                         <div class="detail-icon">
@@ -195,6 +231,7 @@
                         </div>
 
                         <div>
+
                             <span>
                                 Kategori Sentimen
                             </span>
@@ -202,11 +239,13 @@
                             <strong>
                                 Positive · Neutral · Negative
                             </strong>
+
                         </div>
 
                     </div>
 
 
+                    <!-- EVALUASI -->
                     <div class="model-detail-item">
 
                         <div class="detail-icon">
@@ -214,6 +253,7 @@
                         </div>
 
                         <div>
+
                             <span>
                                 Evaluasi
                             </span>
@@ -221,6 +261,7 @@
                             <strong>
                                 Accuracy
                             </strong>
+
                         </div>
 
                     </div>
@@ -238,19 +279,24 @@
             <div class="model-section">
 
                 <div class="model-section-header">
+
                     <div>
+
                         <h2>
                             <i class="fas fa-folder-open"></i>
                             File Model
                         </h2>
 
                         <p>
-                            File yang digunakan aplikasi.
+                            File model yang digunakan aplikasi.
                         </p>
+
                     </div>
+
                 </div>
 
 
+                <!-- MODEL -->
                 <div class="file-box">
 
                     <div class="file-icon">
@@ -276,6 +322,7 @@
                 </div>
 
 
+                <!-- VECTORIZER -->
                 <div class="file-box">
 
                     <div class="file-icon">
@@ -307,82 +354,422 @@
     </div>
 
 
-    <!-- DATASET -->
+    <!-- =====================================================
+         DATASET MANAGER
+    ====================================================== -->
     <div class="model-section mb-4">
 
         <div class="model-section-header">
 
             <div>
+
                 <h2>
                     <i class="fas fa-database"></i>
-                    Dataset Training
+                    Dataset
                 </h2>
 
                 <p>
-                    Dataset yang digunakan dalam proses
-                    pelatihan dan validasi model.
+                    Kelola dataset yang digunakan untuk
+                    pembaruan dan pelatihan model.
                 </p>
+
+            </div>
+
+
+            <!-- UPLOAD DATASET -->
+            <div>
+
+                <form
+                    action="{{ url_for('upload_dataset') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="d-flex align-items-center gap-2"
+                >
+
+                    <input
+                        type="file"
+                        name="dataset"
+                        accept=".csv,.tsv"
+                        class="form-control"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="fas fa-upload"></i>
+
+                        Upload Dataset
+
+                    </button>
+
+                </form>
+
             </div>
 
         </div>
 
 
-        <div class="dataset-list">
+        <!-- DATASET TABLE -->
+        <div class="table-responsive">
 
-            <div class="dataset-item">
+            <table class="table align-middle">
 
-                <div class="dataset-icon">
-                    <i class="fas fa-file-csv"></i>
-                </div>
+                <thead>
 
-                <div class="dataset-info">
+                    <tr>
 
-                    <span>
+                        <th>
+                            Dataset
+                        </th>
+
+                        <th>
+                            Format
+                        </th>
+
+                        <th>
+                            Lokasi
+                        </th>
+
+                        <th>
+                            Aksi
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% if daftar_dataset %}
+
+                        {% for dataset in daftar_dataset %}
+
+                        <tr>
+
+                            <!-- NAMA DATASET -->
+                            <td>
+
+                                <i class="fas fa-file-alt me-2"></i>
+
+                                {{ dataset.nama }}
+
+                            </td>
+
+
+                            <!-- FORMAT -->
+                            <td>
+
+                                <span class="badge bg-secondary">
+
+                                    {{ dataset.ekstensi }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- LOKASI -->
+                            <td>
+                                datasets/
+                            </td>
+
+
+                            <!-- AKSI -->
+                            <td>
+
+                                <form
+                                    action="{{ url_for('delete_dataset', nama_file=dataset.nama) }}"
+                                    method="POST"
+                                    class="d-inline"
+                                    onsubmit="return confirm('Yakin ingin menghapus dataset {{ dataset.nama }}?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-danger"
+                                        title="Hapus dataset"
+                                    >
+
+                                        <i class="fas fa-trash"></i>
+
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="text-center text-muted"
+                            >
+
+                                Belum ada dataset.
+
+                            </td>
+
+                        </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TRAINING MODEL
+    ====================================================== -->
+    <div class="model-section mb-4">
+
+        <div class="model-section-header">
+
+            <div>
+
+                <h2>
+                    <i class="fas fa-sync-alt"></i>
+                    Training Model
+                </h2>
+
+                <p>
+                    Pilih dataset untuk melakukan pelatihan
+                    dan pembaruan model.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- TRAINING FORM -->
+        <form
+            action="{{ url_for('train_model') }}"
+            method="POST"
+        >
+
+            <div class="row">
+
+                <!-- TRAINING DATASET -->
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="training_dataset"
+                        class="form-label"
+                    >
                         Training Dataset
-                    </span>
+                    </label>
 
-                    <strong>
-                        train_preprocess_ori.tsv
-                    </strong>
+                    <select
+                        id="training_dataset"
+                        name="training_dataset"
+                        class="form-select"
+                        required
+                    >
 
-                    <small>
-                        datasets/train_preprocess_ori.tsv
-                    </small>
+                        <option
+                            value=""
+                            disabled
+                            selected
+                        >
+                            Pilih training dataset
+                        </option>
+
+
+                        {% if daftar_dataset %}
+
+                            {% for dataset in daftar_dataset %}
+
+                                <option
+                                    value="{{ dataset.nama }}"
+                                >
+                                    {{ dataset.nama }}
+                                </option>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <option
+                                value=""
+                                disabled
+                            >
+                                Belum ada dataset
+                            </option>
+
+                        {% endif %}
+
+                    </select>
 
                 </div>
 
-                <span class="dataset-badge">
-                    Training
-                </span>
+
+                <!-- VALIDATION DATASET -->
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="validation_dataset"
+                        class="form-label"
+                    >
+                        Validation Dataset
+                    </label>
+
+                    <select
+                        id="validation_dataset"
+                        name="validation_dataset"
+                        class="form-select"
+                        required
+                    >
+
+                        <option
+                            value=""
+                            disabled
+                            selected
+                        >
+                            Pilih validation dataset
+                        </option>
+
+
+                        {% if daftar_dataset %}
+
+                            {% for dataset in daftar_dataset %}
+
+                                <option
+                                    value="{{ dataset.nama }}"
+                                >
+                                    {{ dataset.nama }}
+                                </option>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <option
+                                value=""
+                                disabled
+                            >
+                                Belum ada dataset
+                            </option>
+
+                        {% endif %}
+
+                    </select>
+
+                </div>
 
             </div>
 
 
-            <div class="dataset-item">
+            <!-- TRAINING BUTTON -->
+            <div class="mt-3">
 
-                <div class="dataset-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
+                <button
+                    type="submit"
+                    class="btn btn-success"
+                >
 
-                <div class="dataset-info">
+                    <i class="fas fa-play me-1"></i>
 
-                    <span>
-                        Validation Dataset
-                    </span>
+                    Training Model
 
-                    <strong>
-                        valid_preprocess.tsv
-                    </strong>
+                </button>
 
-                    <small>
-                        datasets/valid_preprocess.tsv
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         HASIL TRAINING
+    ====================================================== -->
+    <div class="model-section mb-4">
+
+        <div class="model-section-header">
+
+            <div>
+
+                <h2>
+                    <i class="fas fa-chart-line"></i>
+                    Hasil Training
+                </h2>
+
+                <p>
+                    Informasi hasil pelatihan model yang sedang aktif.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <!-- AKURASI -->
+            <div class="col-md-4 mb-3">
+
+                <div class="p-3 border rounded">
+
+                    <small class="text-muted">
+                        Akurasi
                     </small>
 
+                    <h3 class="mt-2 mb-0">
+                        {{ akurasi }}
+                    </h3>
+
                 </div>
 
-                <span class="dataset-badge validation">
-                    Validation
-                </span>
+            </div>
+
+
+            <!-- MODEL -->
+            <div class="col-md-4 mb-3">
+
+                <div class="p-3 border rounded">
+
+                    <small class="text-muted">
+                        Model
+                    </small>
+
+                    <h3 class="mt-2 mb-0">
+                        Logistic Regression
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS -->
+            <div class="col-md-4 mb-3">
+
+                <div class="p-3 border rounded">
+
+                    <small class="text-muted">
+                        Status
+                    </small>
+
+                    <h3 class="mt-2 mb-0 text-success">
+                        Aktif
+                    </h3>
+
+                </div>
 
             </div>
 

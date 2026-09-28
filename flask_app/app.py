@@ -2,7 +2,10 @@ import csv
 import io
 import json
 import os
+import pickle
 
+import pandas as pd
+from dotenv import load_dotenv
 from flask import (
     Flask,
     flash,
@@ -15,16 +18,13 @@ from flask import (
     session,
     url_for
 )
+from jinja2 import ChoiceLoader, FileSystemLoader
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+from werkzeug.utils import secure_filename
 
-from jinja2 import (
-    ChoiceLoader,
-    FileSystemLoader
-)
-
-from services.sentiment_service import (
-    proses_sentimen
-)
-
+from services.sentiment_service import proses_sentimen
 from utils.database import (
     ambil_riwayat,
     ambil_riwayat_by_id,
@@ -35,19 +35,38 @@ from utils.database import (
     ambil_statistik_tahunan,
     edit_riwayat as update_riwayat,
     hapus_riwayat,
-    hitung_total_riwayat,
     simpan_ke_db
 )
-
-from utils.security import (
-    verify_password
-)
+from utils.preprocessing import bersihkan_teks
+from utils.security import verify_password
 
 
-# =========================================================
-# PATH PROJECT
-# =========================================================
+# Environment
+load_dotenv()
 
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+ADMIN_PASSWORD_HASH = os.getenv("ADMIN_PASSWORD_HASH")
+
+
+if not SECRET_KEY:
+    raise RuntimeError(
+        "SECRET_KEY belum diatur di file .env"
+    )
+
+if not ADMIN_USERNAME:
+    raise RuntimeError(
+        "ADMIN_USERNAME belum diatur di file .env"
+    )
+
+if not ADMIN_PASSWORD_HASH:
+    raise RuntimeError(
+        "ADMIN_PASSWORD_HASH belum diatur di file .env"
+    )
+
+
+# Path
 BASE_DIR = os.path.dirname(
     os.path.abspath(__file__)
 )
@@ -66,39 +85,29 @@ ADMIN_TEMPLATE_DIR = os.path.join(
     "templates"
 )
 
-METRICS_PATH = os.path.join(
+DATASET_DIR = os.path.join(
     PROJECT_DIR,
-    "models",
+    "datasets"
+)
+
+MODEL_DIR = os.path.join(
+    PROJECT_DIR,
+    "models"
+)
+
+METRICS_PATH = os.path.join(
+    MODEL_DIR,
     "metrics.json"
 )
 
 
-# =========================================================
-# KONFIGURASI APLIKASI
-# =========================================================
-
+# App
 app = Flask(__name__)
 
-app.secret_key = (
-    "kunci-rahasia-aplikasi"
-)
+app.secret_key = SECRET_KEY
 
 
-# =========================================================
-# TEMPLATE LOADER
-# =========================================================
-#
-# Template utama:
-# flask_app/templates
-#
-# Template admin:
-# flask_app/admin/templates
-#
-# Component admin:
-# flask_app/admin/components
-#
-# =========================================================
-
+# Template
 app.jinja_loader = ChoiceLoader([
     app.jinja_loader,
     FileSystemLoader(ADMIN_TEMPLATE_DIR),
@@ -106,24 +115,99 @@ app.jinja_loader = ChoiceLoader([
 ])
 
 
-# =========================================================
-# KONFIGURASI ADMIN
-# =========================================================
-
-ADMIN_USERNAME = "admin"
-
-ADMIN_PASSWORD_HASH = (
-    "c976fb9fcc6d65c5d8a8efba43101fd4fba53682b4e224316acea7c5b063044e"
-)
+# Helper
+def admin_sudah_login():
+    return session.get(
+        "admin_login",
+        False
+    )
 
 
-# =========================================================
-# ASSET SB ADMIN
-# =========================================================
+def ambil_akurasi_model():
 
-@app.route(
-    "/admin-static/<path:filename>"
-)
+    try:
+        with open(
+            METRICS_PATH,
+            "r",
+            encoding="utf-8"
+        ) as file:
+
+            metrics = json.load(file)
+
+        return metrics.get(
+            "accuracy",
+            "N/A"
+        )
+
+    except (
+        FileNotFoundError,
+        json.JSONDecodeError
+    ):
+        return "N/A"
+
+
+def ambil_daftar_dataset():
+
+    daftar_dataset = []
+
+    if not os.path.exists(DATASET_DIR):
+        return daftar_dataset
+
+    for nama_file in os.listdir(DATASET_DIR):
+
+        file_path = os.path.join(
+            DATASET_DIR,
+            nama_file
+        )
+
+        if not os.path.isfile(file_path):
+            continue
+
+        ekstensi = os.path.splitext(
+            nama_file
+        )[1].lower()
+
+        if ekstensi not in [".csv", ".tsv"]:
+            continue
+
+        daftar_dataset.append({
+            "nama": nama_file,
+            "ekstensi": ekstensi.replace(
+                ".",
+                ""
+            ).upper()
+        })
+
+    daftar_dataset.sort(
+        key=lambda x: x["nama"].lower()
+    )
+
+    return daftar_dataset
+
+
+def redirect_ke_model():
+    return redirect(
+        url_for("model_sentimen")
+    )
+
+
+# Security
+@app.after_request
+def tambahkan_header_keamanan(response):
+
+    response.headers["Cache-Control"] = (
+        "no-store, no-cache, "
+        "must-revalidate, max-age=0"
+    )
+
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+
+    return response
+
+
+# Admin static
+@app.route("/admin-static/<path:filename>")
 def admin_static(filename):
 
     return send_from_directory(
@@ -132,72 +216,11 @@ def admin_static(filename):
     )
 
 
-# =========================================================
-# FUNGSI CEK LOGIN ADMIN
-# =========================================================
-
-def admin_sudah_login():
-
-    return session.get(
-        "admin_login",
-        False
-    )
-
-
-# =========================================================
-# INFORMASI MODEL
-# =========================================================
-
-def ambil_akurasi_model():
-
-    try:
-
-        with open(
-            METRICS_PATH,
-            "r",
-            encoding="utf-8"
-        ) as file:
-
-            metrics = json.load(
-                file
-            )
-
-        return metrics.get(
-            "accuracy",
-            "N/A"
-        )
-
-    except FileNotFoundError:
-
-        print(
-            "metrics.json tidak ditemukan:"
-        )
-
-        print(
-            METRICS_PATH
-        )
-
-        return "N/A"
-
-    except json.JSONDecodeError:
-
-        print(
-            "Format metrics.json tidak valid."
-        )
-
-        return "N/A"
-
-
-# =========================================================
-# HALAMAN UTAMA USER
-# =========================================================
-
+# User
 @app.route("/")
 def home():
 
-    akurasi = (
-        ambil_akurasi_model()
-    )
+    akurasi = ambil_akurasi_model()
 
     return render_template(
         "index.html",
@@ -205,10 +228,7 @@ def home():
     )
 
 
-# =========================================================
-# ANALISIS SENTIMEN
-# =========================================================
-
+# Analisis
 @app.route(
     "/analisis",
     methods=["POST"]
@@ -238,9 +258,7 @@ def analisis():
         proses_sentimen(teks)
     )
 
-    akurasi = (
-        ambil_akurasi_model()
-    )
+    akurasi = ambil_akurasi_model()
 
     print(
         "Hasil prediksi:",
@@ -261,10 +279,7 @@ def analisis():
     })
 
 
-# =========================================================
-# LOGIN ADMIN
-# =========================================================
-
+# Login
 @app.route(
     "/admin",
     methods=["GET", "POST"]
@@ -322,10 +337,7 @@ def admin_login():
     )
 
 
-# =========================================================
-# DASHBOARD ADMIN
-# =========================================================
-
+# Dashboard
 @app.route(
     "/admin/dashboard"
 )
@@ -337,9 +349,7 @@ def dashboard():
             url_for("admin_login")
         )
 
-    statistik = (
-        ambil_statistik()
-    )
+    statistik = ambil_statistik()
 
     riwayat = ambil_riwayat(
         limit=20,
@@ -354,16 +364,11 @@ def dashboard():
         "dashboard.html",
         statistik=statistik,
         riwayat=riwayat,
-        statistik_harian=(
-            statistik_harian
-        )
+        statistik_harian=statistik_harian
     )
 
 
-# =========================================================
-# STATISTIK ADMIN
-# =========================================================
-
+# Statistik
 @app.route(
     "/admin/statistik"
 )
@@ -394,22 +399,13 @@ def statistik():
     return render_template(
         "statistik.html",
         statistik=data_statistik,
-        statistik_harian=(
-            statistik_harian
-        ),
-        statistik_bulanan=(
-            statistik_bulanan
-        ),
-        statistik_tahunan=(
-            statistik_tahunan
-        )
+        statistik_harian=statistik_harian,
+        statistik_bulanan=statistik_bulanan,
+        statistik_tahunan=statistik_tahunan
     )
 
 
-# =========================================================
-# RIWAYAT KLASIFIKASI
-# =========================================================
-
+# Riwayat
 @app.route(
     "/admin/riwayat"
 )
@@ -430,10 +426,6 @@ def riwayat():
         riwayat=data_riwayat
     )
 
-
-# =========================================================
-# TAMBAH RIWAYAT
-# =========================================================
 
 @app.route(
     "/admin/riwayat/tambah",
@@ -471,19 +463,15 @@ def tambah_riwayat():
             ).strip()
         )
 
-        if confidence_input:
+        try:
 
-            try:
+            confidence = (
+                float(confidence_input)
+                if confidence_input
+                else None
+            )
 
-                confidence = float(
-                    confidence_input
-                )
-
-            except ValueError:
-
-                confidence = None
-
-        else:
+        except ValueError:
 
             confidence = None
 
@@ -507,10 +495,6 @@ def tambah_riwayat():
         "riwayat_tambah.html"
     )
 
-
-# =========================================================
-# EDIT RIWAYAT
-# =========================================================
 
 @app.route(
     "/admin/riwayat/edit/<int:id_data>",
@@ -565,19 +549,15 @@ def edit_riwayat(id_data):
             ).strip()
         )
 
-        if confidence_input:
+        try:
 
-            try:
+            confidence = (
+                float(confidence_input)
+                if confidence_input
+                else None
+            )
 
-                confidence = float(
-                    confidence_input
-                )
-
-            except ValueError:
-
-                confidence = None
-
-        else:
+        except ValueError:
 
             confidence = None
 
@@ -604,10 +584,6 @@ def edit_riwayat(id_data):
     )
 
 
-# =========================================================
-# HAPUS SATU RIWAYAT
-# =========================================================
-
 @app.route(
     "/admin/riwayat/hapus/<int:id_data>",
     methods=["POST"]
@@ -633,10 +609,6 @@ def hapus_satu_riwayat(id_data):
         url_for("riwayat")
     )
 
-
-# =========================================================
-# HAPUS BANYAK RIWAYAT
-# =========================================================
 
 @app.route(
     "/admin/riwayat/hapus",
@@ -670,10 +642,7 @@ def hapus_banyak_riwayat():
     )
 
 
-# =========================================================
-# DOWNLOAD RIWAYAT CSV
-# =========================================================
-
+# Download CSV
 @app.route(
     "/admin/riwayat/download"
 )
@@ -726,10 +695,7 @@ def download_csv():
     )
 
 
-# =========================================================
-# MODEL SENTIMEN
-# =========================================================
-
+# Model
 @app.route(
     "/admin/model"
 )
@@ -741,20 +707,451 @@ def model_sentimen():
             url_for("admin_login")
         )
 
-    akurasi = (
-        ambil_akurasi_model()
-    )
-
     return render_template(
         "model.html",
-        akurasi=akurasi
+        akurasi=ambil_akurasi_model(),
+        daftar_dataset=ambil_daftar_dataset()
     )
 
 
-# =========================================================
-# LOGOUT ADMIN
-# =========================================================
+@app.route(
+    "/admin/model/upload-dataset",
+    methods=["POST"]
+)
+def upload_dataset():
 
+    if not admin_sudah_login():
+
+        return redirect(
+            url_for("admin_login")
+        )
+
+    file = request.files.get(
+        "dataset"
+    )
+
+    if not file or not file.filename:
+
+        flash(
+            "Silakan pilih file dataset.",
+            "danger"
+        )
+
+        return redirect_ke_model()
+
+    nama_file = secure_filename(
+        file.filename
+    )
+
+    ekstensi = os.path.splitext(
+        nama_file
+    )[1].lower()
+
+    if ekstensi not in [
+        ".csv",
+        ".tsv"
+    ]:
+
+        flash(
+            "Format file harus CSV atau TSV.",
+            "danger"
+        )
+
+        return redirect_ke_model()
+
+    os.makedirs(
+        DATASET_DIR,
+        exist_ok=True
+    )
+
+    file_path = os.path.join(
+        DATASET_DIR,
+        nama_file
+    )
+
+    file.save(
+        file_path
+    )
+
+    flash(
+        f"Dataset {nama_file} berhasil ditambahkan.",
+        "success"
+    )
+
+    return redirect_ke_model()
+
+
+@app.route(
+    "/admin/model/delete-dataset/<nama_file>",
+    methods=["POST"]
+)
+def delete_dataset(nama_file):
+
+    if not admin_sudah_login():
+
+        return redirect(
+            url_for("admin_login")
+        )
+
+    nama_file = secure_filename(
+        nama_file
+    )
+
+    ekstensi = os.path.splitext(
+        nama_file
+    )[1].lower()
+
+    if ekstensi not in [
+        ".csv",
+        ".tsv"
+    ]:
+
+        flash(
+            "File dataset tidak valid.",
+            "danger"
+        )
+
+        return redirect_ke_model()
+
+    file_path = os.path.join(
+        DATASET_DIR,
+        nama_file
+    )
+
+    if not os.path.isfile(file_path):
+
+        flash(
+            "Dataset tidak ditemukan.",
+            "danger"
+        )
+
+        return redirect_ke_model()
+
+    try:
+
+        os.remove(
+            file_path
+        )
+
+        flash(
+            f"Dataset {nama_file} berhasil dihapus.",
+            "danger"
+        )
+
+    except OSError:
+
+        flash(
+            f"Dataset {nama_file} gagal dihapus.",
+            "danger"
+        )
+
+    return redirect_ke_model()
+
+
+# Training
+@app.route(
+    "/admin/model/train",
+    methods=["POST"]
+)
+def train_model():
+
+    if not admin_sudah_login():
+
+        return redirect(
+            url_for("admin_login")
+        )
+
+    training_dataset = request.form.get(
+        "training_dataset",
+        ""
+    ).strip()
+
+    validation_dataset = request.form.get(
+        "validation_dataset",
+        ""
+    ).strip()
+
+    if (
+        not training_dataset
+        or not validation_dataset
+    ):
+
+        flash(
+            "Training dan validation dataset harus dipilih.",
+            "danger"
+        )
+
+        return redirect_ke_model()
+
+    training_dataset = secure_filename(
+        training_dataset
+    )
+
+    validation_dataset = secure_filename(
+        validation_dataset
+    )
+
+    ekstensi_training = os.path.splitext(
+        training_dataset
+    )[1].lower()
+
+    ekstensi_validation = os.path.splitext(
+        validation_dataset
+    )[1].lower()
+
+    if ekstensi_training not in [
+        ".csv",
+        ".tsv"
+    ]:
+
+        flash(
+            "Format training dataset harus CSV atau TSV.",
+            "danger"
+        )
+
+        return redirect_ke_model()
+
+    if ekstensi_validation not in [
+        ".csv",
+        ".tsv"
+    ]:
+
+        flash(
+            "Format validation dataset harus CSV atau TSV.",
+            "danger"
+        )
+
+        return redirect_ke_model()
+
+    training_path = os.path.join(
+        DATASET_DIR,
+        training_dataset
+    )
+
+    validation_path = os.path.join(
+        DATASET_DIR,
+        validation_dataset
+    )
+
+    if not os.path.isfile(
+        training_path
+    ):
+
+        flash(
+            "Training dataset tidak ditemukan.",
+            "danger"
+        )
+
+        return redirect_ke_model()
+
+    if not os.path.isfile(
+        validation_path
+    ):
+
+        flash(
+            "Validation dataset tidak ditemukan.",
+            "danger"
+        )
+
+        return redirect_ke_model()
+
+    try:
+
+        separator_training = (
+            "\t"
+            if ekstensi_training == ".tsv"
+            else ","
+        )
+
+        separator_validation = (
+            "\t"
+            if ekstensi_validation == ".tsv"
+            else ","
+        )
+
+        df_train = pd.read_csv(
+            training_path,
+            sep=separator_training
+        )
+
+        df_valid = pd.read_csv(
+            validation_path,
+            sep=separator_validation
+        )
+
+        kolom_wajib = [
+            "text",
+            "sentiment"
+        ]
+
+        for kolom in kolom_wajib:
+
+            if kolom not in df_train.columns:
+
+                flash(
+                    f"Kolom '{kolom}' tidak ditemukan "
+                    "pada training dataset.",
+                    "danger"
+                )
+
+                return redirect_ke_model()
+
+            if kolom not in df_valid.columns:
+
+                flash(
+                    f"Kolom '{kolom}' tidak ditemukan "
+                    "pada validation dataset.",
+                    "danger"
+                )
+
+                return redirect_ke_model()
+
+        df_train = df_train[
+            ["text", "sentiment"]
+        ].dropna()
+
+        df_valid = df_valid[
+            ["text", "sentiment"]
+        ].dropna()
+
+        if df_train.empty:
+
+            flash(
+                "Training dataset tidak memiliki data.",
+                "danger"
+            )
+
+            return redirect_ke_model()
+
+        if df_valid.empty:
+
+            flash(
+                "Validation dataset tidak memiliki data.",
+                "danger"
+            )
+
+            return redirect_ke_model()
+
+        df_train["text_clean"] = (
+            df_train["text"]
+            .astype(str)
+            .apply(bersihkan_teks)
+        )
+
+        df_valid["text_clean"] = (
+            df_valid["text"]
+            .astype(str)
+            .apply(bersihkan_teks)
+        )
+
+        vectorizer = TfidfVectorizer()
+
+        X_train = vectorizer.fit_transform(
+            df_train["text_clean"]
+        )
+
+        X_valid = vectorizer.transform(
+            df_valid["text_clean"]
+        )
+
+        y_train = df_train["sentiment"]
+        y_valid = df_valid["sentiment"]
+
+        model = LogisticRegression(
+            max_iter=1000
+        )
+
+        model.fit(
+            X_train,
+            y_train
+        )
+
+        prediksi = model.predict(
+            X_valid
+        )
+
+        accuracy = accuracy_score(
+            y_valid,
+            prediksi
+        )
+
+        accuracy_percent = (
+            f"{accuracy * 100:.2f}%"
+        )
+
+        os.makedirs(
+            MODEL_DIR,
+            exist_ok=True
+        )
+
+        model_path = os.path.join(
+            MODEL_DIR,
+            "model_sentimen.pkl"
+        )
+
+        vectorizer_path = os.path.join(
+            MODEL_DIR,
+            "vectorizer_tfidf.pkl"
+        )
+
+        with open(
+            model_path,
+            "wb"
+        ) as file:
+
+            pickle.dump(
+                model,
+                file
+            )
+
+        with open(
+            vectorizer_path,
+            "wb"
+        ) as file:
+
+            pickle.dump(
+                vectorizer,
+                file
+            )
+
+        metrics = {
+            "accuracy": accuracy_percent
+        }
+
+        with open(
+            METRICS_PATH,
+            "w",
+            encoding="utf-8"
+        ) as file:
+
+            json.dump(
+                metrics,
+                file,
+                indent=4
+            )
+
+        flash(
+            "Training model berhasil. "
+            f"Akurasi validation: {accuracy_percent}",
+            "success"
+        )
+
+    except Exception as error:
+
+        print(
+            "Training error:",
+            error
+        )
+
+        flash(
+            f"Training gagal: {error}",
+            "danger"
+        )
+
+    return redirect_ke_model()
+
+
+# Logout
 @app.route(
     "/admin/logout",
     methods=["GET", "POST"]
@@ -767,10 +1164,6 @@ def logout():
         url_for("admin_login")
     )
 
-
-# =========================================================
-# MENJALANKAN APLIKASI
-# =========================================================
 
 if __name__ == "__main__":
 
