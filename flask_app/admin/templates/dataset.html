@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Dataset
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-4">
+
+    <!-- Page Header -->
+    <div class="dataset-page-header mt-4 mb-4">
+
+        <h1 class="mt-0 mb-1">
+            Dataset
+        </h1>
+
+        <p class="text-muted mb-0">
+            Kelola dataset yang digunakan untuk pelatihan model.
+        </p>
+
+    </div>
+
+
+    <!-- Daftar Dataset -->
+    <div class="card mb-4">
+
+        <!-- Card Header -->
+        <div class="card-header dataset-card-header">
+
+            <!-- Judul -->
+            <div class="dataset-card-title">
+                <i class="fas fa-database me-1"></i>
+                Daftar Dataset
+            </div>
+
+
+            <!-- Upload Dataset -->
+            <form
+                action="{{ url_for('upload_dataset') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="dataset-upload-form"
+            >
+
+                <input
+                    type="file"
+                    name="dataset"
+                    accept=".csv,.tsv"
+                    class="dataset-file-input"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-primary dataset-upload-button"
+                >
+                    <i class="fas fa-upload me-1"></i>
+                    Upload
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Table -->
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-bordered table-hover align-middle mb-0"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Nama Dataset
+                            </th>
+
+                            <th>
+                                Format
+                            </th>
+
+                            <th
+                                class="text-center"
+                                style="width: 120px;"
+                            >
+                                Aksi
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% if daftar_dataset %}
+
+                            {% for dataset in daftar_dataset %}
+
+                                <tr>
+
+                                    <!-- Nama Dataset -->
+                                    <td>
+
+                                        <i
+                                            class="fas fa-file-lines me-2 text-secondary"
+                                        ></i>
+                                    
+                                        <a
+                                            href="{{ url_for('detail_dataset', nama_file=dataset.nama) }}"
+                                            class="dataset-name-link"
+                                        >
+                                            {{ dataset.nama }}
+                                        </a>
+                                    
+                                    </td>
+
+
+                                    <!-- Format -->
+                                    <td>
+
+                                        <span class="badge bg-secondary">
+                                            {{ dataset.ekstensi }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Aksi -->
+                                    <td class="text-center">
+
+                                        <form
+                                            action="{{ url_for('delete_dataset', nama_file=dataset.nama) }}"
+                                            method="POST"
+                                            class="d-inline"
+                                            onsubmit="return confirm('Apakah kamu yakin ingin menghapus dataset ini?');"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-outline-danger dataset-delete-button"
+                                                title="Hapus dataset"
+                                            >
+
+                                                <i class="fas fa-trash"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <tr>
+
+                                <td
+                                    colspan="3"
+                                    class="text-center text-muted py-4"
+                                >
+
+                                    <i
+                                        class="fas fa-database fa-2x mb-2"
+                                    ></i>
+
+                                    <div>
+                                        Belum ada dataset.
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

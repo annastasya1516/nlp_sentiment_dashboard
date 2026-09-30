@@ -1,0 +1,527 @@
+{% extends "base.html" %}
+
+{% block title %}
+    SentiView - Detail Dataset
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-4">
+
+    <div class="dataset-detail-header mt-4 mb-4">
+
+        <div>
+            <h1>Detail Dataset</h1>
+
+            <p class="text-muted mb-0">
+                Melihat isi dan struktur dataset.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('dataset') }}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="fas fa-arrow-left me-1"></i>
+            Kembali
+        </a>
+
+    </div>
+
+
+    <!-- Informasi Dataset -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <i class="fas fa-file-lines me-1"></i>
+            Informasi Dataset
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+
+                    <div class="dataset-info-box">
+
+                        <div class="dataset-info-label">
+                            Nama Dataset
+                        </div>
+
+                        <div class="dataset-info-value">
+                            {{ nama_file }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <div class="dataset-info-box">
+
+                        <div class="dataset-info-label">
+                            Format
+                        </div>
+
+                        <div class="dataset-info-value">
+
+                            <span class="badge bg-secondary">
+                                {{ ekstensi }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <div class="dataset-info-box">
+
+                        <div class="dataset-info-label">
+                            Jumlah Baris
+                        </div>
+
+                        <div class="dataset-info-value">
+                            {{ jumlah_baris }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <div class="dataset-info-box">
+
+                        <div class="dataset-info-label">
+                            Jumlah Kolom
+                        </div>
+
+                        <div class="dataset-info-value">
+                            {{ jumlah_kolom }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Isi Dataset -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Isi Dataset
+        </div>
+
+        <div class="card-body">
+
+            <div class="dataset-preview">
+
+                <table
+                    id="datasetTable"
+                    class="table table-bordered table-hover table-sm align-middle"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            {% for nama_kolom in kolom %}
+
+                                <th>
+                                    {{ nama_kolom }}
+                                </th>
+
+                            {% endfor %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for baris in data %}
+
+                            <tr>
+
+                                {% for nama_kolom in kolom %}
+
+                                    {% set nilai = baris[nama_kolom] %}
+
+                                    {% if nama_kolom|lower in ["sentiment", "sentimen"] %}
+
+                                        <td class="dataset-sentiment-cell">
+
+                                            {% if nilai|lower == "positive" %}
+
+                                                <span class="badge bg-success">
+                                                    Positive
+                                                </span>
+
+                                            {% elif nilai|lower == "negative" %}
+
+                                                <span class="badge bg-danger">
+                                                    Negative
+                                                </span>
+
+                                            {% elif nilai|lower == "neutral" %}
+
+                                                <span class="badge bg-warning text-dark">
+                                                    Neutral
+                                                </span>
+
+                                            {% else %}
+
+                                                {{ nilai }}
+
+                                            {% endif %}
+
+                                        </td>
+
+                                    {% else %}
+
+                                        <td>
+
+                                            <div
+                                                class="dataset-cell-text"
+                                                data-full-text="{{ nilai|e }}"
+                                                onclick="tampilkanTeksLengkap(this)"
+                                                title="Klik untuk melihat teks lengkap"
+                                            >
+                                                {{ nilai }}
+                                            </div>
+
+                                        </td>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </tr>
+
+                        {% else %}
+
+                            <tr>
+
+                                <td
+                                    colspan="{{ jumlah_kolom }}"
+                                    class="text-center text-muted py-4"
+                                >
+                                    Dataset tidak memiliki data.
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Modal Teks Lengkap -->
+
+<div
+    class="modal fade"
+    id="modalTeksLengkap"
+    tabindex="-1"
+    aria-labelledby="modalTeksLengkapLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="modalTeksLengkapLabel"
+                >
+                    Teks Lengkap
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Tutup"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div
+                    id="teksLengkap"
+                    class="dataset-full-text"
+                ></div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Tutup
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script
+    src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
+    crossorigin="anonymous"
+></script>
+
+
+<script>
+
+    const datasetTable =
+        document.getElementById("datasetTable");
+
+
+    if (datasetTable) {
+
+        new simpleDatatables.DataTable(
+            datasetTable,
+            {
+                perPage: 100,
+
+                perPageSelect: [
+                    50,
+                    100,
+                    200
+                ]
+            }
+        );
+
+    }
+
+
+    function tampilkanTeksLengkap(element) {
+
+        const teks =
+            element.getAttribute("data-full-text");
+
+
+        if (!teks) {
+            return;
+        }
+
+
+        document.getElementById(
+            "teksLengkap"
+        ).textContent = teks;
+
+
+        const modalElement =
+            document.getElementById(
+                "modalTeksLengkap"
+            );
+
+
+        const modal =
+            bootstrap.Modal.getOrCreateInstance(
+                modalElement
+            );
+
+
+        modal.show();
+
+    }
+
+</script>
+
+
+<style>
+
+/* Header */
+
+.dataset-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+
+/* Informasi Dataset */
+
+.dataset-info-box {
+    height: 100%;
+    padding: 14px 16px;
+
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+
+    background-color: #f8f9fa;
+}
+
+.dataset-info-label {
+    margin-bottom: 5px;
+
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.dataset-info-value {
+    color: #212529;
+    font-size: 15px;
+    font-weight: 500;
+
+    word-break: break-word;
+}
+
+
+/* Tabel */
+
+.dataset-preview {
+    width: 100%;
+}
+
+.dataset-preview .dataTable-container {
+    max-height: 600px;
+    overflow: auto;
+
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+}
+
+
+/* Header tabel */
+
+.dataset-preview th {
+    white-space: nowrap !important;
+    background-color: #f8f9fa;
+}
+
+
+/* Cell */
+
+.dataset-preview td {
+    vertical-align: middle !important;
+}
+
+
+/* Teks panjang */
+
+.dataset-cell-text {
+    display: block;
+
+    width: 100%;
+    max-width: 400px;
+
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+
+    cursor: pointer;
+}
+
+
+/* Saat diarahkan */
+
+.dataset-cell-text:hover {
+    color: #2563eb;
+}
+
+
+/* Sentiment */
+
+.dataset-sentiment-cell {
+    white-space: nowrap !important;
+}
+
+
+/* Modal */
+
+.dataset-full-text {
+    padding: 15px;
+
+    background-color: #f8f9fa;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+
+    line-height: 1.6;
+
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+
+/* Pagination */
+
+.dataset-preview .dataTable-bottom {
+    margin-top: 0;
+    padding: 15px !important;
+
+    border-top: 1px solid #dee2e6;
+
+    background-color: #fff;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+    .dataset-detail-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+
+

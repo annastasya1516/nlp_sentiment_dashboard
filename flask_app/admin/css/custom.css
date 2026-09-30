@@ -1,31 +1,27 @@
-/* =========================================================
-   SENTIVIEW ADMIN - CUSTOM THEME
-   ========================================================= */
+/* SENTIVIEW ADMIN */
 
+/* TOP NAVBAR */
 
-/* =========================================================
-   TOP NAVBAR
-   ========================================================= */
-
-   .sb-topnav {
-    background-color: #ffffff !important;
+.sb-topnav {
+    background-color: #fff !important;
     border-bottom: 1px solid #e5e7eb;
 }
 
-.sb-topnav .navbar-brand {
-    color: #2563eb !important;
-    font-weight: 700;
-}
-
+.sb-topnav .navbar-brand,
 .sb-topnav #sidebarToggle {
     color: #2563eb !important;
+}
+
+.sb-topnav .navbar-brand {
+    font-weight: 700;
 }
 
 .sb-topnav .form-control {
     border: 1px solid #dbe3ef;
 }
 
-.sb-topnav .btn-primary {
+.sb-topnav .btn-primary,
+.btn-primary {
     background-color: #2563eb;
     border-color: #2563eb;
 }
@@ -34,19 +30,22 @@
     color: #64748b !important;
 }
 
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
 
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
+
+/* SIDEBAR */
 
 .sb-sidenav-light {
-    background-color: #ffffff !important;
+    background-color: #fff !important;
     color: #475569 !important;
     border-right: 1px solid #e5e7eb;
 }
 
 .sb-sidenav-light .sb-sidenav-menu {
-    background-color: #ffffff !important;
+    background-color: #fff !important;
 }
 
 .sb-sidenav-light .sb-sidenav-menu-heading {
@@ -56,432 +55,58 @@
 
 .sb-sidenav-light .nav-link {
     color: #475569 !important;
-
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .sb-sidenav-light .sb-nav-link-icon {
     color: #64748b !important;
-
-    transition:
-        color 0.2s ease;
 }
 
-
-/* =========================================================
-   SIDEBAR - HOVER
-   ========================================================= */
-
-.sb-sidenav-light .nav-link:hover {
-    color: #2563eb !important;
-    background-color: #eff6ff !important;
-}
-
-.sb-sidenav-light .nav-link:hover .sb-nav-link-icon {
-    color: #2563eb !important;
-}
-
-
-/* =========================================================
-   SIDEBAR - ACTIVE
-   ========================================================= */
-
+.sb-sidenav-light .nav-link:hover,
 .sb-sidenav-light .nav-link.active {
     color: #2563eb !important;
     background-color: #eff6ff !important;
-    font-weight: 600;
-
-    border-left: 4px solid #2563eb;
 }
 
+.sb-sidenav-light .nav-link:hover .sb-nav-link-icon,
 .sb-sidenav-light .nav-link.active .sb-nav-link-icon {
     color: #2563eb !important;
 }
 
-
-/* =========================================================
-   SIDEBAR FOOTER
-   ========================================================= */
+.sb-sidenav-light .nav-link.active {
+    font-weight: 600;
+    border-left: 4px solid #2563eb;
+}
 
 .sb-sidenav-light .sb-sidenav-footer {
     background-color: #f8fafc !important;
     color: #64748b !important;
-
     border-top: 1px solid #e5e7eb;
 }
 
 
-/* =========================================================
-   MAIN CONTENT
-   ========================================================= */
+/* MAIN */
 
 #layoutSidenav_content {
     background-color: #f8fafc;
-
     flex: 1 1 auto;
     min-width: 0;
     width: 0;
+}
+
+#layoutSidenav_content main {
+    padding-top: 1.5rem;
 }
 
 #layoutSidenav_content h1 {
     color: #111827;
 }
 
-
-/* =========================================================
-   BREADCRUMB
-   ========================================================= */
-
-.breadcrumb {
-    color: #64748b;
-}
-
-.breadcrumb a {
-    color: #2563eb;
-}
-
-
-/* =========================================================
-   CARD
-   ========================================================= */
-
-.card {
-    border: 1px solid #e5e7eb;
-
-    box-shadow:
-        0 2px 8px rgba(15, 23, 42, 0.04);
-}
-
-.card-header {
-    background-color: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-
-/* =========================================================
-   FORM
-   ========================================================= */
-
-.form-control:focus,
-.form-select:focus {
-    border-color: #93c5fd;
-
-    box-shadow:
-        0 0 0 0.2rem rgba(37, 99, 235, 0.15);
-}
-
-
-/* =========================================================
-   BUTTON
-   ========================================================= */
-
-.btn-primary {
-    background-color: #2563eb;
-    border-color: #2563eb;
-}
-
-.btn-primary:hover {
-    background-color: #1d4ed8;
-    border-color: #1d4ed8;
-}
-
-
-/* =========================================================
-   TABLE
-   ========================================================= */
-
-.table th {
-    font-weight: 600;
-}
-
-.dataTable-table {
-    width: 100% !important;
-}
-
-.dataTable-table th {
-    white-space: nowrap;
-}
-
-.dataTable-table td {
-    vertical-align: middle;
-}
-
-
-/* =========================================================
-   SIMPLE DATATABLES
-   TOP
-   ========================================================= */
-
-.dataTable-top {
-    width: 100% !important;
-
-    display: flex !important;
-
-    justify-content: space-between !important;
-    align-items: center !important;
-
-    gap: 20px;
-
-    margin-bottom: 15px;
-
-    padding: 0 !important;
-}
-
-
-/* =========================================================
-   ENTRIES PER PAGE
-   ========================================================= */
-
-.dataTable-dropdown {
-    display: flex !important;
-
-    align-items: center !important;
-
-    flex: 0 0 auto;
-
-    margin: 0 !important;
-}
-
-.dataTable-dropdown label {
-    display: flex !important;
-
-    align-items: center !important;
-
-    gap: 8px;
-
-    margin: 0 !important;
-
-    white-space: nowrap;
-}
-
-
-/* Dropdown */
-
-.dataTable-selector {
-    width: auto !important;
-
-    min-width: 70px !important;
-
-    height: 40px !important;
-
-    padding: 6px 30px 6px 12px !important;
-
-    margin: 0 !important;
-
-    border: 1px solid #dbe3ef !important;
-
-    border-radius: 6px !important;
-
-    background-color: #ffffff !important;
-
-    font-size: 14px !important;
-
-    line-height: 1.5 !important;
-}
-
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
-
-.dataTable-search {
-    display: flex !important;
-
-    align-items: center !important;
-
-    flex: 0 0 auto;
-
-    margin-left: auto !important;
-
-    margin-right: 0 !important;
-
-    padding: 0 !important;
-}
-
-
-/* Search input */
-
-.dataTable-input {
-    width: 250px !important;
-
-    min-width: 200px !important;
-
-    height: 40px !important;
-
-    padding: 6px 12px !important;
-
-    margin: 0 !important;
-
-    border: 1px solid #dbe3ef !important;
-
-    border-radius: 6px !important;
-
-    font-size: 14px !important;
-
-    background-color: #ffffff !important;
-}
-
-
-/* =========================================================
-   SEARCH & SELECT - FOCUS
-   ========================================================= */
-
-.dataTable-input:focus,
-.dataTable-selector:focus {
-    border-color: #93c5fd !important;
-
-    outline: none !important;
-
-    box-shadow:
-        0 0 0 0.2rem rgba(37, 99, 235, 0.15) !important;
-}
-
-
-/* =========================================================
-   SIMPLE DATATABLES
-   BOTTOM
-   ========================================================= */
-
-.dataTable-bottom {
-    width: 100% !important;
-
-    display: flex !important;
-
-    justify-content: space-between !important;
-
-    align-items: center !important;
-
-    gap: 20px;
-
-    margin-top: 15px;
-
-    padding: 0 !important;
-}
-
-
-/* =========================================================
-   INFO JUMLAH DATA
-   ========================================================= */
-
-.dataTable-info {
-    margin: 0 !important;
-
-    color: #64748b;
-}
-
-
-/* =========================================================
-   PAGINATION
-   ========================================================= */
-
-.dataTable-pagination {
-    margin-left: auto !important;
-}
-
-.dataTable-pagination ul {
-    display: flex;
-
-    align-items: center;
-
-    gap: 4px;
-
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-.dataTable-pagination li {
-    margin: 0 !important;
-}
-
-.dataTable-pagination a {
-    min-width: 38px;
-
-    height: 38px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 6px 10px;
-
-    border-radius: 6px;
-}
-
-
-/* =========================================================
-   DATATABLE WRAPPER
-   ========================================================= */
-
-.dataTable-wrapper {
-    width: 100% !important;
-}
-
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-footer {
-    background-color: #ffffff !important;
-
-    border-top: 1px solid #e5e7eb;
-}
-
-
-/* =========================================================
-   RESPONSIVE DATATABLES
-   ========================================================= */
-
-@media (max-width: 768px) {
-
-    .dataTable-top {
-        flex-direction: column !important;
-
-        align-items: stretch !important;
-    }
-
-    .dataTable-dropdown {
-        width: 100%;
-
-        justify-content: flex-start;
-    }
-
-    .dataTable-search {
-        width: 100%;
-
-        margin-left: 0 !important;
-    }
-
-    .dataTable-input {
-        width: 100% !important;
-
-        min-width: 0 !important;
-    }
-
-    .dataTable-bottom {
-        flex-direction: column !important;
-
-        align-items: stretch !important;
-    }
-
-    .dataTable-pagination {
-        margin-left: 0 !important;
-    }
-
-}
-/* =========================================================
-   STATISTIK PAGE
-   ========================================================= */
-
-   .admin-header {
+.admin-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin: 0.5rem 1rem 2rem;
 }
 
 .admin-header h1 {
@@ -498,23 +123,171 @@ footer {
 }
 
 
-/* =========================================================
-   DASHBOARD CONTENT
-   ========================================================= */
+/* GENERAL */
 
-.dashboard-content {
-    background: #ffffff;
+.breadcrumb {
+    color: #64748b;
+}
+
+.breadcrumb a {
+    color: #2563eb;
+}
+
+.card {
     border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #e5e7eb;
+}
 
-/* =========================================================
-   SECTION TITLE
-   ========================================================= */
+.form-control:focus,
+.form-select:focus {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15);
+}
+
+footer {
+    background-color: #fff !important;
+    border-top: 1px solid #e5e7eb;
+}
+
+
+/* DATATABLES */
+
+.table th {
+    font-weight: 600;
+}
+
+.dataTable-wrapper,
+.dataTable-container,
+.dataTable-table {
+    width: 100% !important;
+}
+
+.dataTable-table th {
+    white-space: nowrap;
+}
+
+.dataTable-table td {
+    vertical-align: middle;
+}
+
+.dataTable-top,
+.dataTable-bottom {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 20px;
+}
+
+.dataTable-top {
+    margin-bottom: 15px;
+    padding: 0 !important;
+}
+
+.dataTable-bottom {
+    margin-top: 15px;
+    padding: 0 !important;
+}
+
+.dataTable-dropdown,
+.dataTable-search {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+}
+
+.dataTable-dropdown {
+    flex: 0 0 auto;
+}
+
+.dataTable-dropdown label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px;
+    margin: 0 !important;
+    white-space: nowrap;
+}
+
+.dataTable-selector {
+    width: auto !important;
+    min-width: 70px !important;
+    height: 40px !important;
+    padding: 6px 30px 6px 12px !important;
+    border: 1px solid #dbe3ef !important;
+    border-radius: 6px !important;
+    background-color: #fff !important;
+    font-size: 14px !important;
+}
+
+.dataTable-search {
+    margin-left: auto !important;
+}
+
+.dataTable-input {
+    width: 250px !important;
+    min-width: 200px !important;
+    height: 40px !important;
+    padding: 6px 12px !important;
+    border: 1px solid #dbe3ef !important;
+    border-radius: 6px !important;
+    background-color: #fff !important;
+    font-size: 14px !important;
+}
+
+.dataTable-input:focus,
+.dataTable-selector:focus {
+    border-color: #93c5fd !important;
+    outline: none !important;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15) !important;
+}
+
+.dataTable-info {
+    margin: 0 !important;
+    color: #64748b;
+}
+
+.dataTable-pagination {
+    margin-left: auto !important;
+}
+
+.dataTable-pagination ul {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.dataTable-pagination li {
+    margin: 0 !important;
+}
+
+.dataTable-pagination a {
+    min-width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+
+/* STATISTIK */
+
+.dashboard-content {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 0 1rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
 
 .dashboard-title {
     margin-bottom: 1.25rem;
@@ -533,20 +306,14 @@ footer {
     font-size: 0.9rem;
 }
 
-
-/* =========================================================
-   STATISTICS CARD
-   ========================================================= */
-
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
 }
 
-
 .stat-card {
-    background: #ffffff;
+    background: #fff;
     border: 1px solid #e5e7eb;
     border-left: 4px solid #2563eb;
     border-radius: 0.65rem;
@@ -556,21 +323,17 @@ footer {
     gap: 0.4rem;
 }
 
-
 .stat-card.positive {
     border-left-color: #16a34a;
 }
-
 
 .stat-card.neutral {
     border-left-color: #eab308;
 }
 
-
 .stat-card.negative {
     border-left-color: #dc2626;
 }
-
 
 .stat-label {
     color: #64748b;
@@ -578,17 +341,11 @@ footer {
     font-weight: 500;
 }
 
-
 .stat-value {
     color: #111827;
     font-size: 1.8rem;
     font-weight: 700;
 }
-
-
-/* =========================================================
-   CHART
-   ========================================================= */
 
 .chart-container {
     position: relative;
@@ -596,15 +353,9 @@ footer {
     height: 350px;
 }
 
-
 .chart-container canvas {
     max-width: 100%;
 }
-
-
-/* =========================================================
-   PERIOD SELECTOR
-   ========================================================= */
 
 .period-selector {
     display: flex;
@@ -612,7 +363,6 @@ footer {
     gap: 1.5rem;
     margin-bottom: 1.25rem;
 }
-
 
 .period-selector label {
     display: inline-flex;
@@ -623,12 +373,10 @@ footer {
     font-size: 0.9rem;
 }
 
-
 .period-selector input {
     margin: 0;
     cursor: pointer;
 }
-
 
 .period-selector input:checked + span {
     color: #2563eb;
@@ -636,54 +384,10 @@ footer {
 }
 
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+/* MODEL */
 
-@media (max-width: 992px) {
-
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-}
-
-
-@media (max-width: 576px) {
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .period-selector {
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-}
-/* =========================================================
-   STATISTIK - JARAK HEADER
-   ========================================================= */
-
-   #layoutSidenav_content main {
-    padding-top: 1.5rem;
-}
-
-.admin-header {
-    margin-top: 0.5rem;
-    margin-bottom: 2rem;
-}
-.admin-header,
-.dashboard-content {
-    margin-left: 1rem;
-    margin-right: 1rem;
-}
-/* =========================================================
-   MODEL SENTIMEN
-   ========================================================= */
-
-   .model-card {
-    background: #ffffff;
+.model-card {
+    background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 1.25rem;
@@ -692,7 +396,7 @@ footer {
     gap: 1rem;
     min-height: 125px;
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-    transition: all 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .model-card:hover {
@@ -704,12 +408,10 @@ footer {
     width: 52px;
     height: 52px;
     min-width: 52px;
-    border-radius: 12px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
+    border-radius: 12px;
     font-size: 1.3rem;
 }
 
@@ -761,15 +463,11 @@ footer {
     color: #16a34a !important;
 }
 
-
-/* SECTION */
-
 .model-section {
-    background: #ffffff;
+    background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 1.5rem;
-
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
@@ -777,13 +475,11 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-
     margin-bottom: 1.5rem;
 }
 
 .model-section-header h2 {
     margin: 0;
-
     color: #111827;
     font-size: 1.15rem;
     font-weight: 700;
@@ -796,13 +492,9 @@ footer {
 
 .model-section-header p {
     margin: 0.4rem 0 0;
-
     color: #64748b;
     font-size: 0.9rem;
 }
-
-
-/* DETAIL MODEL */
 
 .model-detail-list {
     display: flex;
@@ -813,13 +505,9 @@ footer {
 .model-detail-item {
     display: flex;
     align-items: center;
-
     gap: 1rem;
-
     padding: 0.9rem;
-
     background: #f8fafc;
-
     border: 1px solid #eef2f7;
     border-radius: 9px;
 }
@@ -828,49 +516,41 @@ footer {
     width: 38px;
     height: 38px;
     min-width: 38px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     background: #eff6ff;
     color: #2563eb;
-
     border-radius: 8px;
 }
 
-.model-detail-item span {
+.model-detail-item span,
+.model-detail-item strong {
     display: block;
+}
 
+.model-detail-item span {
     color: #64748b;
     font-size: 0.78rem;
 }
 
 .model-detail-item strong {
-    display: block;
-
     margin-top: 0.15rem;
-
     color: #111827;
     font-size: 0.92rem;
 }
 
 
-/* FILE MODEL */
+/* FILE */
 
 .file-box {
     display: flex;
     align-items: center;
-
     gap: 1rem;
-
     padding: 1rem;
-
     background: #f8fafc;
-
     border: 1px solid #e5e7eb;
     border-radius: 9px;
-
     margin-bottom: 0.75rem;
 }
 
@@ -882,130 +562,281 @@ footer {
     width: 42px;
     height: 42px;
     min-width: 42px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     background: #eff6ff;
     color: #2563eb;
-
     border-radius: 9px;
 }
 
-.file-content span {
+.file-content span,
+.file-content strong,
+.file-content small {
     display: block;
+}
 
+.file-content span {
     color: #64748b;
     font-size: 0.78rem;
 }
 
 .file-content strong {
-    display: block;
-
     color: #111827;
     font-size: 0.9rem;
-
     margin-top: 0.15rem;
 }
 
 .file-content small {
-    display: block;
-
     color: #94a3b8;
     font-size: 0.75rem;
-
     margin-top: 0.2rem;
 }
 
 
 /* DATASET */
 
-.dataset-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+.dataset-page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 500;
 }
 
-.dataset-item {
+.dataset-page-header p {
+    font-size: 1.05rem;
+}
+
+.dataset-card-header {
     display: flex;
     align-items: center;
-
-    gap: 1rem;
-
-    padding: 1rem;
-
-    background: #f8fafc;
-
-    border: 1px solid #e5e7eb;
-    border-radius: 9px;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 58px;
 }
 
-.dataset-icon {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-
+.dataset-card-title {
     display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.dataset-upload-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.dataset-file-input {
+    width: 300px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background: #fff;
+    color: #212529;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.dataset-file-input::file-selector-button {
+    height: 38px;
+    margin-right: 10px;
+    padding: 0 14px;
+    border: none;
+    border-right: 1px solid #ced4da;
+    background: #e9ecef;
+    color: #212529;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.dataset-file-input::file-selector-button:hover {
+    background: #dee2e6;
+}
+
+.dataset-upload-button {
+    height: 38px;
+    padding: 0 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.dataset-delete-button {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    background: #eff6ff;
-    color: #2563eb;
-
-    border-radius: 9px;
+    padding: 0;
 }
 
-.dataset-info {
-    flex: 1;
+.dataset-card-header + .card-body {
+    padding-top: 18px;
 }
 
-.dataset-info span {
-    display: block;
 
-    color: #64748b;
-    font-size: 0.78rem;
+/* DATASET DETAIL */
+
+.dataset-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
 }
 
-.dataset-info strong {
-    display: block;
-
-    color: #111827;
-    font-size: 0.92rem;
-
-    margin-top: 0.15rem;
+.dataset-info-box {
+    height: 100%;
+    padding: 14px 16px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: #f8f9fa;
 }
 
-.dataset-info small {
-    display: block;
-
-    color: #94a3b8;
-    font-size: 0.75rem;
-
-    margin-top: 0.2rem;
+.dataset-info-label {
+    margin-bottom: 5px;
+    color: #6c757d;
+    font-size: 13px;
 }
 
-.dataset-badge {
-    background: #dbeafe;
-    color: #1d4ed8;
-
-    padding: 0.35rem 0.7rem;
-
-    border-radius: 999px;
-
-    font-size: 0.75rem;
-    font-weight: 600;
+.dataset-info-value {
+    color: #212529;
+    font-size: 15px;
+    font-weight: 500;
+    word-break: break-word;
 }
 
-.dataset-badge.validation {
-    background: #fef3c7;
-    color: #92400e;
+
+/* TABEL DATASET */
+
+.dataset-preview {
+    width: 100%;
 }
 
+.dataset-preview .dataTable-container {
+    max-height: 600px;
+    overflow: auto;
+    border: 1px solid #dee2e6;
+    background: #fff;
+}
+
+.dataset-preview .dataTable-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed !important;
+}
+
+.dataset-preview .dataTable-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+
+    background: #f8f9fa;
+    white-space: nowrap;
+}
+
+.dataset-preview .dataTable-table td {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.dataset-preview .dataset-cell {
+    cursor: pointer;
+}
+
+.dataset-preview .dataset-cell:hover {
+    background-color: #f8f9fa;
+}
+
+.dataset-preview .dataset-sentiment-cell {
+    white-space: nowrap;
+}
+
+.dataset-preview .dataTable-bottom {
+    margin-top: 0;
+    padding: 15px !important;
+    border-top: 1px solid #dee2e6;
+    background: #fff;
+}
+
+
+/* MODAL TEKS */
+
+.dataset-full-text {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    line-height: 1.6;
+
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+
+@media (max-width: 768px) {
+
+    .dataset-detail-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
 
 /* RESPONSIVE */
 
+@media (max-width: 992px) {
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dataset-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dataset-upload-form {
+        width: 100%;
+    }
+
+    .dataset-file-input {
+        flex: 1;
+        width: auto;
+    }
+}
+
 @media (max-width: 768px) {
+
+    .dataTable-top,
+    .dataTable-bottom {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .dataTable-dropdown,
+    .dataTable-search {
+        width: 100%;
+    }
+
+    .dataTable-search {
+        margin-left: 0 !important;
+    }
+
+    .dataTable-input {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .dataTable-pagination {
+        margin-left: 0 !important;
+    }
 
     .model-card {
         min-height: auto;
@@ -1015,12 +846,30 @@ footer {
         padding: 1.25rem;
     }
 
-    .dataset-item {
+    .dataset-detail-header {
         align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 
-    .dataset-badge {
-        margin-left: auto;
+    .period-selector {
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
+    .dataset-upload-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dataset-file-input,
+    .dataset-upload-button {
+        width: 100%;
+    }
 }

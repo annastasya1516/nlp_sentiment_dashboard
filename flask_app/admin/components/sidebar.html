@@ -82,17 +82,70 @@
                 </div>
 
 
-                <!-- MODEL SENTIMEN -->
+                <!-- MODEL MENU -->
 
                 <a
-                    class="nav-link {% if request.endpoint == 'model_sentimen' %}active{% endif %}"
-                    href="{{ url_for('model_sentimen') }}"
+                    class="nav-link collapsed"
+                    href="#"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseModel"
+                    aria-expanded="false"
+                    aria-controls="collapseModel"
                 >
+
                     <div class="sb-nav-link-icon">
                         <i class="fas fa-brain"></i>
                     </div>
-                    Model Sentimen
+
+                    Model
+
+                    <div class="sb-sidenav-collapse-arrow">
+                        <i class="fas fa-angle-down"></i>
+                    </div>
+
                 </a>
+
+
+                <!-- MODEL SUBMENU -->
+
+                <div
+                    class="collapse"
+                    id="collapseModel"
+                    aria-labelledby="headingModel"
+                    data-bs-parent="#sidenavAccordion"
+                >
+
+                    <nav
+                        class="sb-sidenav-menu-nested nav"
+                    >
+
+                    <!-- MODEL SENTIMEN -->
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('model_sentimen') }}"
+                    >
+
+                        <i class="fas fa-brain me-2"></i>
+
+                        Model Sentimen
+
+                    </a>
+
+
+                    <!-- DATASET -->
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('dataset') }}"
+                    >
+                        <i class="fas fa-database me-2"></i>
+                        Dataset
+                    </a>
+
+                </nav>
+
+            </div>
 
             </div>
 

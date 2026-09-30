@@ -23,7 +23,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from werkzeug.utils import secure_filename
-
+from services.dataset_service import proses_file_dataset
 from services.sentiment_service import proses_sentimen
 from utils.database import (
     ambil_riwayat,
@@ -41,14 +41,15 @@ from utils.preprocessing import bersihkan_teks
 from utils.security import verify_password
 
 
+# =========================
 # Environment
-load_dotenv()
+# =========================
 
+load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD_HASH = os.getenv("ADMIN_PASSWORD_HASH")
-
 
 if not SECRET_KEY:
     raise RuntimeError(
@@ -66,7 +67,10 @@ if not ADMIN_PASSWORD_HASH:
     )
 
 
+# =========================
 # Path
+# =========================
+
 BASE_DIR = os.path.dirname(
     os.path.abspath(__file__)
 )
@@ -101,13 +105,13 @@ METRICS_PATH = os.path.join(
 )
 
 
+# =========================
 # App
-app = Flask(__name__)
+# =========================
 
+app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
-
-# Template
 app.jinja_loader = ChoiceLoader([
     app.jinja_loader,
     FileSystemLoader(ADMIN_TEMPLATE_DIR),
@@ -115,7 +119,10 @@ app.jinja_loader = ChoiceLoader([
 ])
 
 
+# =========================
 # Helper
+# =========================
+
 def admin_sudah_login():
     return session.get(
         "admin_login",
@@ -167,7 +174,10 @@ def ambil_daftar_dataset():
             nama_file
         )[1].lower()
 
-        if ekstensi not in [".csv", ".tsv"]:
+        if ekstensi not in [
+            ".csv",
+            ".tsv"
+        ]:
             continue
 
         daftar_dataset.append({
@@ -179,7 +189,7 @@ def ambil_daftar_dataset():
         })
 
     daftar_dataset.sort(
-        key=lambda x: x["nama"].lower()
+        key=lambda data: data["nama"].lower()
     )
 
     return daftar_dataset
@@ -191,7 +201,16 @@ def redirect_ke_model():
     )
 
 
+def redirect_ke_dataset():
+    return redirect(
+        url_for("dataset")
+    )
+
+
+# =========================
 # Security
+# =========================
+
 @app.after_request
 def tambahkan_header_keamanan(response):
 
@@ -199,15 +218,19 @@ def tambahkan_header_keamanan(response):
         "no-store, no-cache, "
         "must-revalidate, max-age=0"
     )
-
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
 
     return response
 
 
-# Admin static
-@app.route("/admin-static/<path:filename>")
+# =========================
+# Admin Static
+# =========================
+
+@app.route(
+    "/admin-static/<path:filename>"
+)
 def admin_static(filename):
 
     return send_from_directory(
@@ -216,19 +239,19 @@ def admin_static(filename):
     )
 
 
+# =========================
 # User
+# =========================
+
 @app.route("/")
 def home():
 
-    akurasi = ambil_akurasi_model()
-
     return render_template(
         "index.html",
-        akurasi=akurasi
+        akurasi=ambil_akurasi_model()
     )
 
 
-# Analisis
 @app.route(
     "/analisis",
     methods=["POST"]
@@ -238,7 +261,6 @@ def analisis():
     data = request.get_json()
 
     if not data:
-
         return jsonify({
             "status": "error",
             "message": "Data tidak ditemukan."
@@ -254,8 +276,8 @@ def analisis():
         teks
     )
 
-    prediksi, confidence = (
-        proses_sentimen(teks)
+    prediksi, confidence = proses_sentimen(
+        teks
     )
 
     akurasi = ambil_akurasi_model()
@@ -279,7 +301,10 @@ def analisis():
     })
 
 
+# =========================
 # Login
+# =========================
+
 @app.route(
     "/admin",
     methods=["GET", "POST"]
@@ -287,7 +312,6 @@ def analisis():
 def admin_login():
 
     if admin_sudah_login():
-
         return redirect(
             url_for("dashboard")
         )
@@ -304,11 +328,9 @@ def admin_login():
             ""
         )
 
-        password_benar = (
-            verify_password(
-                password,
-                ADMIN_PASSWORD_HASH
-            )
+        password_benar = verify_password(
+            password,
+            ADMIN_PASSWORD_HASH
         )
 
         if (
@@ -316,9 +338,7 @@ def admin_login():
             and password_benar
         ):
 
-            session[
-                "admin_login"
-            ] = True
+            session["admin_login"] = True
 
             return redirect(
                 url_for("dashboard")
@@ -326,10 +346,7 @@ def admin_login():
 
         return render_template(
             "admin_login.html",
-            error=(
-                "Username atau "
-                "password salah."
-            )
+            error="Username atau password salah."
         )
 
     return render_template(
@@ -337,93 +354,71 @@ def admin_login():
     )
 
 
+# =========================
 # Dashboard
+# =========================
+
 @app.route(
     "/admin/dashboard"
 )
 def dashboard():
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
 
-    statistik = ambil_statistik()
-
-    riwayat = ambil_riwayat(
-        limit=20,
-        offset=0
-    )
-
-    statistik_harian = (
-        ambil_statistik_harian()
-    )
-
     return render_template(
         "dashboard.html",
-        statistik=statistik,
-        riwayat=riwayat,
-        statistik_harian=statistik_harian
+        statistik=ambil_statistik(),
+        riwayat=ambil_riwayat(
+            limit=20,
+            offset=0
+        ),
+        statistik_harian=ambil_statistik_harian()
     )
 
 
+# =========================
 # Statistik
+# =========================
+
 @app.route(
     "/admin/statistik"
 )
 def statistik():
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
 
-    data_statistik = (
-        ambil_statistik()
-    )
-
-    statistik_harian = (
-        ambil_statistik_harian()
-    )
-
-    statistik_bulanan = (
-        ambil_statistik_bulanan()
-    )
-
-    statistik_tahunan = (
-        ambil_statistik_tahunan()
-    )
-
     return render_template(
         "statistik.html",
-        statistik=data_statistik,
-        statistik_harian=statistik_harian,
-        statistik_bulanan=statistik_bulanan,
-        statistik_tahunan=statistik_tahunan
+        statistik=ambil_statistik(),
+        statistik_harian=ambil_statistik_harian(),
+        statistik_bulanan=ambil_statistik_bulanan(),
+        statistik_tahunan=ambil_statistik_tahunan()
     )
 
 
+# =========================
 # Riwayat
+# =========================
+
 @app.route(
     "/admin/riwayat"
 )
 def riwayat():
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
 
-    data_riwayat = (
-        ambil_semua_riwayat()
-    )
-
     return render_template(
         "riwayat.html",
-        riwayat=data_riwayat
+        riwayat=ambil_semua_riwayat()
     )
 
 
@@ -434,7 +429,6 @@ def riwayat():
 def tambah_riwayat():
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
@@ -456,23 +450,18 @@ def tambah_riwayat():
             ""
         )
 
-        confidence_input = (
-            request.form.get(
-                "confidence",
-                ""
-            ).strip()
-        )
+        confidence_input = request.form.get(
+            "confidence",
+            ""
+        ).strip()
 
         try:
-
             confidence = (
                 float(confidence_input)
                 if confidence_input
                 else None
             )
-
         except ValueError:
-
             confidence = None
 
         simpan_ke_db(
@@ -503,15 +492,12 @@ def tambah_riwayat():
 def edit_riwayat(id_data):
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
 
-    data = (
-        ambil_riwayat_by_id(
-            id_data
-        )
+    data = ambil_riwayat_by_id(
+        id_data
     )
 
     if data is None:
@@ -542,23 +528,18 @@ def edit_riwayat(id_data):
             ""
         )
 
-        confidence_input = (
-            request.form.get(
-                "confidence",
-                ""
-            ).strip()
-        )
+        confidence_input = request.form.get(
+            "confidence",
+            ""
+        ).strip()
 
         try:
-
             confidence = (
                 float(confidence_input)
                 if confidence_input
                 else None
             )
-
         except ValueError:
-
             confidence = None
 
         update_riwayat(
@@ -591,7 +572,6 @@ def edit_riwayat(id_data):
 def hapus_satu_riwayat(id_data):
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
@@ -617,7 +597,6 @@ def hapus_satu_riwayat(id_data):
 def hapus_banyak_riwayat():
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
@@ -642,21 +621,21 @@ def hapus_banyak_riwayat():
     )
 
 
-# Download CSV
+# =========================
+# Download Riwayat
+# =========================
+
 @app.route(
     "/admin/riwayat/download"
 )
 def download_csv():
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
 
-    data_riwayat = (
-        ambil_semua_riwayat()
-    )
+    data_riwayat = ambil_semua_riwayat()
 
     output = io.StringIO()
 
@@ -673,11 +652,9 @@ def download_csv():
         "Waktu"
     ])
 
-    for data in data_riwayat:
-
-        writer.writerow(
-            data
-        )
+    writer.writerows(
+        data_riwayat
+    )
 
     output.seek(0)
 
@@ -689,20 +666,20 @@ def download_csv():
         ),
         mimetype="text/csv",
         as_attachment=True,
-        download_name=(
-            "riwayat_sentimen.csv"
-        )
+        download_name="riwayat_sentimen.csv"
     )
 
 
+# =========================
 # Model
+# =========================
+
 @app.route(
     "/admin/model"
 )
 def model_sentimen():
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
@@ -714,81 +691,32 @@ def model_sentimen():
     )
 
 
+# =========================
+# Dataset
+# =========================
+
 @app.route(
-    "/admin/model/upload-dataset",
-    methods=["POST"]
+    "/admin/dataset"
 )
-def upload_dataset():
+def dataset():
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
 
-    file = request.files.get(
-        "dataset"
+    return render_template(
+        "dataset.html",
+        daftar_dataset=ambil_daftar_dataset()
     )
-
-    if not file or not file.filename:
-
-        flash(
-            "Silakan pilih file dataset.",
-            "danger"
-        )
-
-        return redirect_ke_model()
-
-    nama_file = secure_filename(
-        file.filename
-    )
-
-    ekstensi = os.path.splitext(
-        nama_file
-    )[1].lower()
-
-    if ekstensi not in [
-        ".csv",
-        ".tsv"
-    ]:
-
-        flash(
-            "Format file harus CSV atau TSV.",
-            "danger"
-        )
-
-        return redirect_ke_model()
-
-    os.makedirs(
-        DATASET_DIR,
-        exist_ok=True
-    )
-
-    file_path = os.path.join(
-        DATASET_DIR,
-        nama_file
-    )
-
-    file.save(
-        file_path
-    )
-
-    flash(
-        f"Dataset {nama_file} berhasil ditambahkan.",
-        "success"
-    )
-
-    return redirect_ke_model()
 
 
 @app.route(
-    "/admin/model/delete-dataset/<nama_file>",
-    methods=["POST"]
+    "/admin/dataset/<nama_file>"
 )
-def delete_dataset(nama_file):
+def detail_dataset(nama_file):
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
@@ -811,7 +739,7 @@ def delete_dataset(nama_file):
             "danger"
         )
 
-        return redirect_ke_model()
+        return redirect_ke_dataset()
 
     file_path = os.path.join(
         DATASET_DIR,
@@ -825,7 +753,196 @@ def delete_dataset(nama_file):
             "danger"
         )
 
-        return redirect_ke_model()
+        return redirect_ke_dataset()
+
+    try:
+
+        separator = (
+            "\t"
+            if ekstensi == ".tsv"
+            else ","
+        )
+
+        data = pd.read_csv(
+            file_path,
+            sep=separator,
+            dtype=str,
+            keep_default_na=False
+        )
+
+        kolom = list(
+            data.columns
+        )
+
+        return render_template(
+            "dataset_detail.html",
+            nama_file=nama_file,
+            ekstensi=ekstensi.replace(
+                ".",
+                ""
+            ).upper(),
+            jumlah_baris=len(data),
+            jumlah_kolom=len(kolom),
+            kolom=kolom,
+            data=data.to_dict(
+                orient="records"
+            )
+        )
+
+    except Exception as error:
+
+        flash(
+            f"Dataset gagal dibaca: {error}",
+            "danger"
+        )
+
+        return redirect_ke_dataset()
+
+
+# =========================
+# Upload Dataset
+# =========================
+
+@app.route(
+    "/admin/model/upload-dataset",
+    methods=["POST"]
+)
+def upload_dataset():
+
+    if not admin_sudah_login():
+        return redirect(
+            url_for("admin_login")
+        )
+
+    file = request.files.get(
+        "dataset"
+    )
+
+    if not file or not file.filename:
+
+        flash(
+            "Silakan pilih file dataset.",
+            "danger"
+        )
+
+        return redirect_ke_dataset()
+
+    nama_file = secure_filename(
+        file.filename
+    )
+
+    ekstensi = os.path.splitext(
+        nama_file
+    )[1].lower()
+
+    if ekstensi not in [
+        ".csv",
+        ".tsv"
+    ]:
+
+        flash(
+            "Format file harus CSV atau TSV.",
+            "danger"
+        )
+
+        return redirect_ke_dataset()
+
+    os.makedirs(
+        DATASET_DIR,
+        exist_ok=True
+    )
+
+    file_path = os.path.join(
+        DATASET_DIR,
+        nama_file
+    )
+
+    file.save(
+        file_path
+    )
+
+    try:
+
+        hasil = proses_file_dataset(
+            file_path,
+            ekstensi
+        )
+
+        hasil.to_csv(
+            file_path,
+            sep="\t" if ekstensi == ".tsv" else ",",
+            index=False
+        )
+
+        flash(
+            f"Dataset {nama_file} berhasil diproses. "
+            f"{len(hasil)} data siap digunakan.",
+            "success"
+        )
+
+    except Exception as error:
+
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+        flash(
+            f"Dataset gagal diproses: {error}",
+            "danger"
+        )
+
+    return redirect_ke_dataset()
+
+    return redirect_ke_dataset()
+
+
+# =========================
+# Delete Dataset
+# =========================
+
+@app.route(
+    "/admin/model/delete-dataset/<nama_file>",
+    methods=["POST"]
+)
+def delete_dataset(nama_file):
+
+    if not admin_sudah_login():
+        return redirect(
+            url_for("admin_login")
+        )
+
+    nama_file = secure_filename(
+        nama_file
+    )
+
+    ekstensi = os.path.splitext(
+        nama_file
+    )[1].lower()
+
+    if ekstensi not in [
+        ".csv",
+        ".tsv"
+    ]:
+
+        flash(
+            "File dataset tidak valid.",
+            "danger"
+        )
+
+        return redirect_ke_dataset()
+
+    file_path = os.path.join(
+        DATASET_DIR,
+        nama_file
+    )
+
+    if not os.path.isfile(file_path):
+
+        flash(
+            "Dataset tidak ditemukan.",
+            "danger"
+        )
+
+        return redirect_ke_dataset()
 
     try:
 
@@ -845,10 +962,13 @@ def delete_dataset(nama_file):
             "danger"
         )
 
-    return redirect_ke_model()
+    return redirect_ke_dataset()
 
 
+# =========================
 # Training
+# =========================
+
 @app.route(
     "/admin/model/train",
     methods=["POST"]
@@ -856,7 +976,6 @@ def delete_dataset(nama_file):
 def train_model():
 
     if not admin_sudah_login():
-
         return redirect(
             url_for("admin_login")
         )
@@ -1084,18 +1203,11 @@ def train_model():
             exist_ok=True
         )
 
-        model_path = os.path.join(
-            MODEL_DIR,
-            "model_sentimen.pkl"
-        )
-
-        vectorizer_path = os.path.join(
-            MODEL_DIR,
-            "vectorizer_tfidf.pkl"
-        )
-
         with open(
-            model_path,
+            os.path.join(
+                MODEL_DIR,
+                "model_sentimen.pkl"
+            ),
             "wb"
         ) as file:
 
@@ -1105,7 +1217,10 @@ def train_model():
             )
 
         with open(
-            vectorizer_path,
+            os.path.join(
+                MODEL_DIR,
+                "vectorizer_tfidf.pkl"
+            ),
             "wb"
         ) as file:
 
@@ -1114,10 +1229,6 @@ def train_model():
                 file
             )
 
-        metrics = {
-            "accuracy": accuracy_percent
-        }
-
         with open(
             METRICS_PATH,
             "w",
@@ -1125,7 +1236,9 @@ def train_model():
         ) as file:
 
             json.dump(
-                metrics,
+                {
+                    "accuracy": accuracy_percent
+                },
                 file,
                 indent=4
             )
@@ -1151,7 +1264,10 @@ def train_model():
     return redirect_ke_model()
 
 
+# =========================
 # Logout
+# =========================
+
 @app.route(
     "/admin/logout",
     methods=["GET", "POST"]
@@ -1164,6 +1280,10 @@ def logout():
         url_for("admin_login")
     )
 
+
+# =========================
+# Run
+# =========================
 
 if __name__ == "__main__":
 
