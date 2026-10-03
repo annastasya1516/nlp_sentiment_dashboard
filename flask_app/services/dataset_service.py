@@ -22,7 +22,6 @@ KOLOM_SENTIMEN = [
     "polarity"
 ]
 
-
 def cari_kolom(df, daftar_kolom):
 
     kolom_dataset = {

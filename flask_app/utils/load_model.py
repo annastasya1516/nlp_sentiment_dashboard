@@ -1,7 +1,6 @@
 import pickle
 import os
 
-
 def load_model_assets():
 
     base_dir = os.path.dirname(

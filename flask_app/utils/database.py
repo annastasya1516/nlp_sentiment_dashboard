@@ -1,16 +1,9 @@
 import os
 import sqlite3
-
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-
-# =========================================================
-# DATABASE CONNECTION
-# =========================================================
-
 def _get_db_connection():
-
     base_dir = os.path.dirname(
         os.path.dirname(
             os.path.dirname(
@@ -28,28 +21,20 @@ def _get_db_connection():
     return sqlite3.connect(db_path)
 
 
-# =========================================================
-# SIMPAN RIWAYAT
-# =========================================================
-
 def simpan_ke_db(
     teks_asli,
     teks_bersih,
     klasifikasi,
     confidence=None
 ):
-
-    # Ambil waktu lokal Indonesia (WIB)
     waktu = datetime.now(
         ZoneInfo("Asia/Jakarta")
     ).strftime(
         "%Y-%m-%d %H:%M:%S"
     )
 
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -71,23 +56,16 @@ def simpan_ke_db(
         )
     )
 
-
     koneksi.commit()
     koneksi.close()
 
-
-# =========================================================
-# AMBIL RIWAYAT
-# =========================================================
 
 def ambil_riwayat(
     limit=20,
     offset=0
 ):
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -108,23 +86,15 @@ def ambil_riwayat(
         )
     )
 
-
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
 
 
-# =========================================================
-# HITUNG TOTAL RIWAYAT
-# =========================================================
-
 def hitung_total_riwayat():
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -133,23 +103,15 @@ def hitung_total_riwayat():
         """
     )
 
-
     total = cursor.fetchone()[0]
-
     koneksi.close()
 
     return total
 
 
-# =========================================================
-# STATISTIK SENTIMEN
-# =========================================================
-
 def ambil_statistik():
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -161,11 +123,8 @@ def ambil_statistik():
         """
     )
 
-
     data = cursor.fetchall()
-
     koneksi.close()
-
 
     statistik = {
         "positive": 0,
@@ -174,31 +133,20 @@ def ambil_statistik():
         "invalid": 0
     }
 
-
     for klasifikasi, jumlah in data:
-
         if klasifikasi in statistik:
-
             statistik[klasifikasi] = jumlah
-
 
     statistik["total"] = sum(
         statistik.values()
     )
 
-
     return statistik
 
 
-# =========================================================
-# AMBIL SEMUA RIWAYAT
-# =========================================================
-
 def ambil_semua_riwayat():
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -214,23 +162,15 @@ def ambil_semua_riwayat():
         """
     )
 
-
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
 
 
-# =========================================================
-# STATISTIK HARIAN
-# =========================================================
-
 def ambil_statistik_harian():
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -243,23 +183,15 @@ def ambil_statistik_harian():
         """
     )
 
-
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
 
 
-# =========================================================
-# STATISTIK BULANAN
-# =========================================================
-
 def ambil_statistik_bulanan():
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -272,23 +204,15 @@ def ambil_statistik_bulanan():
         """
     )
 
-
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
 
 
-# =========================================================
-# STATISTIK TAHUNAN
-# =========================================================
-
 def ambil_statistik_tahunan():
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -301,32 +225,22 @@ def ambil_statistik_tahunan():
         """
     )
 
-
     data = cursor.fetchall()
-
     koneksi.close()
 
     return data
 
 
-# =========================================================
-# HAPUS RIWAYAT
-# =========================================================
-
 def hapus_riwayat(ids_data):
-
     if not ids_data:
         return
-
 
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
 
-
     placeholder = ",".join(
         "?" for _ in ids_data
     )
-
 
     cursor.execute(
         f"""
@@ -336,14 +250,9 @@ def hapus_riwayat(ids_data):
         ids_data
     )
 
-
     koneksi.commit()
     koneksi.close()
 
-
-# =========================================================
-# EDIT RIWAYAT
-# =========================================================
 
 def edit_riwayat(
     id_data,
@@ -352,10 +261,8 @@ def edit_riwayat(
     klasifikasi,
     confidence
 ):
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -376,20 +283,13 @@ def edit_riwayat(
         )
     )
 
-
     koneksi.commit()
     koneksi.close()
 
 
-# =========================================================
-# AMBIL RIWAYAT BERDASARKAN ID
-# =========================================================
-
 def ambil_riwayat_by_id(id_data):
-
     koneksi = _get_db_connection()
     cursor = koneksi.cursor()
-
 
     cursor.execute(
         """
@@ -406,9 +306,7 @@ def ambil_riwayat_by_id(id_data):
         (id_data,)
     )
 
-
     data = cursor.fetchone()
-
     koneksi.close()
 
     return data
