@@ -1,20 +1,13 @@
 {% extends "base.html" %}
 
-
 {% block title %}
     SentiView - Dashboard
 {% endblock %}
 
-
 {% block content %}
 
 <div class="container-fluid px-4">
-
-
-    <!-- ================================================= -->
     <!-- PAGE HEADER -->
-    <!-- ================================================= -->
-
     <h1 class="mt-4">
         Dashboard
     </h1>
@@ -28,13 +21,8 @@
 
     </ol>
 
-
-    <!-- ================================================= -->
     <!-- SUMMARY CARDS -->
-    <!-- ================================================= -->
-
     <div class="row">
-
 
         <!-- TOTAL DATA -->
 
@@ -71,7 +59,6 @@
 
         </div>
 
-
         <!-- POSITIVE -->
 
         <div class="col-xl-3 col-md-6">
@@ -107,7 +94,6 @@
 
         </div>
 
-
         <!-- NEGATIVE -->
 
         <div class="col-xl-3 col-md-6">
@@ -142,7 +128,6 @@
             </div>
 
         </div>
-
 
         <!-- NEUTRAL -->
 
@@ -181,13 +166,8 @@
 
     </div>
 
-
-    <!-- ================================================= -->
     <!-- CHARTS -->
-    <!-- ================================================= -->
-
     <div class="row">
-
 
         <!-- DISTRIBUSI SENTIMEN -->
 
@@ -202,7 +182,6 @@
                     Distribusi Sentimen
 
                 </div>
-
 
                 <div class="card-body">
 
@@ -224,7 +203,6 @@
             </div>
 
         </div>
-
 
         <!-- TREN ANALISIS -->
 
@@ -264,13 +242,8 @@
 
     </div>
 
-
-    <!-- ================================================= -->
     <!-- RECENT DATA -->
-    <!-- ================================================= -->
-
     <div class="card mb-4">
-
 
         <div class="card-header">
 
@@ -279,7 +252,6 @@
             20 Data Terbaru
 
         </div>
-
 
         <div class="card-body">
 
@@ -387,7 +359,6 @@
 
                         </td>
 
-
                         <!-- CONFIDENCE -->
 
                         <td>
@@ -420,7 +391,6 @@
 
             </table>
 
-
         </div>
 
     </div>
@@ -428,11 +398,7 @@
 
 </div>
 
-
-<!-- ================================================= -->
 <!-- DASHBOARD DATA -->
-<!-- ================================================= -->
-
 <div
     id="dashboardData"
 
@@ -449,70 +415,48 @@
 
 {% endblock %}
 
-
 {% block extra_js %}
 
-
-<!-- ================================================= -->
 <!-- SIMPLE DATATABLES -->
-<!-- ================================================= -->
-
 <script
     src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
     crossorigin="anonymous"
 ></script>
 
-
-<!-- ================================================= -->
 <!-- CHART.JS -->
-<!-- ================================================= -->
-
 <script
     src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
 ></script>
 
 
 <script>
-
-
-    /* ================================================= */
     /* DASHBOARD DATA */
-    /* ================================================= */
-
     const dashboardData =
         document.getElementById(
             "dashboardData"
         );
-
 
     const positive =
         Number(
             dashboardData.dataset.positive
         );
 
-
     const neutral =
         Number(
             dashboardData.dataset.neutral
         );
-
 
     const negative =
         Number(
             dashboardData.dataset.negative
         );
 
-
     const harian =
         JSON.parse(
             dashboardData.dataset.harian
         );
 
-
-    /* ================================================= */
     /* SENTIMENT CHART */
-    /* ================================================= */
-
     const sentimentCanvas =
         document.getElementById(
             "sentimentChart"
@@ -583,10 +527,7 @@
 
     }
 
-
-    /* ================================================= */
     /* DAILY CHART */
-    /* ================================================= */
 
     const dailyCanvas =
         document.getElementById(
@@ -696,11 +637,7 @@
 
     }
 
-
-    /* ================================================= */
     /* DATA TABLE */
-    /* ================================================= */
-
     const dashboardTable =
         document.getElementById(
             "dashboardTable"

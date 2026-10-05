@@ -5,16 +5,9 @@
     SentiView - Riwayat Analisis
 {% endblock %}
 
-
-
 {% block content %}
 
 <div class="container-fluid px-4">
-
-
-    <!-- ================================================= -->
-    <!-- PAGE HEADER -->
-    <!-- ================================================= -->
 
     <h1 class="mt-4">
         Riwayat Analisis
@@ -75,17 +68,11 @@
 
     {% endwith %}
 
-
-    <!-- ================================================= -->
     <!-- DATA RIWAYAT -->
-    <!-- ================================================= -->
-
     <div class="card mb-4">
 
 
-        <!-- ================================================= -->
         <!-- CARD HEADER -->
-        <!-- ================================================= -->
 
         <div
             class="card-header d-flex justify-content-between align-items-center"
@@ -127,17 +114,14 @@
         </div>
 
 
-        <!-- ================================================= -->
         <!-- CARD BODY -->
-        <!-- ================================================= -->
 
         <div class="card-body">
 
 
-            <!-- ================================================= -->
-            <!-- TABLE -->
-            <!-- ================================================= -->
 
+            <!-- TABLE -->
+    
             <table
                 id="riwayatTable"
                 class="table table-bordered"
@@ -338,10 +322,7 @@
 
 {% block extra_js %}
 
-<!-- ================================================= -->
 <!-- SIMPLE DATATABLES -->
-<!-- ================================================= -->
-
 <script
     src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
     crossorigin="anonymous"
@@ -349,11 +330,7 @@
 
 
 <script>
-
-    /* ================================================= */
     /* RIWAYAT DATATABLE */
-    /* ================================================= */
-
     const riwayatTable =
         document.getElementById(
             "riwayatTable"

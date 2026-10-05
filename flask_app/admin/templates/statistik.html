@@ -23,11 +23,7 @@ Statistik - SentiView
 
 </header>
 
-
-<!-- ===================================================== -->
 <!-- RINGKASAN KLASIFIKASI -->
-<!-- ===================================================== -->
-
 <section class="dashboard-content">
 
     <div class="dashboard-title">
@@ -110,11 +106,7 @@ Statistik - SentiView
 </section>
 
 
-
-<!-- ===================================================== -->
 <!-- DISTRIBUSI SENTIMEN -->
-<!-- ===================================================== -->
-
 <section class="dashboard-content history-section">
 
 
@@ -142,11 +134,7 @@ Statistik - SentiView
 </section>
 
 
-
-<!-- ===================================================== -->
 <!-- AKTIVITAS KLASIFIKASI -->
-<!-- ===================================================== -->
-
 <section class="dashboard-content history-section">
 
 
@@ -228,11 +216,7 @@ Statistik - SentiView
 </section>
 
 
-
-<!-- ===================================================== -->
 <!-- DATA STATISTIK -->
-<!-- ===================================================== -->
-
 <div
     id="statistikData"
 
@@ -251,11 +235,7 @@ Statistik - SentiView
 </div>
 
 
-
-<!-- ===================================================== -->
 <!-- CHART.JS -->
-<!-- ===================================================== -->
-
 <script
     src="https://cdn.jsdelivr.net/npm/chart.js"
 ></script>
@@ -264,11 +244,7 @@ Statistik - SentiView
 
 <script>
 
-
-// =====================================================
 // AMBIL DATA DARI HTML
-// =====================================================
-
 const statistikElement =
     document.getElementById(
         "statistikData"
@@ -293,11 +269,7 @@ const negative =
     );
 
 
-
-// =====================================================
 // GRAFIK DISTRIBUSI SENTIMEN
-// =====================================================
-
 new Chart(
 
     document.getElementById(
@@ -375,11 +347,7 @@ new Chart(
 );
 
 
-
-// =====================================================
 // DATA AKTIVITAS
-// =====================================================
-
 const activityData = {
 
     harian:
@@ -409,11 +377,7 @@ const activityData = {
 };
 
 
-
-// =====================================================
 // FUNGSI LABEL
-// =====================================================
-
 const getLabels = data =>
 
     data.map(
@@ -423,11 +387,7 @@ const getLabels = data =>
     );
 
 
-
-// =====================================================
 // FUNGSI VALUE
-// =====================================================
-
 const getValues = data =>
 
     data.map(
@@ -437,11 +397,7 @@ const getValues = data =>
     );
 
 
-
-// =====================================================
 // GRAFIK AKTIVITAS
-// =====================================================
-
 const activityChart = new Chart(
 
     document.getElementById(
@@ -532,11 +488,7 @@ const activityChart = new Chart(
 );
 
 
-
-// =====================================================
 // RADIO BUTTON PERIODE
-// =====================================================
-
 document
 
     .querySelectorAll(
